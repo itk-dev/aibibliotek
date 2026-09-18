@@ -99,10 +99,10 @@ final class AssistantDraftPrefiller
      * explicitly uploaded a different config and step 2 must
      * reflect it.
      *
-     * @param AssistantDraft                        $draft   the DTO to mutate in place
-     * @param \App\Assistant\Format\FormatAdapter   $adapter the format adapter matched to the current source config
+     * @param AssistantDraft       $draft   the DTO to mutate in place
+     * @param Format\FormatAdapter $adapter the format adapter matched to the current source config
      */
-    private function prefillForEdit(AssistantDraft $draft, \App\Assistant\Format\FormatAdapter $adapter): void
+    private function prefillForEdit(AssistantDraft $draft, Format\FormatAdapter $adapter): void
     {
         if ($draft->sourceConfig === $draft->initialSourceConfig) {
             return;
@@ -145,10 +145,10 @@ final class AssistantDraftPrefiller
     /**
      * Baseline-compare refresh for the create wizard.
      *
-     * @param AssistantDraft                        $draft   the DTO to mutate in place
-     * @param \App\Assistant\Format\FormatAdapter   $adapter the format adapter matched to the current source config
+     * @param AssistantDraft       $draft   the DTO to mutate in place
+     * @param Format\FormatAdapter $adapter the format adapter matched to the current source config
      */
-    private function prefillForCreate(AssistantDraft $draft, \App\Assistant\Format\FormatAdapter $adapter): void
+    private function prefillForCreate(AssistantDraft $draft, Format\FormatAdapter $adapter): void
     {
         $draft->framework = $adapter->id();
         $canonical = $adapter->sourceToCanonical($adapter->parseToSource($draft->sourceConfig));
@@ -212,9 +212,9 @@ final class AssistantDraftPrefiller
      * empty picker and can still submit.
      *
      * @return \App\Entity\Organization|null the matching organisation,
-     *                                        or `null` when the acting
-     *                                        user has no e-mail domain
-     *                                        or no organisation claims it
+     *                                       or `null` when the acting
+     *                                       user has no e-mail domain
+     *                                       or no organisation claims it
      */
     private function resolveOrganizationFromActingUser(): ?\App\Entity\Organization
     {

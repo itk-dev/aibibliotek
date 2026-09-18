@@ -31,7 +31,7 @@ final class CatalogCriteria
      * @param list<string> $frameworks        exact `framework` values to keep; empty list means no narrowing on this facet
      * @param list<string> $tags              exact tag names to keep; empty list means no narrowing on this facet
      * @param list<string> $organizations     exact organisation names to keep; empty list means no narrowing on this facet
-     * @param list<string> $dataSensitivities exact {@see \App\Enum\DataSensitivity} backing values to keep; empty list means no narrowing on this facet
+     * @param list<string> $dataSensitivities exact {@see DataSensitivity} backing values to keep; empty list means no narrowing on this facet
      * @param CatalogSort  $sort              the ordering applied to the result set; defaults to newest-first
      */
     public function __construct(

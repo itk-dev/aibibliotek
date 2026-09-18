@@ -122,8 +122,8 @@ final class AssistantEditor
      * @param string|null $organizationId a ULID string or `null`
      *
      * @return Organization|null the resolved organization, or `null`
-     *                            when the id is blank, malformed, or
-     *                            not found
+     *                           when the id is blank, malformed, or
+     *                           not found
      */
     private function resolveOrganization(?string $organizationId): ?Organization
     {

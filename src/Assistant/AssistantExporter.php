@@ -12,7 +12,7 @@ use App\Entity\Assistant;
  * Builds a re-importable config download for an assistant.
  *
  * Reads the assistant's stored source (in its own format), lifts it
- * to the neutral {@see \App\Assistant\Format\CanonicalModel} with the
+ * to the neutral {@see Format\CanonicalModel} with the
  * current catalogue edits applied, then renders it through the target
  * adapter. Target defaults to the assistant's own format (a faithful
  * round-trip); a different target produces a cross-format export,
@@ -65,11 +65,7 @@ final class AssistantExporter
 
         $result = $targetAdapter->validate($payload);
         if (!$result->isValid()) {
-            throw new \RuntimeException(\sprintf(
-                'Export to "%s" produced an invalid payload: %s',
-                $targetId,
-                implode('; ', $result->getErrors()),
-            ));
+            throw new \RuntimeException(\sprintf('Export to "%s" produced an invalid payload: %s', $targetId, implode('; ', $result->getErrors())));
         }
 
         return new ExportedConfig(

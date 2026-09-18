@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Controller;
 
 use App\DataFixtures\UserFixtures;
-use App\Entity\ResetPasswordRequest;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;

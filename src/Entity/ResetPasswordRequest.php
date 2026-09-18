@@ -17,7 +17,7 @@ use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestTrait;
  * `selector`, `hashedToken`, `requestedAt`, `expiresAt` — plus the
  * accessor methods {@see ResetPasswordHelper} looks up during
  * validation. This entity only adds the FK back to
- * {@see \App\Entity\User} and the primary-key column, matching the
+ * {@see User} and the primary-key column, matching the
  * scaffold the bundle's maker recipe generates.
  */
 #[ORM\Entity(repositoryClass: ResetPasswordRequestRepository::class)]

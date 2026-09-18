@@ -124,7 +124,7 @@ final class FormatAdapterRegistryTest extends TestCase
      */
     private function stub(string $id, string $label, ?callable $supports = null, array $required = []): FormatAdapter
     {
-        return new class ($id, $label, $supports, $required) implements FormatAdapter {
+        return new class($id, $label, $supports, $required) implements FormatAdapter {
             /**
              * @param callable(string):bool|null $supports
              * @param list<string>               $required

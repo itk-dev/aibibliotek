@@ -10,7 +10,7 @@ use Twig\Environment;
 /**
  * Render-level coverage of the admin Table component family.
  *
- * Renders an inline template combining {@see \Twig\Environment::createTemplate()}
+ * Renders an inline template combining {@see Environment::createTemplate()}
  * and the six Table sub-components, then asserts on the resulting
  * HTML structure. There are no first consumers on develop yet —
  * `templates/admin/organization/list.html.twig` migrates to this

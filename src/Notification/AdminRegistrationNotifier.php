@@ -35,11 +35,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AdminRegistrationNotifier
 {
     /**
-     * @param MailerInterface       $mailer        Symfony Mailer used to dispatch the message
-     * @param SettingsManager       $settings      typed accessor for the admin-editable templates, recipient, and sender
-     * @param EmailTemplateRenderer $renderer      resolves the Markdown template into subject + html + text
-     * @param UrlGeneratorInterface $urlGenerator  absolute-URL helper for the `%approval_url%` token
-     * @param LoggerInterface       $logger        receives a warning when the recipient or sender is unset
+     * @param MailerInterface       $mailer       Symfony Mailer used to dispatch the message
+     * @param SettingsManager       $settings     typed accessor for the admin-editable templates, recipient, and sender
+     * @param EmailTemplateRenderer $renderer     resolves the Markdown template into subject + html + text
+     * @param UrlGeneratorInterface $urlGenerator absolute-URL helper for the `%approval_url%` token
+     * @param LoggerInterface       $logger       receives a warning when the recipient or sender is unset
      */
     public function __construct(
         private readonly MailerInterface $mailer,
