@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `actions/checkout` moves from v6 to v7 across every workflow, matching the
+  version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
+  Action the project uses. Upstream also reindented the mirrored files from
+  four spaces to two; that is deliberately not copied, since it would bury a
+  one-line change per file in a reformat and `.github/` is outside the
+  project's Prettier glob either way.
+
 ## [1.0.2] - 2026-09-18
 
 ### Added
