@@ -80,6 +80,10 @@ task coding-standards-composer-apply
 # Run every check at once
 task coding-standards-check
 
+# Automated refactoring (Rector)
+task rector-check                   # dry-run, shows what would change
+task rector-apply                   # rewrites the files
+
 # Tests
 task test                           # PHPUnit, no coverage
 task test-coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
@@ -91,6 +95,33 @@ Actions workflow on every pull request — see `.github/workflows/tests.yaml`.
 Run the matching check before committing changes in that area. For
 commands without a dedicated task, fall back to `task compose -- <args>`
 or `itkdev-docker-compose <args>`.
+
+## Automated refactoring
+
+`rector.php` configures [Rector](https://getrector.com/), which rewrites code
+rather than reformatting it. It is a separate tool from the coding-standards
+family: PHP CS Fixer decides how code is laid out, Rector decides what it says.
+
+Reach for it when the task is a mechanical transformation across many files —
+a PHP or Symfony version migration, removing dead code, adopting a new idiom
+the whole codebase should follow. Don't reach for it for a change you can make
+in one file by hand.
+
+**Never run `task rector-apply` as part of an unrelated change.** Rector
+rewrites whatever its configured sets match, so an apply run inside a feature
+branch buries the feature in hundreds of lines of unrelated refactoring. An
+apply run is its own pull request, with the rule set that produced it named in
+the description, so a reviewer can judge the rewrite on its own terms.
+
+`task rector-check` is **expected to report changes** on the current codebase —
+the configured sets have never been applied. That is tracked separately; it is
+not a signal that something is broken, and it is not wired into CI. Before
+using its output, check whether the files it wants to touch are files your
+change touches.
+
+The configuration is deliberately narrow — the dead-code set and the PHP 8.4
+migration, scoped to `src/` and `tests/`. Widen it one set at a time, in its
+own pull request.
 
 ## Coding standards
 

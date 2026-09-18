@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- [Rector](https://getrector.com/) as a dev dependency, with `rector.php`,
+  `task rector-check` / `task rector-apply`, and a section in `CLAUDE.md`.
+  The coding-standards family decides how code is laid out; Rector decides
+  what it says, which is the half that was missing — and the one that pays
+  off on the major upgrades currently queued.
+  The configuration is deliberately narrow: the dead-code set plus the PHP 8.4
+  migration, scoped to `src/` and `tests/`. `task rector-check` therefore
+  reports changes on the current codebase, since the sets have never been
+  applied; it is not wired into CI, and applying them is tracked separately so
+  the rewrite gets reviewed on its own terms rather than riding along with a
+  feature.
+
 ## [1.0.2] - 2026-09-18
 
 ### Added
