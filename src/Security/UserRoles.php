@@ -15,7 +15,7 @@ use App\Repository\UserRepository;
  * action X", and one place to add audit logging or change
  * notification if those land later.
  *
- * Authorisation is enforced by {@see \App\Security\Voter\ManageUserVoter}
+ * Authorisation is enforced by {@see Voter\ManageUserVoter}
  * before any call into this service reaches it — callers must
  * already have passed an `IsGranted` check. The service is
  * privilege-aware in only one way: it refuses to demote the last
@@ -122,10 +122,7 @@ final class UserRoles
         }
 
         if ($this->userRepository->countAdmins() <= 1) {
-            throw new LastAdminException(\sprintf(
-                'Refusing to demote "%s": the site would be left without an administrator.',
-                (string) $user->getEmail(),
-            ));
+            throw new LastAdminException(\sprintf('Refusing to demote "%s": the site would be left without an administrator.', (string) $user->getEmail()));
         }
     }
 }

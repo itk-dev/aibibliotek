@@ -25,7 +25,7 @@ final class CanonicalModel
      * @param string                              $name                 human title of the assistant
      * @param string|null                         $description          long-form description, when the source carries one
      * @param string|null                         $systemPrompt         the system / instruction prompt, when present
-     * @param string|null                         $baseModel           underlying model identifier (e.g. `gpt-4o`), when present
+     * @param string|null                         $baseModel            underlying model identifier (e.g. `gpt-4o`), when present
      * @param list<string>                        $tags                 catalogue tag names, deduped and trimmed
      * @param list<string>                        $conversationStarters suggested opening prompts, when the source carries them
      * @param array<string, array<string, mixed>> $sourceExtras         unmapped fields, keyed by originating format id
@@ -52,7 +52,7 @@ final class CanonicalModel
      *
      * @param string       $name        replacement title
      * @param string|null  $description replacement description
-     * @param string|null  $baseModel  replacement model identifier
+     * @param string|null  $baseModel   replacement model identifier
      * @param list<string> $tags        replacement tag names
      *
      * @return self a new model with the four editable fields replaced

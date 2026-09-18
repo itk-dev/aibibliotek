@@ -6,8 +6,8 @@ namespace App\Tests\Integration\Controller;
 
 use App\Enum\UserStatus;
 use App\Repository\UserRepository;
-use App\Settings\SettingsManager;
 use App\Security\Registration;
+use App\Settings\SettingsManager;
 use App\Tests\Support\ClosedLimiterFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * End-to-end self-signup flow against the real `form_login` firewall
- * and the `AccountStatusChecker`
+ * and the `AccountStatusChecker`.
  *
  * The test env's allow-list default is `example.test` (see
  * `config/services.yaml`), so `*.@example.test` emails are accepted

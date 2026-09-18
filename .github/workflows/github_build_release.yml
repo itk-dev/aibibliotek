@@ -1,0 +1,53 @@
+on:
+    push:
+        tags:
+            - "*.*.*"
+
+name: Create Github Release
+
+permissions:
+    contents: write
+
+jobs:
+    create-release:
+        runs-on: ubuntu-latest
+        env:
+            COMPOSER_ALLOW_SUPERUSER: 1
+            APP_ENV: prod
+            # Build the release in the same stack the servers run, so the
+            # assets are produced against the alpine image rather than the
+            # glibc one used for local development. `when@prod` pins the musl
+            # Tailwind binary, which only works in the alpine container.
+            COMPOSE_FILE: docker-compose.yml:docker-compose.server.yml
+            # Only nginx reads it, but compose interpolates every service.
+            COMPOSE_SERVER_DOMAIN: localhost
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+
+            - name: Composer install and asset build
+              run: |
+                  docker network create frontend
+                  docker compose run --rm --user=root --env APP_ENV=prod phpfpm composer install --no-dev -o --classmap-authoritative
+                  docker compose run --rm --user=root --env APP_ENV=prod phpfpm composer clear-cache
+                  # https://symfony.com/bundles/TailwindBundle/current/index.html
+                  docker compose run --rm --user=root --env APP_ENV=prod phpfpm php bin/console tailwind:build --minify
+                  # https://symfony.com/doc/current/frontend/asset_mapper.html#serving-assets-in-dev-vs-prod
+                  docker compose run --rm --user=root --env APP_ENV=prod phpfpm php bin/console asset-map:compile
+            - name: Make assets dir
+              run: |
+                  mkdir -p ../assets
+
+            - name: Create archive
+              run: tar --exclude='.git' --exclude='node_modules' -zcf ../assets/${{ github.event.repository.name }}-${{ github.ref_name }}.tar.gz ./
+
+            - name: Create checksum
+              run: |
+                  cd ../assets
+                  sha256sum ${{ github.event.repository.name }}-${{ github.ref_name }}.tar.gz > ../assets/checksum.txt
+
+            - name: Create a release in GitHub and uploads assets
+              run: gh release create ${{ github.ref_name }} --verify-tag --generate-notes ../assets/*.*
+              env:
+                  GITHUB_TOKEN: ${{ github.TOKEN }}
+              shell: bash

@@ -43,13 +43,13 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 class PasswordResetNotifier
 {
     /**
-     * @param MailerInterface              $mailer      Symfony Mailer used to dispatch the message
-     * @param SettingsManager              $settings    typed accessor for the admin-editable templates + sender
-     * @param EmailTemplateRenderer        $renderer    resolves the Markdown template into subject + html + text
-     * @param ResetPasswordHelperInterface $resetHelper mints the per-user reset token
+     * @param MailerInterface              $mailer       Symfony Mailer used to dispatch the message
+     * @param SettingsManager              $settings     typed accessor for the admin-editable templates + sender
+     * @param EmailTemplateRenderer        $renderer     resolves the Markdown template into subject + html + text
+     * @param ResetPasswordHelperInterface $resetHelper  mints the per-user reset token
      * @param UrlGeneratorInterface        $urlGenerator builds the absolute reset URL embedded in the email
-     * @param TranslatorInterface          $translator  resolves the ResetPasswordBundle's expiration copy
-     * @param LoggerInterface              $logger      receives a warning when the sender is unset
+     * @param TranslatorInterface          $translator   resolves the ResetPasswordBundle's expiration copy
+     * @param LoggerInterface              $logger       receives a warning when the sender is unset
      */
     public function __construct(
         private readonly MailerInterface $mailer,

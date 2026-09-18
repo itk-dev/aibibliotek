@@ -107,10 +107,7 @@ final class UserApproval
         }
 
         if ($this->userRepository->countActiveAdmins() <= 1) {
-            throw new LastAdminException(\sprintf(
-                'Refusing to block "%s": the site would be left without an active administrator.',
-                (string) $user->getEmail(),
-            ));
+            throw new LastAdminException(\sprintf('Refusing to block "%s": the site would be left without an active administrator.', (string) $user->getEmail()));
         }
     }
 }

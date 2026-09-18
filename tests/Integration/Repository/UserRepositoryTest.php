@@ -59,7 +59,7 @@ final class UserRepositoryTest extends KernelTestCase
     // Ensures upgradePassword() throws UnsupportedUserException when handed a user not of the App\Entity\User class.
     public function testUpgradePasswordRejectsForeignUserType(): void
     {
-        $foreignUser = new class () implements PasswordAuthenticatedUserInterface {
+        $foreignUser = new class implements PasswordAuthenticatedUserInterface {
             public function getPassword(): ?string
             {
                 return null;

@@ -34,7 +34,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
  * and the user welcome mail are deliberately deferred to
  * {@see EmailConfirmation::consume()} — nothing lands in the
  * moderator inbox and nothing welcomes the user until the address
- * has been verified. The {@see \App\Security\AccountStatusChecker}
+ * has been verified. The {@see AccountStatusChecker}
  * keeps the user out of the login flow at every status below
  * `Approved`, so the moderator queue still gates site access
  * regardless of whether the user has confirmed their email yet.

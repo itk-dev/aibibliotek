@@ -7,8 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-18
+
+### Fixed
+
+- The release workflow now builds the archive in the same container the
+  servers run. `.github/workflows/github_build_release.yml` sets
+  `COMPOSE_FILE` to `docker-compose.yml:docker-compose.server.yml`, so
+  `tailwind:build` and `asset-map:compile` execute against
+  `itkdev/php8.4-fpm:alpine` instead of the glibc image used for local
+  development. `config/packages/symfonycasts_tailwind.yaml` pins the musl
+  Tailwind binary under `when@prod`, and that binary cannot exec on glibc,
+  so the 1.0.0 build died with `exec: tailwindcss-linux-x64-musl: not
+  found` and published no release. The pin cannot be dropped in favour of
+  the bundle's own platform detection: it reads PHP's build triplet out of
+  `phpinfo()`, which the alpine image disables via `disable_functions`, so
+  detection answers glibc in the one image where musl is required.
+  `COMPOSE_SERVER_DOMAIN` is set because compose interpolates nginx's
+  labels even when only `phpfpm` is run.
+
+## [1.0.0] - 2026-09-17
+
 ### Added
 
+- Updated `league/commonmark` to 2.10.1, clearing four advisories against
+  2.8.2 — two high-severity denial-of-service parser bugs, a quadratic-time
+  parse, and an `AttributesExtension` unsafe-link filter bypass via embedded
+  control bytes. The `composer.json` floor moves to `^2.10.1` so a fresh
+  install cannot resolve back into the affected range.
+- Added woodpecker prod setup.
 - Unified the Danish terminology for fetching an assistant. The
   interface previously alternated between "hjemtag", "eksportér",
   and "download" for one and the same action; every occurrence is

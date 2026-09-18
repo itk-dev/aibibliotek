@@ -122,10 +122,10 @@ final class AssistantFixtures extends Fixture implements DependentFixtureInterfa
     /**
      * Persist the six hand-written catalogue entries.
      *
-     * @param ObjectManager                 $manager       Doctrine object manager the entries are persisted into
-     * @param list<User>                    $creators      round-robin creators, or empty when users are unavailable
-     * @param array<string, Organization>   $organizations resolved organizations keyed by name (may be empty in unit tests)
-     * @param int                           $index         running index of the first entry, for creator round-robin
+     * @param ObjectManager               $manager       Doctrine object manager the entries are persisted into
+     * @param list<User>                  $creators      round-robin creators, or empty when users are unavailable
+     * @param array<string, Organization> $organizations resolved organizations keyed by name (may be empty in unit tests)
+     * @param int                         $index         running index of the first entry, for creator round-robin
      *
      * @return int the next free index after the persisted entries
      */

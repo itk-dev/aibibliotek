@@ -37,8 +37,8 @@ final class DevTemplateMarkerNodeVisitor implements NodeVisitorInterface
      * Wrap the template body (or its `body` block, for extending
      * templates) with begin and end marker TextNodes.
      *
-     * @param Node $node the node being left
-     * @param Environment $env the Twig environment (unused)
+     * @param Node        $node the node being left
+     * @param Environment $env  the Twig environment (unused)
      *
      * @return Node the original node, mutated in place when applicable
      */
@@ -77,9 +77,9 @@ final class DevTemplateMarkerNodeVisitor implements NodeVisitorInterface
      * `BlockNode`; we iterate to find the BlockNode and replace its
      * body with the wrapped sequence.
      *
-     * @param ModuleNode $node the extending module
-     * @param TextNode $prefix the opening marker
-     * @param TextNode $suffix the closing marker
+     * @param ModuleNode $node   the extending module
+     * @param TextNode   $prefix the opening marker
+     * @param TextNode   $suffix the closing marker
      */
     private function wrapExtendingBody(ModuleNode $node, TextNode $prefix, TextNode $suffix): void
     {
@@ -111,7 +111,7 @@ final class DevTemplateMarkerNodeVisitor implements NodeVisitorInterface
      * Replace `$node`'s `body` child with a sequence: prefix, original
      * body, suffix.
      *
-     * @param Node $node the node whose body to wrap
+     * @param Node     $node   the node whose body to wrap
      * @param TextNode $prefix the opening marker
      * @param TextNode $suffix the closing marker
      */

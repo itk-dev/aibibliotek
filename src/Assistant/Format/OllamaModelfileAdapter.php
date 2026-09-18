@@ -247,9 +247,9 @@ final class OllamaModelfileAdapter implements FormatAdapter
      * Read a `SYSTEM` / `TEMPLATE` value, consuming extra lines when the
      * value is an unterminated triple-quoted block.
      *
-     * @param string        $rest  the remainder of the instruction's first line
-     * @param list<string>  $lines all Modelfile lines
-     * @param int           $i     the current line index
+     * @param string       $rest  the remainder of the instruction's first line
+     * @param list<string> $lines all Modelfile lines
+     * @param int          $i     the current line index
      *
      * @return array{0: string, 1: int} the value and the index of the last line consumed
      */

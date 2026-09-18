@@ -346,7 +346,7 @@ class AssistantRepository extends ServiceEntityRepository
      *
      * Powers the catalogue's "Datafølsomhed" facet. Keys are the enum's
      * backing values, so the template resolves each to a label through
-     * {@see \App\Enum\DataSensitivity::label()} rather than showing
+     * {@see DataSensitivity::label()} rather than showing
      * `ordinary_personal` to a curator. Unclassified assistants carry
      * `null` and are skipped, since there is no bucket to put them in.
      *

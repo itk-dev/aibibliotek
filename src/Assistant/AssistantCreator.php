@@ -51,16 +51,16 @@ final class AssistantCreator
      * — the uploading user's details, access grants, timestamps, and
      * knowledge references never reach the database.
      *
-     * @param string                $title                title of the assistant
-     * @param string                $description          long-form description
-     * @param string                $languageModel        model identifier snapshot (e.g. `gpt-4o`)
-     * @param string                $framework            format/framework id; selects the adapter (e.g. `openwebui`)
-     * @param list<string>          $tags                 zero or more catalogue tags
-     * @param string                $rawConfig            raw uploaded config; validated then parsed by the adapter
-     * @param string|null           $organizationId       ULID (string) of the sharing organization, `null` when unset
-     * @param string|null           $tagline              short one-line tagline shown in list views
-     * @param string|null           $knowledgeDescription free-form description of the knowledge base the assistant relies on
-     * @param DataSensitivity|null  $dataSensitivity      classification for the assistant's data
+     * @param string               $title                title of the assistant
+     * @param string               $description          long-form description
+     * @param string               $languageModel        model identifier snapshot (e.g. `gpt-4o`)
+     * @param string               $framework            format/framework id; selects the adapter (e.g. `openwebui`)
+     * @param list<string>         $tags                 zero or more catalogue tags
+     * @param string               $rawConfig            raw uploaded config; validated then parsed by the adapter
+     * @param string|null          $organizationId       ULID (string) of the sharing organization, `null` when unset
+     * @param string|null          $tagline              short one-line tagline shown in list views
+     * @param string|null          $knowledgeDescription free-form description of the knowledge base the assistant relies on
+     * @param DataSensitivity|null $dataSensitivity      classification for the assistant's data
      *
      * @return Assistant the persisted assistant with its id assigned
      *
@@ -128,8 +128,8 @@ final class AssistantCreator
      * @param string|null $organizationId a ULID string or `null`
      *
      * @return Organization|null the resolved organization, or `null`
-     *                            when the id is blank, malformed, or
-     *                            not found
+     *                           when the id is blank, malformed, or
+     *                           not found
      */
     private function resolveOrganization(?string $organizationId): ?Organization
     {

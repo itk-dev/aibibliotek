@@ -50,12 +50,6 @@ final class UserManager
      * still an error — it usually signals a form submission that
      * missed the required-field guard.
      *
-     * @param string       $email         user e-mail; must be unique
-     * @param string       $name          display name; required, may be any non-null string
-     * @param string|null  $plainPassword clear-text password, hashed before persistence; when null a random secret is minted
-     * @param list<string> $roles         additional roles beyond the implicit `ROLE_USER`
-     * @param UserStatus   $status        identity-lifecycle status; defaults to {@see UserStatus::Pending}
-     *
      * @return User the persisted user with an assigned id
      *
      * @throws \DomainException          when a user with the same e-mail already exists
@@ -133,10 +127,10 @@ final class UserManager
      * rejected before any change is persisted. The status string
      * is parsed with `UserStatus::tryFrom()`.
      *
-     * @param string         $email  e-mail of the user to update
-     * @param string|null    $name   new display name, or null to leave unchanged
+     * @param string            $email  e-mail of the user to update
+     * @param string|null       $name   new display name, or null to leave unchanged
      * @param list<string>|null $roles  new role list, or null to leave unchanged
-     * @param UserStatus|null $status new lifecycle status, or null to leave unchanged
+     * @param UserStatus|null   $status new lifecycle status, or null to leave unchanged
      *
      * @return User the updated user
      *
@@ -158,11 +152,7 @@ final class UserManager
             $allowed = [Roles::USER, Roles::DOMAIN_MANAGER, Roles::ADMIN];
             foreach ($roles as $role) {
                 if (!\in_array($role, $allowed, true)) {
-                    throw new \InvalidArgumentException(\sprintf(
-                        'Unknown role "%s". Allowed roles: %s.',
-                        $role,
-                        implode(', ', $allowed),
-                    ));
+                    throw new \InvalidArgumentException(\sprintf('Unknown role "%s". Allowed roles: %s.', $role, implode(', ', $allowed)));
                 }
             }
         }

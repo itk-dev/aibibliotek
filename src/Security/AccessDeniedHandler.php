@@ -43,8 +43,8 @@ final class AccessDeniedHandler implements AccessDeniedHandlerInterface
     /**
      * Render the templated 403 response for the failed authorisation.
      *
-     * @param Request                $request               the request that tripped the access decision
-     * @param AccessDeniedException  $accessDeniedException the underlying exception (not currently surfaced to the template, but available for future per-reason rendering)
+     * @param Request               $request               the request that tripped the access decision
+     * @param AccessDeniedException $accessDeniedException the underlying exception (not currently surfaced to the template, but available for future per-reason rendering)
      *
      * @return Response a `text/html` response with HTTP 403 and the rendered template
      */

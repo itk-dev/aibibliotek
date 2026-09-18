@@ -35,12 +35,12 @@ use Symfony\Bundle\SecurityBundle\Security;
 final class AssistantOwnership
 {
     /**
-     * @param AssistantRepository    $assistants    source of the per-organisation assistant list
-     * @param UserRepository         $users         source of the candidate-owner list
-     * @param OrganizationRepository $organizations used to resolve an explicitly requested organisation
+     * @param AssistantRepository    $assistants       source of the per-organisation assistant list
+     * @param UserRepository         $users            source of the candidate-owner list
+     * @param OrganizationRepository $organizations    used to resolve an explicitly requested organisation
      * @param UserOrganization       $userOrganization resolves the acting user's own organisation
-     * @param Security               $security      used for the `ROLE_ADMIN` check that lifts the organisation scope
-     * @param EntityManagerInterface $entityManager persists the reassignment
+     * @param Security               $security         used for the `ROLE_ADMIN` check that lifts the organisation scope
+     * @param EntityManagerInterface $entityManager    persists the reassignment
      */
     public function __construct(
         private readonly AssistantRepository $assistants,
