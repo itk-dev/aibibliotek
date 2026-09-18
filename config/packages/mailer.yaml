@@ -1,3 +1,5 @@
 framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
+        headers:
+            Reply-To: '%env(APP_MAIL_REPLY_TO)%'

@@ -104,22 +104,22 @@ final class SettingsManagerTest extends KernelTestCase
         self::assertSame('keepme@example.test', $manager->getAdminRecipient(), 'invalid submit must not overwrite stored value');
     }
 
-    // Verifies the sender accessor reads the MAILER_FROM env baked into the test container.
+    // Verifies the sender accessor reads the APP_MAIL_FROM env baked into the test container.
     public function testGetSenderAddressReadsMailerFromEnv(): void
     {
         $manager = self::getContainer()->get(SettingsManager::class);
 
         $sender = $manager->getSenderAddress();
-        self::assertNotNull($sender, 'MAILER_FROM is set in .env.test so the accessor must resolve.');
+        self::assertNotNull($sender, 'APP_MAIL_FROM is set in .env.test so the accessor must resolve.');
         self::assertStringContainsString('@', $sender);
     }
 
-    // Verifies getSenderAddress returns null when the MAILER_FROM env var is empty — the "no mailer configured" state notifiers use to short-circuit.
+    // Verifies getSenderAddress returns null when the APP_MAIL_FROM env var is empty — the "no mailer configured" state notifiers use to short-circuit.
     public function testGetSenderAddressReturnsNullWhenEnvIsEmpty(): void
     {
         $container = self::getContainer();
         // Build a fresh manager whose env-var fallback is the empty
-        // string — mirrors a deploy that left MAILER_FROM unset.
+        // string — mirrors a deploy that left APP_MAIL_FROM unset.
         $manager = new SettingsManager(
             $container->get(SettingRepository::class),
             $container->get(EntityManagerInterface::class),
