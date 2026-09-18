@@ -1,0 +1,457 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Method App\\Assistant\\AssistantEditor\:\:syncTags\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Assistant/AssistantEditor.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Assistant/AssistantOwnership.php
+
+		-
+			message: '#^Offset 1 might not exist on array\{\}\|array\{non\-empty\-string, non\-empty\-string, string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Assistant/Format/OllamaModelfileAdapter.php
+
+		-
+			message: '#^Offset 2 might not exist on array\{\}\|array\{non\-empty\-string, non\-empty\-string, string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Assistant/Format/OllamaModelfileAdapter.php
+
+		-
+			message: '#^Argument of an invalid type array\<string, array\<string, array\<int\<0, max\>\|string, string\|null\>\|string\>\>\|null supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 1
+			path: src/Assistant/Model/ModelMap.php
+
+		-
+			message: '#^Parameter \#1 \$array \(non\-empty\-list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Command/UserUpdateCommand.php
+
+		-
+			message: '#^Parameter \#3 \$tokens of method App\\Mail\\EmailTemplateRenderer\:\:render\(\) expects array\<string, string\>, array\<string, string\|null\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/Admin/SettingsController.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Controller/AssistantCreateController.php
+
+		-
+			message: '#^Instanceof between Symfony\\Component\\Form\\Flow\\FormFlowInterface and Symfony\\Component\\Form\\Flow\\FormFlowInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Controller/AssistantCreateController.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Controller/AssistantEditController.php
+
+		-
+			message: '#^Instanceof between Symfony\\Component\\Form\\Flow\\FormFlowInterface and Symfony\\Component\\Form\\Flow\\FormFlowInterface will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Controller/AssistantEditController.php
+
+		-
+			message: '#^Property App\\Assistant\\AssistantDraft\:\:\$tags \(list\<string\>\) does not accept array\<int, string\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/Controller/AssistantEditController.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/DataFixtures/AssistantFixtures.php
+
+		-
+			message: '#^Instanceof between App\\Entity\\Organization and App\\Entity\\Organization will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/DataFixtures/AssistantFixtures.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Entity/Organization.php
+
+		-
+			message: '#^Property App\\Entity\\ResetPasswordRequest\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/ResetPasswordRequest.php
+
+		-
+			message: '#^Method App\\Entity\\User\:\:getUserIdentifier\(\) should return non\-empty\-string but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Parameter \#2 \$data of function hash expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Class App\\Form\\AssistantJsonStepType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/AssistantJsonStepType.php
+
+		-
+			message: '#^Class App\\Form\\AssistantMetadataStepType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/AssistantMetadataStepType.php
+
+		-
+			message: '#^Class App\\Form\\AssistantReceiptStepType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/AssistantReceiptStepType.php
+
+		-
+			message: '#^Class App\\Form\\ChangePasswordFormType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ChangePasswordFormType.php
+
+		-
+			message: '#^Class App\\Form\\OrganizationType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/OrganizationType.php
+
+		-
+			message: '#^Parameter \#2 \$emailDomains of class App\\Entity\\Organization constructor expects list\<string\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Form/OrganizationType.php
+
+		-
+			message: '#^Class App\\Form\\ProfileType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ProfileType.php
+
+		-
+			message: '#^Class App\\Form\\ResetPasswordRequestFormType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ResetPasswordRequestFormType.php
+
+		-
+			message: '#^Class App\\Form\\UserCreateType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/UserCreateType.php
+
+		-
+			message: '#^Method App\\Kernel\:\:getAllowedEnvs\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: src/Kernel.php
+
+		-
+			message: '#^Parameter \#1 \$array \(non\-empty\-list\<string\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Repository/UserRepository.php
+
+		-
+			message: '#^Method App\\Security\\UserManager\:\:createUser\(\) has parameter \$roles with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Security/UserManager.php
+
+		-
+			message: '#^Parameter \#1 \$roles of method App\\Entity\\User\:\:setRoles\(\) expects list\<string\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Security/UserManager.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Security/UserOrganization.php
+
+		-
+			message: '#^Class App\\Security\\Voter\\EditAssistantVoter extends generic class Symfony\\Component\\Security\\Core\\Authorization\\Voter\\Voter but does not specify its types\: TAttribute, TSubject$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Security/Voter/EditAssistantVoter.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Security/Voter/EditAssistantVoter.php
+
+		-
+			message: '#^Class App\\Security\\Voter\\ManageUserVoter extends generic class Symfony\\Component\\Security\\Core\\Authorization\\Voter\\Voter but does not specify its types\: TAttribute, TSubject$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Security/Voter/ManageUserVoter.php
+
+		-
+			message: '#^Class App\\Security\\Voter\\OrganizationAssistantVoter extends generic class Symfony\\Component\\Security\\Core\\Authorization\\Voter\\Voter but does not specify its types\: TAttribute, TSubject$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Security/Voter/OrganizationAssistantVoter.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Symfony\\Component\\Uid\\Ulid will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/Assistant/AssistantCreatorTest.php
+
+		-
+			message: '#^Parameter \#1 \$kernel of class Symfony\\Bundle\\FrameworkBundle\\Console\\Application constructor expects Symfony\\Component\\HttpKernel\\KernelInterface, Symfony\\Component\\HttpKernel\\KernelInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Command/UserChangePasswordCommandTest.php
+
+		-
+			message: '#^Parameter \#1 \$kernel of class Symfony\\Bundle\\FrameworkBundle\\Console\\Application constructor expects Symfony\\Component\\HttpKernel\\KernelInterface, Symfony\\Component\\HttpKernel\\KernelInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Command/UserCreateCommandTest.php
+
+		-
+			message: '#^Parameter \#1 \$kernel of class Symfony\\Bundle\\FrameworkBundle\\Console\\Application constructor expects Symfony\\Component\\HttpKernel\\KernelInterface, Symfony\\Component\\HttpKernel\\KernelInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Command/UserObfuscatePasswordsCommandTest.php
+
+		-
+			message: '#^Parameter \#1 \$kernel of class Symfony\\Bundle\\FrameworkBundle\\Console\\Application constructor expects Symfony\\Component\\HttpKernel\\KernelInterface, Symfony\\Component\\HttpKernel\\KernelInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Command/UserUpdateCommandTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Security\\Core\\User\\UserInterface\:\:getId\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/Integration/Controller/Admin/AssistantOwnershipControllerTest.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: tests/Integration/Controller/Admin/AssistantOwnershipControllerTest.php
+
+		-
+			message: '#^Cannot call method disableValidation\(\) on array\<array\<Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Integration/Controller/Admin/OrganizationControllerTest.php
+
+		-
+			message: '#^Cannot call method setValue\(\) on array\<array\<Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: tests/Integration/Controller/Admin/OrganizationControllerTest.php
+
+		-
+			message: '#^Parameter \#1 \$string of function parse_str expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: tests/Integration/Controller/AssistantCatalogControllerTest.php
+
+		-
+			message: '#^Parameter \#1 \$needle of static method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Controller/AssistantControllerTest.php
+
+		-
+			message: '#^Cannot call method getValue\(\) on array\<array\<Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\.$#'
+			identifier: method.nonObject
+			count: 8
+			path: tests/Integration/Controller/AssistantCreateControllerTest.php
+
+		-
+			message: '#^Cannot call method disableValidation\(\) on array\<array\<Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Integration/Controller/AssistantEditControllerTest.php
+
+		-
+			message: '#^Cannot call method getValue\(\) on array\<array\<Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\>\|Symfony\\Component\\DomCrawler\\Field\\FormField\.$#'
+			identifier: method.nonObject
+			count: 7
+			path: tests/Integration/Controller/AssistantEditControllerTest.php
+
+		-
+			message: '#^Parameter \#1 \$string of function trim expects string, array\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Controller/AssistantEditControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getHtmlBody\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Integration/Controller/ResetPasswordControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getTextBody\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Integration/Controller/ResetPasswordControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getSubject\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Integration/Notification/DomainNotifierTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getTextBody\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Integration/Notification/DomainNotifierTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getTo\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Integration/Notification/DomainNotifierTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getSubject\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Integration/Notification/NotifierIntegrationTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getTextBody\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Integration/Notification/NotifierIntegrationTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\Mime\\RawMessage\:\:getTo\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Integration/Notification/NotifierIntegrationTest.php
+
+		-
+			message: '#^Method App\\Tests\\Integration\\Repository\\AssistantRepositoryTest\:\:idsOf\(\) should return list\<string\> but returns array\<non\-empty\-string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: tests/Integration/Repository/AssistantRepositoryTest.php
+
+		-
+			message: '#^Method App\\Tests\\Integration\\Repository\\AssistantRepositoryTest\:\:titlesOf\(\) should return list\<string\> but returns array\<string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: tests/Integration/Repository/AssistantRepositoryTest.php
+
+		-
+			message: '#^Offset int\<0, max\>\|null might not exist on list\<string\>\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: tests/Integration/Repository/AssistantRepositoryTest.php
+
+		-
+			message: '#^Parameter \#1 \.\.\.\$arg1 of function max expects non\-empty\-array, array\<Symfony\\Component\\Uid\\Ulid\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Repository/AssistantRepositoryTest.php
+
+		-
+			message: '#^Parameter \#1 \.\.\.\$arg1 of function min expects non\-empty\-array, array\<Symfony\\Component\\Uid\\Ulid\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Integration/Repository/AssistantRepositoryTest.php
+
+		-
+			message: '#^Anonymous function never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 2
+			path: tests/Integration/Repository/UserRepositoryTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Symfony\\Component\\Uid\\Ulid will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/Security/UserManagerTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Symfony\\Component\\Uid\\Ulid and ''persisted row must…'' will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 1
+			path: tests/Integration/Settings/SettingsManagerTest.php
+
+		-
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\Builder\\InvocationStubber\:\:with\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Assistant/AssistantDraftPrefillerTest.php
+
+		-
+			message: '#^Parameter \#1 \$emailDomains of method App\\Entity\\Organization\:\:setEmailDomains\(\) expects list\<string\>, array\{9\: '' AALBORG\.DK'', 1\: ''aalborgkommune\.dk''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Entity/OrganizationTest.php
+
+		-
+			message: '#^Parameter \#2 \$emailDomains of class App\\Entity\\Organization constructor expects list\<string\>, array\{5\: '' Aarhus\.DK '', 3\: ''AAK\.dk''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Entity/OrganizationTest.php
+
+		-
+			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true will always evaluate to true\.$#'
+			identifier: staticMethod.alreadyNarrowedType
+			count: 3
+			path: tests/Unit/Security/AccountStatusCheckerTest.php
+
+		-
+			message: '#^Parameter \#1 \$name of method Twig\\Environment\:\:render\(\) expects string\|Twig\\TemplateWrapper, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: tests/Unit/Twig/DevTemplateMarkerNodeVisitorTest.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Symfony\\\\Component\\\\Dotenv\\\\Dotenv'' and ''bootEnv'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/bootstrap.php
+
+		-
+			message: '#^Call to an undefined method object\:\:get\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: tests/bootstrap_integration.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Symfony\\\\Component\\\\Dotenv\\\\Dotenv'' and ''bootEnv'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/bootstrap_integration.php
+
+		-
+			message: '#^Service "test\.service_container" is not registered in the container\.$#'
+			identifier: symfonyContainer.serviceNotFound
+			count: 1
+			path: tests/bootstrap_integration.php

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- PHPStan static analysis at level 8 over `src/` and `tests/`, with
+  `phpstan/phpstan-symfony` resolving container services, a
+  `task static-analysis-check` target, and a section in `CLAUDE.md`. Nothing
+  type-checked the code before this: undefined methods, wrong argument types
+  and impossible conditions all passed CI, since the 100% coverage gate proves
+  lines execute rather than that types line up.
+- `phpstan-baseline.neon` capturing the 111 errors that already existed, so
+  the gate protects new code immediately instead of waiting on a cleanup. The
+  baseline is deferred work, not an allow-list; clearing it is tracked
+  separately.
+
 ## [1.0.2] - 2026-09-18
 
 ### Added

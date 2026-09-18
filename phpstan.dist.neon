@@ -1,0 +1,19 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+    # Errors that already existed when PHPStan was introduced. The gate
+    # protects new code from day one; the backlog is cleaned up separately
+    # rather than holding up the tool landing.
+    - phpstan-baseline.neon
+
+parameters:
+    level: 8
+
+    paths:
+        - src
+        - tests
+
+    # Lets the Symfony extension resolve services, so `$container->get()`
+    # and friends are type-checked rather than assumed to return object.
+    symfony:
+        containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
