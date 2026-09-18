@@ -150,7 +150,7 @@ final class SettingsController extends AbstractController
             // Persist the recipient + email templates together so a
             // later invalid field cannot leave an earlier one partially
             // saved. Sender address (`From:`) is deploy-time only via
-            // MAILER_FROM — not editable through the admin UI.
+            // APP_MAIL_FROM — not editable through the admin UI.
             $this->settingsManager->setAdminRecipient($adminRecipient);
 
             $this->settingsManager->applyEmailContent(

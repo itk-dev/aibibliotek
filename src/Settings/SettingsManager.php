@@ -96,7 +96,7 @@ class SettingsManager
         private readonly string $defaultBrandTagline,
         #[Autowire('%env(BRAND_INITIALS)%')]
         private readonly string $defaultBrandInitials,
-        #[Autowire('%env(MAILER_FROM)%')]
+        #[Autowire('%env(APP_MAIL_FROM)%')]
         private readonly string $defaultSenderAddress,
     ) {
     }
@@ -107,7 +107,7 @@ class SettingsManager
      * Returns the address an administrator typed into the
      * `/admin/settings` form, or `null` when no value has been
      * saved yet. Callers that need a guaranteed address should
-     * fall back to a deploy-time `MAILER_FROM`/`MAILER_TO` env
+     * fall back to a deploy-time `APP_MAIL_FROM`/`MAILER_TO` env
      * convention.
      *
      * @return string|null configured admin recipient, or null when unset
@@ -135,7 +135,7 @@ class SettingsManager
     /**
      * Read the transactional-mail sender (`From:`) address.
      *
-     * Sourced from the deploy-time `MAILER_FROM` env var. Returns
+     * Sourced from the deploy-time `APP_MAIL_FROM` env var. Returns
      * `null` when the env var is empty / unset, signalling to
      * notifiers that they should skip the send — a fresh install
      * with no mailer configured is a legitimate operating state
@@ -146,7 +146,7 @@ class SettingsManager
      * `"AI Reolen <noreply@…>"`; {@see \Symfony\Component\Mime\Address::create()}
      * parses both shapes on the send side.
      *
-     * @return string|null the configured sender address, or null when MAILER_FROM is empty
+     * @return string|null the configured sender address, or null when APP_MAIL_FROM is empty
      */
     public function getSenderAddress(): ?string
     {
