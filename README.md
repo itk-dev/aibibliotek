@@ -191,6 +191,14 @@ task console -- app:user:change-password alice@example.test newsecret
 
 Then sign in at `/login`.
 
+Self-signup stays closed until at least one organisation exists: the allow-list
+of e-mail domains is collected from the organisations, not from configuration.
+A fresh install therefore rejects every registration with "the e-mail domain is
+not approved" until an administrator adds an organisation at
+`/admin/organization` with the domain on it. The local-dev fixtures seed one;
+on a new server, create the first user with `app:user:create` (which does not
+go through signup) and add the organisation from the admin UI.
+
 ## Testing
 
 Tests live under `tests/` (PSR-4 namespace `App\Tests\`) and run with

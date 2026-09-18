@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- `REGISTRATION_ALLOWED_EMAIL_DOMAINS` from `.env` and `.env.test`. Nothing
+  read it: the signup allow-list is collected from `Organization.emailDomains`
+  via `OrganizationRepository::collectAllowedEmailDomains()`, so the variable
+  and its comments described behaviour that no longer existed. Leaving it in
+  place was worse than useless — a production signup was rejected for a domain
+  the comment in `.env` claimed was allowed.
+
+### Changed
+
+- README states that self-signup stays closed until an organisation exists.
+  A fresh install rejects every registration, by design, and nothing said so;
+  the note explains the bootstrap path via `app:user:create` and
+  `/admin/organization`. The `@param` on `App\Security\Registration` no longer
+  claims the allow-list is parsed from an env var.
+
 ## [1.0.1] - 2026-09-18
 
 ### Fixed
