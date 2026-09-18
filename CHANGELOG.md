@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `app:user:create` and `app:user:change-password` no longer accept the
+  password as an argument. It is prompted for with `askHidden()` every time.
+  A password on the command line survives in shell history, is readable in
+  the process list for as long as the command runs, and is echoed into
+  deployment logs — and there was no way to avoid it, since neither command
+  implemented `interact()`. The argument is removed outright rather than made
+  optional, so nothing can quietly keep passing one.
+- `app:user:create` takes the e-mail and display name as optional arguments
+  and prompts for whichever is missing; `app:user:change-password` does the
+  same for the e-mail, completing against the addresses already in the user
+  table, since rotating a password usually starts with finding the account.
+  Both fail with a clear message under `--no-interaction`, where the password
+  cannot be collected.
+
+### Added
+
+- `UserRepository::collectEmails()`, the read-side lookup backing that
+  completion.
+
 ## [1.0.1] - 2026-09-18
 
 ### Fixed
