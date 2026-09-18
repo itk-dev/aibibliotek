@@ -45,7 +45,7 @@ Preferred order:
 
 1. `task <name>` — the project's `Taskfile.yml` is the entry point for
    everyday commands. Run `task --list` to see what's available.
-2. `task compose -- <args>` / `task compose-exec -- <args>` — pass-through
+2. `task compose -- <args>` / `task compose:exec -- <args>` — pass-through
    helpers when no dedicated target exists.
 3. `itkdev-docker-compose <command>` — for cross-project ITK Dev tooling
    not wrapped by the project Taskfile (e.g. `traefik:start`).
@@ -62,27 +62,27 @@ task down                           # tear the stack down
 
 # Composer / PHP / Symfony console
 task composer -- <command>          # e.g. task composer -- require foo/bar
-task compose-exec -- phpfpm php <command>
+task compose:exec -- phpfpm php <command>
 task console -- <command>           # e.g. task console -- cache:clear
 
 # Coding standards (check / apply pairs)
-task coding-standards-php-check
-task coding-standards-php-apply
-task coding-standards-twig-check
-task coding-standards-twig-apply
-task coding-standards-yaml-check
-task coding-standards-yaml-apply
-task coding-standards-markdown-check
-task coding-standards-markdown-apply
-task coding-standards-composer-check
-task coding-standards-composer-apply
+task coding-standards:php:check
+task coding-standards:php:apply
+task coding-standards:twig:check
+task coding-standards:twig:apply
+task coding-standards:yaml:check
+task coding-standards:yaml:apply
+task coding-standards:markdown:check
+task coding-standards:markdown:apply
+task coding-standards:composer:check
+task coding-standards:composer:apply
 
 # Run every check at once
-task coding-standards-check
+task coding-standards:check
 
 # Tests
 task test                           # PHPUnit, no coverage
-task test-coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
+task test:coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
 ```
 
 The coverage gate is **100%** and is enforced by the `Tests` GitHub

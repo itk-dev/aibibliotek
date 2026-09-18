@@ -46,28 +46,28 @@ task composer -- <command>
 task console -- <command>
 
 # Apply PHP coding standards
-task coding-standards-php-apply
+task coding-standards:php:apply
 
 # Lint Twig templates
-task coding-standards-twig-check
+task coding-standards:twig:check
 
 # Format YAML
-task coding-standards-yaml-apply
+task coding-standards:yaml:apply
 
 # Lint Markdown
-task coding-standards-markdown-check
+task coding-standards:markdown:check
 
 # Normalize composer.json
-task coding-standards-composer-apply
+task coding-standards:composer:apply
 
 # Run every coding-standards check
-task coding-standards-check
+task coding-standards:check
 
 # Run the PHPUnit test suite
 task test
 
 # Run PHPUnit with coverage and enforce the 100% gate
-task test-coverage
+task test:coverage
 ```
 
 ## Frontend assets
@@ -167,7 +167,7 @@ cd ai-reolen
 task
 
 # Install site
-task site-install
+task site:install
 
 # Open the site
 task open
@@ -203,10 +203,10 @@ below that threshold fail the `Tests` workflow.
 task test
 
 # Run the suite under Xdebug coverage and enforce the 100% gate
-task test-coverage
+task test:coverage
 ```
 
-`task test-coverage` runs PHPUnit with `XDEBUG_MODE=coverage`, writes a
+`task test:coverage` runs PHPUnit with `XDEBUG_MODE=coverage`, writes a
 Clover report to `coverage/clover.xml`, and then runs
 [`rregeer/phpunit-coverage-check`](https://github.com/richardregeer/phpunit-coverage-check)
 against the report. The same two steps run in the `Tests` GitHub Actions
