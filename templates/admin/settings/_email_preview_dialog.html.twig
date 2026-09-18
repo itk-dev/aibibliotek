@@ -1,0 +1,68 @@
+{#
+    Preview modal for a single email-template body field.
+
+    Rendered inside a `<div data-controller="email-preview">`
+    wrapper that also hosts the subject input, body textarea,
+    and the inline Preview trigger link (in the help paragraph).
+    The response payload lands in an
+    `<iframe sandbox="allow-same-origin">` via `srcdoc` so the
+    admin-typed HTML runs isolated from the admin origin.
+
+    Nested `<form>` inside another `<form>` is invalid HTML, so
+    the dialog uses a plain `<div>` layout instead of the usual
+    `<form method="dialog">` pattern, and the hidden CSRF token
+    lives in a `<div hidden>` carrier — the shared
+    `generateCsrfToken()` helper only queries for the input
+    inside it and doesn't care whether the surrounding element
+    is a `<form>` or not.
+
+    The dialog is centered via `fixed inset-0 m-auto` — the UA
+    stylesheet centers `<dialog>` by default, but the moment we
+    add utility classes that touch `position` or `margin` the
+    default centering is lost, so we set it explicitly.
+
+    Include vars:
+    - `id` — DOM-id suffix used for the dialog + labelledby id
+#}
+
+<dialog data-email-preview-target="dialog"
+        aria-labelledby="{{ id }}Title"
+        class="fixed inset-0 m-auto max-h-[85vh] w-[min(92vw,48rem)] rounded-xl border border-line bg-surface p-0 shadow-xl backdrop:bg-ink/40">
+    <div class="grid gap-4 p-6">
+        <header class="flex items-start justify-between gap-4">
+            <div class="grid gap-1">
+                <twig:Heading level="2" size="xs" id="{{ id }}Title">
+                    {{ 'admin.settings.email.preview.modal_title'|trans }}
+                </twig:Heading>
+                <p class="text-sm text-text-muted">
+                    <span class="font-medium">{{ 'admin.settings.email.preview.subject_prefix'|trans }}</span>
+                    <span data-email-preview-target="subjectDisplay" class="ml-1"></span>
+                </p>
+            </div>
+            <twig:Form:IconButton
+                type="button"
+                shape="pill"
+                size="md"
+                tone="neutral"
+                data-action="click->email-preview#close"
+                aria-label="{{ 'admin.settings.email.preview.close'|trans }}"
+            >
+                ×
+            </twig:Form:IconButton>
+        </header>
+        <p data-email-preview-target="error"
+           role="alert"
+           class="hidden rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-red-700">
+            {{ 'admin.settings.email.preview.error'|trans }}
+        </p>
+        <iframe data-email-preview-target="iframe"
+                sandbox="allow-same-origin"
+                referrerpolicy="no-referrer"
+                class="h-96 w-full rounded-lg border border-line bg-white"
+                title="{{ 'admin.settings.email.preview.modal_title'|trans }}"></iframe>
+    </div>
+</dialog>
+
+<div data-email-preview-target="csrfForm" hidden aria-hidden="true">
+    <twig:Form:CsrfInput intent="admin-settings-email-preview" />
+</div>

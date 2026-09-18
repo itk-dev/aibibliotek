@@ -1,0 +1,8 @@
+{# Zebra stripes via child selectors so the row markup itself stays plain. #}
+{# Odd rows take an explicit white so the zebra works even when the table #}
+{# sits on a tinted panel; even rows use the dedicated `--color-row-alt` #}
+{# token. `bg-surface-2` is intentionally avoided — it doubles as the #}
+{# project's hover-state tone. #}
+<tbody class="[&>tr:nth-child(odd)]:bg-bg [&>tr:nth-child(even)]:bg-row-alt">
+    {% block content %}{% endblock %}
+</tbody>

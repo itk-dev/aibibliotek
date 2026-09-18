@@ -1,0 +1,32 @@
+name: Tests
+
+env:
+    COMPOSE_USER: runner
+
+on:
+    pull_request:
+
+jobs:
+    phpunit:
+        name: PHPUnit + coverage gate
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+
+            - name: Create docker network
+              run: docker network create frontend
+
+            - name: Install dependencies
+              run: docker compose run --rm phpfpm composer install
+
+            - name: Build Tailwind CSS
+              run: docker compose run --rm phpfpm bin/console tailwind:build
+
+            - name: Create the test database
+              run: docker compose run --rm phpfpm bin/console --env=test doctrine:database:create --if-not-exists --no-interaction
+
+            - name: Run PHPUnit with coverage
+              run: docker compose run -e XDEBUG_MODE=coverage --rm phpfpm vendor/bin/phpunit --bootstrap=tests/bootstrap_integration.php --coverage-clover=coverage/clover.xml
+
+            - name: Enforce coverage threshold (100%)
+              run: docker compose run --rm phpfpm vendor/bin/coverage-check coverage/clover.xml 100

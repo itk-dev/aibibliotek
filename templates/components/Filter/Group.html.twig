@@ -1,0 +1,7 @@
+{% props label %}
+<fieldset class="flex flex-col gap-2 border-b border-line pb-4 last:border-b-0 last:pb-0">
+    <legend class="mb-2 text-xs font-semibold uppercase tracking-widest text-text-muted">
+        {{ label|trans }}
+    </legend>
+    {% block content %}{% endblock %}
+</fieldset>

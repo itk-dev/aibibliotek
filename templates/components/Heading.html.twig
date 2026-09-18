@@ -1,0 +1,49 @@
+{% props
+    level = 1,
+    size = null,
+    weight = null,
+    muted = false,
+    class = '',
+%}
+{# Renders <h1>..<h6> from `level`, with a size token chosen by `size` #}
+{# (or auto-derived from `level` when omitted). `weight` overrides the #}
+{# size's default font-weight ('normal', 'medium', 'semibold', 'bold') — #}
+{# e.g. 'normal' for a lighter box heading. `muted` swaps the size's #}
+{# `text-ink` for `text-text-muted` for section labels that should read #}
+{# as secondary (e.g. the "Tags" caption above a tag list). `class` #}
+{# appends extras like `mb-4` or layout hooks without leaking design #}
+{# tokens to callers. #}
+{# Headings render in Inter (inherited via --font-sans); DM Serif Display #}
+{# is opt-in for editorial/hero only, so the size tokens carry no font. #}
+{# `hero` is the fluid display size (`text-hero` carries its own #}
+{# proportional line-height); the others use `leading-tight`. #}
+{# The `caption`/`caption-lg` sizes are eyebrow-shaped headings for #}
+{# section labels — uppercase, wide tracking, small text — used inside #}
+{# aside cards and above content clusters. #}
+{% set sizeClasses = {
+    hero: 'text-hero tracking-tight text-ink',
+    xl: 'text-[clamp(2rem,3vw,2.6rem)] leading-tight tracking-tight text-ink',
+    lg: 'text-[clamp(1.75rem,3vw,2.25rem)] leading-tight tracking-tight text-ink',
+    md: 'text-2xl tracking-tight text-ink',
+    sm: 'text-xl text-ink',
+    xs: 'text-lg text-ink',
+    caption: 'text-xs uppercase tracking-widest text-ink',
+    'caption-lg': 'text-sm uppercase tracking-widest text-ink',
+} %}
+{# Inter needs more weight than the serif did to read as a heading, so the #}
+{# defaults sit a step heavier than the old Fraunces scale. `hero` is the #}
+{# serif display face at its natural 400 weight. #}
+{% set defaultWeights = {hero: 'normal', xl: 'bold', lg: 'bold', md: 'semibold', sm: 'semibold', xs: 'semibold', caption: 'semibold', 'caption-lg': 'semibold'} %}
+{% set weightClasses = {
+    normal: 'font-normal',
+    medium: 'font-medium',
+    semibold: 'font-semibold',
+    bold: 'font-bold',
+} %}
+{% set resolvedSize = size ?? (level == 1 ? 'xl' : (level == 2 ? 'md' : 'sm')) %}
+{% set resolvedWeight = weightClasses[weight ?? defaultWeights[resolvedSize]] %}
+{% set sizeClass = muted ? sizeClasses[resolvedSize]|replace({'text-ink': 'text-text-muted'}) : sizeClasses[resolvedSize] %}
+{% set tag = 'h' ~ level %}
+<{{ tag }} class="{{ sizeClass }} {{ resolvedWeight }}{{ class ? ' ' ~ class : '' }}" {{ attributes }}>
+    {%- block content -%}{%- endblock -%}
+</{{ tag }}>

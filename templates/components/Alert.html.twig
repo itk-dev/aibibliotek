@@ -1,0 +1,15 @@
+{% props type = 'info', class = '' %}
+{# Notification box for flash messages and inline errors. `type` drives #}
+{# both the ARIA role and the colour treatment: warning / danger are #}
+{# assertive (role="alert"), success / info are polite (role="status"). #}
+{% set role = type in ['warning', 'danger'] ? 'alert' : 'status' %}
+{% set typeClasses = {
+    info: 'bg-info-surface border-info-line text-info-ink',
+    success: 'bg-success-surface border-success-line text-success-ink',
+    warning: 'bg-warning-surface border-warning-line text-warning-ink',
+    danger: 'bg-danger-surface border-danger-line text-danger-ink',
+} %}
+<div class="rounded-lg border px-4 py-3 text-sm {{ typeClasses[type] }}{{ class ? ' ' ~ class : '' }}"
+     role="{{ role }}">
+    {%- block content -%}{%- endblock -%}
+</div>

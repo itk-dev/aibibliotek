@@ -1,0 +1,125 @@
+{#
+    Step 2 body — metadata fields the user reviews and edits.
+    Every input is pre-filled from the DTO the flow's step-1
+    listener populated from the detected source format.
+
+    `draft.jsonBaseline` carries a snapshot of the values the
+    step-1 prefiller extracted from the uploaded JSON. When a
+    curator has edited a field since prefill, we suffix the
+    label with a small "(Ændret)" badge so they can see at a
+    glance which metadata no longer matches the source config.
+    Empty on the edit path — the prefiller short-circuits when
+    editingAssistantId is set, so no badges appear there.
+
+    Field order narrates the assistant: identity (title, tagline) →
+    what it does (description) → what it draws on (knowledge,
+    language model + organisation) → how it's classified (tags,
+    data sensitivity). Language model and organisation share a
+    row on `md:` and up, stack below.
+#}
+{% set language_model = flow.metadata.languageModel %}
+{% set language_model_current = language_model.vars.value %}
+{% set language_model_choices = language_model.vars.model_choices %}
+{% set language_model_value_in_choices = language_model_current in language_model_choices %}
+
+{% set changed_badge %}<span class="ml-2 rounded bg-primary/10 px-1.5 py-0.5 align-middle text-[0.65rem] font-medium uppercase tracking-wide text-primary">{{ 'assistant.new.step_metadata.changed_badge'|trans }}</span>{% endset %}
+
+{% macro fieldLabel(key, translation, draft, badge) %}
+    {%- set label = translation|trans -%}
+    {%- if draft.jsonBaseline[key] is defined and attribute(draft, key) != draft.jsonBaseline[key] -%}
+        {#- `|e('html')` guards the translation in case it ever carries
+            an HTML-relevant character; concatenating with the badge
+            markup and marking the whole thing `|raw` stops the outer
+            `{{ }}` from re-escaping the span tags. -#}
+        {{- (label|e('html') ~ badge)|raw -}}
+    {%- else -%}
+        {{- label -}}
+    {%- endif -%}
+{% endmacro %}
+{% import _self as macros %}
+
+<div class="grid gap-4">
+    {% if draft.framework|framework_experimental %}
+        <div class="rounded-lg border border-line bg-surface-2 px-4 py-3 text-sm text-text" role="note">
+            {{ 'assistant.new.step_metadata.experimental_notice'|trans({'%format%': draft.framework|framework_label}) }}
+        </div>
+    {% endif %}
+    {{ form_row(flow.metadata.title, {label: macros.fieldLabel('title', 'assistant.new.step_metadata.title_label', draft, changed_badge), label_html: true}) }}
+    {{ form_row(flow.metadata.tagline) }}
+    {{ form_row(flow.metadata.description, {label: macros.fieldLabel('description', 'assistant.new.step_metadata.description_label', draft, changed_badge), label_html: true}) }}
+    {{ form_row(flow.metadata.knowledgeDescription) }}
+
+    <div class="grid gap-4 md:grid-cols-2">
+        {# `content-start` on each column pins the inner grid's tracks #}
+        {# to the top: the outer `md:grid-cols-2` stretches both #}
+        {# columns to the tallest cell's height (default #}
+        {# `align-items: stretch`), and without `content-start` the #}
+        {# shorter column's inner grid distributes the extra vertical #}
+        {# space across its tracks and inflates the gap between the #}
+        {# label, the input, and the help line. #}
+        <div class="grid gap-1 text-sm content-start">
+            <label for="{{ language_model.vars.id }}" class="block font-medium text-ink">
+                {{ macros.fieldLabel('languageModel', 'assistant.new.step_metadata.language_model_label', draft, changed_badge)|raw }}
+            </label>
+            {# The Stimulus controller sits on this wrapper (not the <select>)
+               because Choices.js re-parents the <select> into its own DOM
+               wrapper on init — with the controller on the <select> itself
+               Stimulus would see the node leave the tree, disconnect, then
+               reconnect on re-insertion, looping the init forever. #}
+            <div
+                data-controller="language-model-picker"
+                data-language-model-picker-aliases-value="{{ language_model.vars.model_aliases|json_encode }}"
+                data-language-model-picker-placeholder-value="{{ 'assistant.new.step_metadata.language_model_placeholder'|trans }}"
+                data-language-model-picker-add-item-text-value="{{ 'assistant.new.step_metadata.language_model_add_item'|trans }}"
+            >
+                <select
+                    id="{{ language_model.vars.id }}"
+                    name="{{ language_model.vars.full_name }}"
+                    class="rounded-lg border border-line bg-surface px-3 py-2 text-base text-ink focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                    <option value=""></option>
+                    {% for label, id in language_model_choices %}
+                        <option value="{{ id }}"{{ id == language_model_current ? ' selected' }}>{{ label }}</option>
+                    {% endfor %}
+                    {% if language_model_current is not empty and not language_model_value_in_choices %}
+                        <option value="{{ language_model_current }}" selected>{{ language_model_current }}</option>
+                    {% endif %}
+                </select>
+            </div>
+            {{ form_help(language_model) }}
+            {{ form_errors(language_model) }}
+        </div>
+        {# Manually rendered above — mark the child as rendered so form_end()
+           doesn't emit a duplicate `<input>` with the same label. #}
+        {% do language_model.setRendered %}
+        {{ form_row(flow.metadata.organizationId, {row_attr: {class: 'grid gap-1 text-sm content-start'}}) }}
+    </div>
+
+    {{ form_row(flow.metadata.tags, {label: macros.fieldLabel('tags', 'assistant.new.step_metadata.tags_label', draft, changed_badge), label_html: true}) }}
+
+    {# Data-sensitivity radio-card group. Loops the field's expanded
+       children directly so each card can pair the enum's short label
+       with its longer description — the plain form theme only
+       renders the label. The <fieldset>/<legend> pair carries the
+       group heading natively, so `role="radiogroup"` is redundant. #}
+    {% set sensitivity_field = flow.metadata.dataSensitivity %}
+    <fieldset class="grid gap-2 text-sm">
+        <legend class="block font-medium text-ink">
+            {{ sensitivity_field.vars.label|trans }}
+        </legend>
+        {{ form_help(sensitivity_field) }}
+        <div class="grid gap-2">
+            {% for child in sensitivity_field %}
+                <label class="grid cursor-pointer grid-cols-[auto_1fr] gap-3 rounded-lg border border-line bg-surface p-4 hover:border-border-strong has-[input:checked]:border-primary has-[input:checked]:bg-surface-2">
+                    {{ form_widget(child, {attr: {class: 'mt-1'}}) }}
+                    <span class="grid gap-1">
+                        <span class="font-semibold text-ink">{{ child.vars.label|trans }}</span>
+                        <span class="text-sm text-text-muted">{{ child.vars.attr['data-description-key']|trans }}</span>
+                        <span class="text-sm text-text-muted italic">{{ child.vars.attr['data-example-key']|trans }}</span>
+                    </span>
+                </label>
+            {% endfor %}
+        </div>
+        {{ form_errors(sensitivity_field) }}
+    </fieldset>
+</div>

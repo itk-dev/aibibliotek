@@ -1,0 +1,131 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.assistants.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section>
+        <twig:Eyebrow as="p" class="mb-4">{{ 'admin.assistants.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-2">{{ 'admin.assistants.heading'|trans }}</twig:Heading>
+        <p class="mb-6 max-w-2xl text-sm text-text">{{ 'admin.assistants.lead'|trans }}</p>
+
+        {% for flash in app.flashes('success') %}
+            <twig:Alert type="success" class="mb-4">
+                {{ flash.key|trans({'%count%': flash.count}) }}
+            </twig:Alert>
+        {% endfor %}
+
+        {% for flash in app.flashes('error') %}
+            <twig:Alert type="danger" class="mb-4">
+                {{ flash.key|trans({'%count%': flash.count}) }}
+            </twig:Alert>
+        {% endfor %}
+
+        {% if organizations|length > 1 %}
+            <form method="get"
+                  action="{{ path('app_admin_assistants') }}"
+                  class="mb-6 flex flex-wrap items-end gap-3"
+                  data-controller="filter-autosubmit"
+                  data-action="change->filter-autosubmit#submit">
+                <div class="w-full max-w-sm">
+                    <twig:Form:Label for="organization-picker" text="{{ 'admin.assistants.organization_label'|trans }}">
+                        <twig:Form:Select id="organization-picker" name="organization">
+                            {% for candidate in organizations %}
+                                <option value="{{ candidate.id }}" {{ organization and candidate.id == organization.id ? 'selected' : '' }}>
+                                    {{ candidate.name }}
+                                </option>
+                            {% endfor %}
+                        </twig:Form:Select>
+                    </twig:Form:Label>
+                </div>
+                <twig:Form:Button type="submit" variant="ghost" size="sm">
+                    {{ 'admin.assistants.action.show'|trans }}
+                </twig:Form:Button>
+            </form>
+        {% endif %}
+
+        {% if organization is null %}
+            <p class="text-sm text-text">{{ 'admin.assistants.no_organization'|trans }}</p>
+        {% elseif assistants is empty %}
+            <p class="text-sm text-text">{{ 'admin.assistants.empty'|trans({'%organization%': organization.name}) }}</p>
+        {% else %}
+            <form method="post"
+                  action="{{ path('app_admin_assistants_reassign') }}"
+                  data-controller="bulk-select"
+                  data-action="change->bulk-select#refresh">
+                <twig:Form:CsrfInput intent="admin-assistant-reassign" />
+                <input type="hidden" name="organization" value="{{ organization.id }}">
+
+                <twig:Table class="mb-6">
+                    <twig:Table:Head>
+                        <twig:Table:Row>
+                            <twig:Table:HeadCell>
+                                <twig:Form:Checkbox
+                                    id="select-all-assistants"
+                                    name="select_all"
+                                    value="all"
+                                    data-bulk-select-target="toggle"
+                                    data-action="change->bulk-select#toggleAll"
+                                    aria-label="{{ 'admin.assistants.select_all'|trans }}"
+                                />
+                            </twig:Table:HeadCell>
+                            <twig:Table:HeadCell>{{ 'admin.assistants.columns.title'|trans }}</twig:Table:HeadCell>
+                            <twig:Table:HeadCell>{{ 'admin.assistants.columns.owner'|trans }}</twig:Table:HeadCell>
+                            <twig:Table:HeadCell>{{ 'admin.assistants.columns.language_model'|trans }}</twig:Table:HeadCell>
+                        </twig:Table:Row>
+                    </twig:Table:Head>
+                    <twig:Table:Body>
+                        {% for assistant in assistants %}
+                            {% set checkbox_id = 'assistant-' ~ assistant.id %}
+                            <twig:Table:Row>
+                                <twig:Table:Cell>
+                                    <twig:Form:Checkbox
+                                        id="{{ checkbox_id }}"
+                                        name="assistants[]"
+                                        value="{{ assistant.id }}"
+                                        data-bulk-select-target="item"
+                                    />
+                                </twig:Table:Cell>
+                                <twig:Table:Cell>
+                                    {# Raw <label> rather than <twig:Form:Label>: it labels the row #}
+                                    {# checkbox in the neighbouring cell, so it must not wrap its input. #}
+                                    <label for="{{ checkbox_id }}" class="cursor-pointer font-medium text-ink">
+                                        {{ assistant.title }}
+                                    </label>
+                                </twig:Table:Cell>
+                                <twig:Table:Cell>
+                                    {% if assistant.createdBy %}
+                                        {{ assistant.createdBy.name }}
+                                    {% else %}
+                                        <span class="text-text-muted">{{ 'admin.assistants.no_owner'|trans }}</span>
+                                    {% endif %}
+                                </twig:Table:Cell>
+                                <twig:Table:Cell>{{ assistant.languageModel }}</twig:Table:Cell>
+                            </twig:Table:Row>
+                        {% endfor %}
+                    </twig:Table:Body>
+                </twig:Table>
+
+                {% if candidate_owners is empty %}
+                    <twig:Alert type="warning">
+                        {{ 'admin.assistants.no_candidates'|trans({'%organization%': organization.name}) }}
+                    </twig:Alert>
+                {% else %}
+                    <div class="flex flex-wrap items-end gap-3">
+                        <div class="w-full max-w-sm">
+                            <twig:Form:Label for="new-owner" text="{{ 'admin.assistants.owner_label'|trans }}">
+                                <twig:Form:Select id="new-owner" name="owner">
+                                    {% for candidate in candidate_owners %}
+                                        <option value="{{ candidate.id }}">{{ candidate.name }} ({{ candidate.email }})</option>
+                                    {% endfor %}
+                                </twig:Form:Select>
+                            </twig:Form:Label>
+                        </div>
+                        <twig:Form:Button type="submit">
+                            {{ 'admin.assistants.action.reassign'|trans }}
+                        </twig:Form:Button>
+                    </div>
+                {% endif %}
+            </form>
+        {% endif %}
+    </section>
+{% endblock %}

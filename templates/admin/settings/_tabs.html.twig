@@ -1,0 +1,11 @@
+{# Sub-navigation switcher between the two settings surfaces. #}
+{# Active tab is decided from `app.current_route` so the partial stays #}
+{# self-contained and the host templates don't need to pass extra context. #}
+<twig:Tabs ariaLabel="admin.settings.tabs_label" class="mb-6">
+    <twig:Tabs:Tab href="{{ path('app_admin_settings_site') }}" :active="app.current_route == 'app_admin_settings_site'">
+        {{ 'admin.settings.tabs.site'|trans }}
+    </twig:Tabs:Tab>
+    <twig:Tabs:Tab href="{{ path('app_admin_settings_email') }}" :active="app.current_route == 'app_admin_settings_email'">
+        {{ 'admin.settings.tabs.email'|trans }}
+    </twig:Tabs:Tab>
+</twig:Tabs>

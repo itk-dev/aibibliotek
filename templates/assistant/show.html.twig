@@ -1,0 +1,119 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'assistant.detail.title'|trans({'%title%': assistant.title, '%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    {% set organization_name = assistant.organization ? assistant.organization.name : 'assistant.detail.no_organization'|trans %}
+    <twig:Layout:ContentWithAsides>
+        <twig:block name="main">
+            <article class="grid gap-6">
+                <div class="flex items-start justify-between gap-3">
+                    <nav class="text-sm text-text-muted" aria-label="{{ 'assistant.detail.breadcrumb_label'|trans }}">
+                        <a class="no-underline hover:text-primary" href="{{ path('app_assistant_catalog') }}">
+                            {{ 'assistant.detail.breadcrumb_catalog'|trans }}
+                        </a>
+                        <span aria-hidden="true" class="px-2">/</span>
+                        <span class="text-text">{{ organization_name }}</span>
+                    </nav>
+                    {% if is_granted(constant('App\\Security\\Voter\\EditAssistantVoter::EDIT'), assistant) %}
+                        <twig:Form:IconButton
+                            href="{{ path('app_assistant_edit', {id: assistant.id}) }}"
+                            size="md"
+                            tone="primary"
+                            aria-label="{{ 'assistant.detail.action.edit'|trans }}"
+                            title="{{ 'assistant.detail.action.edit'|trans }}"
+                        >
+                            <twig:Icon:Pencil class="h-4 w-4" />
+                        </twig:Form:IconButton>
+                    {% endif %}
+                </div>
+
+                <header class="grid gap-4">
+                    <twig:Eyebrow as="p">
+                        {{ organization_name }} · {{ assistant.languageModel }}
+                    </twig:Eyebrow>
+                    <twig:Heading level="1">{{ assistant.title }}</twig:Heading>
+                    {% if assistant.tagline %}
+                        <p class="text-sm text-text-muted">{{ assistant.tagline }}</p>
+                    {% endif %}
+
+                    {#
+                        The framework and data-sensitivity chips that used to
+                        sit here are gone: both values are already spelled out
+                        in the meta aside (`meta_framework`, `meta_sensitivity`)
+                        a few hundred pixels to the right, so the header was
+                        repeating itself. The assistant's own tags still render
+                        further down, in the Beskrivelse tab.
+                    #}
+                </header>
+
+                <twig:Tabs ariaLabel="assistant.detail.tabs_label" class="mt-2">
+                    {% for tab_id in tabs %}
+                        <twig:Tabs:Tab
+                            href="{{ path('app_assistant_show', {id: assistant.id, tab: tab_id}) }}"
+                            :active="tab == tab_id">
+                            {{ ('assistant.detail.tab.' ~ tab_id)|trans }}
+                        </twig:Tabs:Tab>
+                    {% endfor %}
+                </twig:Tabs>
+
+                <section class="grid gap-4" aria-live="polite">
+                    {{ include('assistant/_show_tab_' ~ tab ~ '.html.twig', {assistant: assistant}) }}
+                </section>
+            </article>
+        </twig:block>
+
+        <twig:block name="meta">
+            <twig:Box eyebrow="assistant.detail.meta_heading">
+                <twig:DescriptionList:List>
+                    <twig:DescriptionList:Item label="assistant.detail.meta_origin">
+                        {% if assistant.organization %}
+                            {{ assistant.organization.name }}
+                        {% else %}
+                            <span class="italic text-text-muted">
+                                {{ 'assistant.detail.no_organization'|trans }}
+                            </span>
+                        {% endif %}
+                    </twig:DescriptionList:Item>
+                    <twig:DescriptionList:Item label="assistant.detail.meta_language_model">
+                        {{ assistant.languageModel }}
+                    </twig:DescriptionList:Item>
+                    <twig:DescriptionList:Item label="assistant.detail.meta_framework">
+                        {{ assistant.framework|framework_label }}
+                    </twig:DescriptionList:Item>
+                    <twig:DescriptionList:Item label="assistant.detail.meta_sensitivity">
+                        {% if assistant.dataSensitivity %}
+                            <span title="{{ assistant.dataSensitivity.description|trans }}">
+                                {{ assistant.dataSensitivity.label|trans }}
+                            </span>
+                        {% else %}
+                            <span class="italic text-text-muted">
+                                {{ 'assistant.detail.no_data_sensitivity'|trans }}
+                            </span>
+                        {% endif %}
+                    </twig:DescriptionList:Item>
+                    {% if assistant.createdAt %}
+                        <twig:DescriptionList:Item label="assistant.detail.meta_created_at">
+                            {{ assistant.createdAt|format_date(locale: 'da') }}
+                        </twig:DescriptionList:Item>
+                    {% endif %}
+                    {% if assistant.updatedAt %}
+                        <twig:DescriptionList:Item label="assistant.detail.meta_updated_at">
+                            {{ assistant.updatedAt|format_date(locale: 'da') }}
+                        </twig:DescriptionList:Item>
+                    {% endif %}
+                </twig:DescriptionList:List>
+            </twig:Box>
+        </twig:block>
+
+        <twig:block name="actions">
+            <twig:Box eyebrow="assistant.detail.actions_heading">
+                <a class="inline-flex items-center justify-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-ink no-underline transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/40"
+                   href="{{ path('app_assistant_export', {id: assistant.id}) }}"
+                   download>
+                    {{ 'assistant.detail.action.export'|trans }}
+                </a>
+            </twig:Box>
+        </twig:block>
+    </twig:Layout:ContentWithAsides>
+{% endblock %}

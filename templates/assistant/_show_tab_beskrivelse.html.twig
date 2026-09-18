@@ -1,0 +1,30 @@
+{#
+    Beskrivelse tab — description flow + tag chips.
+
+    Description is stored as a single string on the entity today; we
+    split on blank-line boundaries and render each block as a <p>
+    with `white-space: pre-wrap` so single line breaks inside a
+    paragraph are preserved (matches the design mock).
+#}
+<div class="grid gap-6">
+    <div class="grid gap-4 text-base leading-relaxed text-text">
+        {% for paragraph in assistant.description|paragraphs %}
+            <p class="whitespace-pre-wrap">{{ paragraph }}</p>
+        {% endfor %}
+    </div>
+
+    {% if assistant.tags is not empty %}
+        <div class="grid gap-3">
+            <twig:Heading level="3" size="caption-lg" muted>
+                {{ 'assistant.detail.tags_heading'|trans }}
+            </twig:Heading>
+            <ul class="flex flex-wrap gap-2" aria-label="{{ 'assistant.detail.tags_heading'|trans }}">
+                {% for tag in assistant.tags %}
+                    <li class="inline-flex items-center rounded-full border border-line bg-surface-2 px-3 py-1 text-sm text-text">
+                        {{ tag.name }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>

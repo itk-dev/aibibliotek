@@ -1,0 +1,48 @@
+when:
+    - branch: release/*
+      event: push
+
+skip_clone: true
+
+labels:
+    zone: CLOUD
+
+steps:
+    - name: Run stg site update
+      image: itkdev/ansible-plugin:1
+      pull: true
+      settings:
+          id:
+              from_secret: id
+          secret:
+              from_secret: secret
+          host:
+              from_secret: stg_host
+          path:
+              from_secret: stg_path
+          user:
+              from_secret: user
+          actions:
+              - git reset --hard
+              - git fetch origin ${CI_COMMIT_BRANCH}
+              - git checkout ${CI_COMMIT_BRANCH}
+              - git pull
+              - itkdev-docker-compose-server up -d --force-recreate
+              # Allow installation of dev packages to load fixtures.
+              - itkdev-docker-compose-server exec phpfpm composer install -o --classmap-authoritative
+              - itkdev-docker-compose-server exec phpfpm bin/console doctrine:schema:drop --full-database --force
+              # Force dev environment for this command only.
+              - itkdev-docker-compose-server exec phpfpm bin/console doctrine:migrations:migrate --no-interaction
+              # Two-phase fixture load: first the general `default` group,
+              # then the `local` group appended on top so its personal-inbox
+              # accounts survive the obfuscate step in between.
+              - itkdev-docker-compose-server exec -e APP_ENV=dev phpfpm bin/console doctrine:fixtures:load --group=default --no-interaction
+              - itkdev-docker-compose-server exec phpfpm bin/console app:user:obfuscate-passwords --force
+              - itkdev-docker-compose-server exec -e APP_ENV=dev phpfpm bin/console doctrine:fixtures:load --group=local --append --no-interaction
+              - itkdev-docker-compose-server exec phpfpm bin/console assets:install public
+              - itkdev-docker-compose-server exec phpfpm bin/console asset-map:compile
+              # Remove dev packages
+              - itkdev-docker-compose-server exec phpfpm composer install -o --no-dev --classmap-authoritative
+              # Wipe the prod cache.
+              - itkdev-docker-compose-server exec phpfpm rm -rf var/cache/prod
+              - itkdev-docker-compose-server exec -e APP_ENV=prod phpfpm bin/console cache:clear --no-debug

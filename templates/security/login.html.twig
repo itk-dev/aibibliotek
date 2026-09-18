@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'security.login.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'security.login.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'security.login.heading'|trans }}</twig:Heading>
+
+        {% if error %}
+            <twig:Alert type="danger" class="mb-4">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </twig:Alert>
+        {% endif %}
+
+        <form action="{{ path('app_login') }}" method="post" class="grid gap-4">
+            <twig:Form:Label for="inputEmail" text="{{ 'security.login.email_label'|trans }}">
+                <twig:Form:TextInput
+                    id="inputEmail"
+                    name="_username"
+                    type="email"
+                    value="{{ last_username }}"
+                    autocomplete="email"
+                    required
+                    autofocus
+                />
+            </twig:Form:Label>
+
+            <twig:Form:Label for="inputPassword" text="{{ 'security.login.password_label'|trans }}">
+                <twig:Form:TextInput
+                    id="inputPassword"
+                    name="_password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                />
+            </twig:Form:Label>
+
+            <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+            <twig:Form:Button type="submit">
+                {{ 'security.login.submit'|trans }}
+            </twig:Form:Button>
+
+            <p class="text-sm text-text-muted">
+                <a class="text-primary underline hover:text-primary-hover" href="{{ path('app_forgot_password_request') }}">
+                    {{ 'security.login.forgot_password'|trans }}
+                </a>
+            </p>
+        </form>
+    </section>
+{% endblock %}

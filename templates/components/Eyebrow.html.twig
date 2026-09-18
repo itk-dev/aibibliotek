@@ -1,0 +1,4 @@
+{% props class = '', as = 'h2' %}
+{# `as` lets a call site pick the tag — defaults to h2 because most #}
+{# section kickers are the section's heading. Hero passes as="p". #}
+<{{ as }} class="eyebrow{{ class ? ' ' ~ class : '' }}">{% block content %}{% endblock %}</{{ as }}>

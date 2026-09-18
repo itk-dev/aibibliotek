@@ -1,0 +1,8 @@
+{% props name, value, label, count, checked = false %}
+<label class="flex items-center justify-between gap-3 text-sm text-text">
+    <span class="flex items-center gap-2">
+        <twig:Form:Checkbox name="{{ name }}" value="{{ value }}" checked="{{ checked }}" />
+        <span>{{ label }}</span>
+    </span>
+    <span class="text-xs text-text-muted">{{ count }}</span>
+</label>

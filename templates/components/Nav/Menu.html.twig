@@ -1,0 +1,7 @@
+{% props id = 'primary-nav', label = 'nav.menu_label' %}
+<nav class="order-last hidden w-full items-center gap-6 text-sm font-medium md:order-none md:ml-auto md:flex md:w-auto"
+     id="{{ id }}"
+     aria-label="{{ label|trans }}"
+     data-nav-toggle-target="menu">
+    {% block content %}{% endblock %}
+</nav>

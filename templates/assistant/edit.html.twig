@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block main_max_width %}max-w-wide{% endblock %}
+
+{% block title %}{{ 'assistant.edit.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    {% set current_step = flow.vars.cursor.currentStep %}
+    {% set step_definitions = [
+        {name: 'json', label: 'assistant.edit.step_json.rail_label', hint: 'assistant.new.step_json.rail_hint'},
+        {name: 'metadata', label: 'assistant.new.step_metadata.rail_label', hint: 'assistant.new.step_metadata.rail_hint'},
+        {name: 'receipt', label: 'assistant.edit.step_receipt.rail_label', hint: 'assistant.edit.step_receipt.rail_hint'},
+    ] %}
+
+    <aside class="mx-auto mb-6 max-w-wide rounded-lg border border-warning-line bg-warning-surface px-4 py-3 text-sm text-warning-ink" role="note">
+        <p class="mb-2 font-medium text-warning-ink">{{ 'assistant.new.responsibility.heading'|trans }}</p>
+        <p>{{ 'assistant.new.responsibility.body'|trans }}</p>
+    </aside>
+
+    <twig:Layout:ThreeColumn>
+        <twig:block name="start">
+            <div class="grid gap-6">
+                <div>
+                    <twig:Eyebrow as="p" class="mb-4">{{ 'assistant.edit.eyebrow'|trans }}</twig:Eyebrow>
+                    <twig:Heading level="1" size="md">{{ 'assistant.edit.heading'|trans({'%title%': draft.title}) }}</twig:Heading>
+                </div>
+                <twig:StepRail steps="{{ step_definitions }}" currentStep="{{ current_step }}" />
+            </div>
+        </twig:block>
+
+        <twig:block name="main">
+            <section class="max-w-2xl">
+                {{ form_start(flow, {attr: {class: 'grid gap-4'}}) }}
+
+                {% set flow_errors = flow.vars.errors %}
+                {% if flow_errors|length > 0 %}
+                    <twig:Alert type="danger">
+                        <ul class="space-y-1">
+                            {% for error in flow_errors %}
+                                <li class="relative pl-4 before:absolute before:left-0 before:text-text before:content-['•']">
+                                    {{ error.message }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </twig:Alert>
+                {% endif %}
+
+                {% if 'json' == current_step %}
+                    {{ include('assistant/_step_json.html.twig', {flow: flow, checks: checks}) }}
+                {% elseif 'metadata' == current_step %}
+                    {{ include('assistant/_step_metadata.html.twig', {flow: flow, draft: draft}) }}
+                {% elseif 'receipt' == current_step %}
+                    {{ include('assistant/_step_receipt.html.twig', {flow: flow, draft: draft}) }}
+                {% endif %}
+
+                {#
+                    Navigator on the non-receipt steps. Same right-aligned
+                    Previous / Next pair as the create wizard, but the
+                    Next button on the metadata step reads "Gem
+                    ændringer" instead of "Næste trin" — this is the
+                    commit moment for an edit.
+                #}
+                {% if 'receipt' != current_step %}
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                        {% if flow.navigator.previous is defined %}
+                            {{ form_widget(flow.navigator.previous, {
+                                label: 'assistant.edit.action.previous'|trans,
+                                attr: {class: 'rounded-lg border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-surface-2 focus:outline-none focus:ring-2 focus:ring-primary/40'},
+                            }) }}
+                        {% endif %}
+                        {% if flow.navigator.next is defined %}
+                            {{ form_widget(flow.navigator.next, {
+                                label: ('metadata' == current_step ? 'assistant.edit.action.save' : 'assistant.edit.action.next')|trans,
+                                attr: {class: 'rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-ink transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/40'},
+                            }) }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {{ form_end(flow) }}
+            </section>
+        </twig:block>
+    </twig:Layout:ThreeColumn>
+{% endblock %}

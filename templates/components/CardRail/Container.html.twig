@@ -1,0 +1,15 @@
+{% props eyebrow, linkHref = '#', linkLabel, listLabel = 'frontpage.rail.list_label' %}
+<section>
+    <div class="mb-4 flex items-end justify-between gap-4">
+        <twig:Eyebrow>{{ eyebrow|trans }}</twig:Eyebrow>
+        <a class="text-sm font-medium text-text-muted no-underline hover:text-primary"
+           href="{{ linkHref }}">{{ linkLabel|trans }}</a>
+    </div>
+    {# Cards wrap to as many rows as fit the viewport. Each card sets its #}
+    {# own basis + grow on the flex item side so the row fills naturally. #}
+    <div class="flex flex-wrap gap-4"
+         role="list"
+         aria-label="{{ listLabel|trans }}">
+        {% block content %}{% endblock %}
+    </div>
+</section>

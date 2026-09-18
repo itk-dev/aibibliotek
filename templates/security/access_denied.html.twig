@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'security.access_denied.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'security.access_denied.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'security.access_denied.heading'|trans }}</twig:Heading>
+
+        <p class="mb-6 text-sm text-text">{{ 'security.access_denied.lead'|trans }}</p>
+
+        <p>
+            <a class="text-sm text-primary underline hover:text-primary-hover" href="{{ path('app_frontpage') }}">
+                {{ 'security.access_denied.back_link'|trans }}
+            </a>
+        </p>
+    </section>
+{% endblock %}

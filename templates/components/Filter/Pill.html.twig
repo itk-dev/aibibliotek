@@ -1,0 +1,10 @@
+{% props href, label, active = false %}
+{# Navigation-style filter pill: rounded outlined link that toggles #}
+{# background/text when its filter is the active selection. Distinct #}
+{# from `Filter:Chip`, which is a *removable* chip carrying an × icon; #}
+{# this one is a plain link the user clicks to swap the query. #}
+{% set stateClass = active ? 'bg-surface-2 text-ink' : 'text-text hover:bg-surface-2' %}
+<a class="rounded-full border border-line px-3 py-1 {{ stateClass }}"
+   href="{{ href }}">
+    {{ label }}
+</a>

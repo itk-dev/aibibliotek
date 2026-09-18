@@ -1,0 +1,27 @@
+admin:
+    organization:
+        form:
+            email_domains_required: "Angiv mindst ét e-maildomæne."
+            default_framework_unknown: "Vælg et understøttet framework."
+
+security:
+    reset_password:
+        request:
+            email_required: "Indtast din e-mailadresse."
+        reset:
+            password_required: "Indtast et password."
+            password_min: "Passwordet skal være mindst {{ limit }} tegn."
+            password_mismatch: "De to password-felter er ikke ens."
+
+assistant:
+    new:
+        step_json:
+            required: "Indsæt eller upload en assistent-konfiguration."
+            invalid_config: "Filen er ikke en gyldig assistent-konfiguration."
+            invalid_config_help: "Vi genkender OpenWebUI, OpenAI, LibreChat og AI-reolen (.json) samt Ollama (.modelfile). Sammenlign din fil med eksemplet i feltet nedenfor, og kontrollér at den er gyldig JSON."
+        step_metadata:
+            title_required: "Angiv en titel."
+            tagline_required: "Angiv en kort beskrivelse."
+            description_required: "Angiv en beskrivelse."
+            language_model_required: "Angiv en sprogmodel."
+            data_sensitivity_required: "Vælg en klassifikation af datafølsomhed."

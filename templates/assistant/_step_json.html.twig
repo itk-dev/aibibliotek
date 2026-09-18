@@ -1,0 +1,53 @@
+{#
+    Step 1 body — JSON dropzone + textarea.
+
+    Wrapped by the assistant-config-upload Stimulus controller so
+    a file drop, click-to-select, or paste enhances the textarea
+    with live-validate feedback. The server-side form is a plain
+    textarea binding to the DTO's `sourceConfig`; the dropzone
+    is client-side enhancement that fills the textarea and lets
+    the operator review before submit.
+#}
+<div class="grid gap-4"
+     data-controller="assistant-config-upload"
+     data-assistant-config-upload-validate-url-value="{{ path('app_assistant_new_validate_config') }}"
+     data-assistant-config-upload-checks-value="{{ checks|json_encode }}"
+     data-assistant-config-upload-dragging-class="border-primary bg-primary/5 ring-2 ring-primary/30">
+    <div data-assistant-config-upload-target="dropzone"
+         data-action="click->assistant-config-upload#openFilePicker
+                     dragover->assistant-config-upload#dragOver
+                     dragleave->assistant-config-upload#dragLeave
+                     drop->assistant-config-upload#drop"
+         role="button"
+         tabindex="0"
+         aria-label="{{ 'assistant.new.step_json.file_label'|trans }}"
+         class="grid cursor-pointer place-items-center gap-2 rounded-xl border-2 border-dashed border-line bg-surface-2 px-6 py-10 text-center transition-colors hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary/40">
+        <twig:Icon:Upload class="h-10 w-10 text-text-muted" />
+        <p class="text-sm font-medium text-ink">{{ 'assistant.new.step_json.dropzone_prompt'|trans }}</p>
+        <p class="text-xs text-text-muted">{{ 'assistant.new.step_json.dropzone_hint'|trans }}</p>
+        <input type="file"
+               accept=".json,.modelfile,application/json,text/plain"
+               data-assistant-config-upload-target="file"
+               data-action="change->assistant-config-upload#fileChanged"
+               class="sr-only"
+               aria-hidden="true"
+               tabindex="-1">
+    </div>
+
+    {{ form_row(flow.json.sourceConfig, {attr: {'data-assistant-config-upload-target': 'config'}}) }}
+
+    <progress data-assistant-config-upload-target="progress"
+              value="0"
+              max="100"
+              class="hidden h-2 w-full overflow-hidden rounded-full [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-surface-2 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-primary [&::-moz-progress-bar]:bg-primary">
+    </progress>
+
+    <p data-assistant-config-upload-target="status"
+       data-validating-text="{{ 'assistant.new.step_json.config_validating'|trans }}"
+       data-valid-text="{{ 'assistant.new.step_json.config_valid'|trans }}"
+       data-invalid-text="{{ 'assistant.new.step_json.config_invalid'|trans }}"
+       class="text-sm text-text-muted"
+       role="status">
+        {{ 'assistant.new.step_json.config_help'|trans }}
+    </p>
+</div>

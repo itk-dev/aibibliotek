@@ -1,0 +1,8 @@
+{% props eyebrow, heading, lead = null %}
+<header class="flex max-w-3xl flex-col gap-4">
+    <twig:Eyebrow as="p">{{ eyebrow|trans }}</twig:Eyebrow>
+    <twig:Heading level="1">{{ heading|trans }}</twig:Heading>
+    {% if lead %}
+        <p class="max-w-[60ch] text-lg leading-relaxed text-text">{{ lead|trans }}</p>
+    {% endif %}
+</header>

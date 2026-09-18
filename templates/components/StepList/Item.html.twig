@@ -1,0 +1,7 @@
+{% props index, lead, body %}
+<li class="flex items-start gap-4 py-4">
+    <span class="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent-soft text-sm font-semibold text-accent-deep">{{ index }}</span>
+    <span class="block text-base leading-relaxed text-text">
+        <strong class="text-ink">{{ lead|trans }}</strong>{{ body|trans }}
+    </span>
+</li>

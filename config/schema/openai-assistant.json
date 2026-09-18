@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://ai-reolen.local.itkdev.dk/schema/openai-assistant.json",
+    "title": "OpenAI assistant",
+    "description": "An OpenAI Assistants API object. The `object: assistant` const and required `model` discriminate it from the other JSON formats.",
+    "type": "object",
+    "required": ["object", "model"],
+    "properties": {
+        "object": { "const": "assistant" },
+        "model": { "type": "string", "minLength": 1 },
+        "name": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "instructions": { "type": ["string", "null"] },
+        "metadata": { "type": ["object", "null"] }
+    }
+}

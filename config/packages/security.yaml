@@ -1,0 +1,73 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # ADR 006: ROLE_ADMIN implies ROLE_DOMAIN_MANAGER so the same admin
+    # surfaces serve both site-wide admins and domain-scoped approvers.
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_DOMAIN_MANAGER]
+
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            # Ensure dev tools and static assets are always allowed
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            user_checker: App\Security\AccountStatusChecker
+            entry_point: App\Security\UnauthorizedEntryPoint
+            # Custom 403 handler renders a branded "Adgang nægtet" page
+            # for authenticated users that hit a route they don't have
+            # the role for. Anonymous requests still go through the
+            # entry point above (401), so the two cases stay distinct.
+            access_denied_handler: App\Security\AccessDeniedHandler
+            form_login:
+                login_path: app_login
+                check_path: app_login
+                enable_csrf: true
+                default_target_path: app_frontpage
+            logout:
+                path: app_logout
+                target: app_frontpage
+            # Symfony Security's built-in throttling: caps repeated login
+            # attempts at five per quarter-hour per <IP, username> pair.
+            # Sixth attempt within the window short-circuits to a 429-class
+            # AuthenticationException rendered through the login template.
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+
+    # Note: Only the *first* matching rule is applied. The catch-all
+    # `^/` rule flips the default to "every route requires
+    # authentication"; routes that must be reachable anonymously
+    # (login, logout, registration) are listed above it as
+    # PUBLIC_ACCESS allow-list entries.
+    access_control:
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/auth/confirm-email, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_DOMAIN_MANAGER }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+
+when@test:
+    security:
+        password_hashers:
+            # Password hashers are resource-intensive by design to ensure security.
+            # In tests, it's safe to reduce their cost to improve performance.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

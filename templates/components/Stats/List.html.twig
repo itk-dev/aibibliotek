@@ -1,0 +1,5 @@
+{# Auto-width columns so each stat card fits its (nowrap) label rather #}
+{# than the old fixed max-width that clipped longer labels. #}
+<dl class="mt-8 grid grid-cols-1 gap-4 sm:inline-grid sm:auto-cols-max sm:grid-flow-col">
+    {% block content %}{% endblock %}
+</dl>

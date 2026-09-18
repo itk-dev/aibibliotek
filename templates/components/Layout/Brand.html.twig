@@ -1,0 +1,11 @@
+{% props href, name = brand_name %}
+{# Wordmark only — the icon tile and tagline were dropped in favour of a #}
+{# larger name that aligns with the nav row. The first word renders in #}
+{# the primary (green) accent and extra bold; the rest stays in ink. #}
+{% set firstWord = name|split(' ', 2)|first %}
+{% set rest = name|split(' ', 2)|slice(1)|join(' ') %}
+<a class="flex items-center no-underline" href="{{ href }}" aria-label="{{ 'layout.brand_aria_label'|trans }}">
+    <span class="text-xl tracking-tight">
+        <span class="font-extrabold text-primary">{{ firstWord }}</span>{% if rest %} <span class="font-semibold text-ink">{{ rest }}</span>{% endif %}
+    </span>
+</a>

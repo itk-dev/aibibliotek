@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'profile.edit.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'profile.edit.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'profile.edit.heading'|trans }}</twig:Heading>
+
+        <p class="mb-6 text-sm text-text">{{ 'profile.edit.lead'|trans }}</p>
+
+        {% for flash in app.flashes('success') %}
+            <twig:Alert type="success" class="mb-4">
+                {{ flash|trans }}
+            </twig:Alert>
+        {% endfor %}
+
+        {{ form_start(form, {action: path('app_profile_edit'), attr: {class: 'grid gap-4'}}) }}
+            {{ form_row(form.name) }}
+
+            <div class="flex items-center gap-4">
+                <twig:Form:Button type="submit">
+                    {{ 'profile.edit.submit'|trans }}
+                </twig:Form:Button>
+            </div>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

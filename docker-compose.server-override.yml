@@ -1,0 +1,4 @@
+services:
+    mail:
+        labels:
+            - "traefik.http.routers.mail_${COMPOSE_PROJECT_NAME:?}.middlewares=ITKBasicAuth@file"

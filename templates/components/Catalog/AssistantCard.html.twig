@@ -1,0 +1,23 @@
+{% props assistant, href %}
+<a class="assistant-card group flex h-full flex-col gap-3 rounded-xl border border-line bg-surface p-6 no-underline shadow-sm transition-transform hover:-translate-y-0.5 hover:border-border-strong hover:shadow-md"
+   href="{{ href }}">
+    <twig:Heading level="3" size="md" class="group-hover:text-primary">
+        {{ assistant.title }}
+    </twig:Heading>
+    <p class="text-xs font-semibold uppercase tracking-widest text-text-muted">
+        {{ assistant.languageModel }}
+    </p>
+    <p class="line-clamp-3 text-base leading-relaxed text-text">
+        {{ assistant.tagline ?? assistant.description }}
+    </p>
+    <div class="mt-auto flex flex-wrap items-center gap-2 pt-2">
+        <span class="inline-flex items-center rounded-full border border-primary px-3 py-1 text-xs font-semibold text-primary">
+            {{ assistant.framework }}
+        </span>
+        {% for tag in assistant.tags %}
+            <span class="inline-flex items-center rounded-full border border-line bg-surface-2 px-3 py-1 text-xs text-text">
+                {{ tag.name }}
+            </span>
+        {% endfor %}
+    </div>
+</a>

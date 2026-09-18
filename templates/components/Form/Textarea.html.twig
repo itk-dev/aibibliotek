@@ -1,0 +1,22 @@
+{% props
+    id,
+    name,
+    value = '',
+    rows = 4,
+    variant = 'prose',
+%}
+{# `variant` maps to the text-family/size utility group. `prose` matches #}
+{# free-text fields (hero copy, general messages); `mono` matches Markdown #}
+{# / template-token fields where a monospaced glyph makes token boundaries #}
+{# easier to spot. `{{ attributes.defaults(...) }}` spreads arbitrary #}
+{# call-site attributes (e.g. `data-*-target` for Stimulus) and merges any #}
+{# extra `class` onto the default appearance, so callers can extend the #}
+{# field without restating the shared border/focus tokens. #}
+{% set variants = {
+    prose: 'text-base text-ink',
+    mono: 'font-mono text-sm text-ink',
+} %}
+<textarea id="{{ id }}"
+          name="{{ name }}"
+          rows="{{ rows }}"
+          {{ attributes.defaults({class: 'rounded-lg border border-line bg-surface px-3 py-2 ' ~ variants[variant] ~ ' focus:outline-none focus:ring-2 focus:ring-primary/40'}) }}>{{ value }}</textarea>

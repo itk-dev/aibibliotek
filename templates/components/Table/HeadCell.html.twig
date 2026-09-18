@@ -1,0 +1,12 @@
+{% props align = 'left', scope = 'col' %}
+{# Column header cell. `align` (`left` | `right` | `center`, default left) #}
+{# governs horizontal alignment; use `align="right"` on the last column to #}
+{# right-flush an actions header against the table edge. #}
+{% set alignClass = {
+    left: 'text-left',
+    right: 'text-right',
+    center: 'text-center',
+}[align] ?? 'text-left' %}
+<th scope="{{ scope }}" class="px-4 py-3 text-xs font-semibold uppercase tracking-widest {{ alignClass }}">
+    {% block content %}{% endblock %}
+</th>

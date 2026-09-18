@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'auth.email_confirmation.invalid.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'auth.email_confirmation.invalid.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">
+            {{ 'auth.email_confirmation.invalid.heading'|trans }}
+        </twig:Heading>
+
+        <p class="text-sm text-text">{{ 'auth.email_confirmation.invalid.body'|trans }}</p>
+
+        <p class="mt-6">
+            <a class="text-primary underline hover:text-primary-hover" href="{{ path('app_register') }}">
+                {{ 'auth.email_confirmation.invalid.register_link'|trans }}
+            </a>
+        </p>
+    </section>
+{% endblock %}

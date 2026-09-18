@@ -1,0 +1,66 @@
+schemaVersion: "1"
+
+name: ${{ env.args.COMPOSE_PROJECT_NAME }}
+
+agent: claude
+kits:
+    - source: "git+https://github.com/itk-dev/itk-sbx#dir=kits/base-tools"
+    - source: "git+https://github.com/itk-dev/itk-sbx#dir=kits/github"
+
+workspace:
+    path: .
+    clone: false
+
+# The traefik the base-tools kit runs listens on sandbox port 80. Publishing it
+# here replaces the manual `sbx ports <sandbox> --publish` step — ports are
+# published when the sandbox is created, so there is nothing to re-run and
+# nothing that drifts between boots.
+#
+# host: 8000 rather than 80 deliberately, and this is not just tidiness: a pinned
+# host port that is already bound does not degrade to a warning — "If a port
+# can't be published, sandbox creation fails and removes the new sandbox" — and
+# an itkdev developer running the shared traefik stack already holds host 80. So
+# `host: 80` would destroy the sandbox at create on exactly those machines.
+#
+# Omit `host` entirely to take an ephemeral port instead: that can never collide,
+# at the cost of having to look the port up with `sbx ports <sandbox>`.
+#
+# Reaching the site from the host therefore means the port is in the URL:
+#   http://itk-sbx.local.itkdev.dk:8000/
+# Traefik's Host() matcher ignores the port, so routing still resolves. Inside
+# the sandbox it stays plain port 80 — see the base-tools kit instructions.
+ports:
+    - sandbox: 80
+      host: 8000
+
+# Pre-authorises the token injection the github kit declares, so create does not stop
+# on the interactive "no binding authorizes github" consent prompt. These five must
+# match `credentials[].apiKey.inject[].domain` in sbxenv/kits/github/spec.yaml
+# domain missing here is not an error, just a lone 401 from that host.
+bindings:
+    github:
+        apiKey:
+            domains:
+                - api.github.com
+                - github.com
+                - uploads.github.com
+                - raw.githubusercontent.com
+                - codeload.github.com
+
+# Declare what arguments we accept
+args:
+    COMPOSE_PROJECT_NAME:
+        default: stable
+        description: The docker compose project name
+    GIT_IDENTITY_NAME:
+        default: stable
+        description: The git identity name
+    GIT_IDENTITY_EMAIL:
+        default: stable
+        description: The git identity email
+
+# Env variables to be injected into the sandbox.
+env:
+    COMPOSE_PROJECT_NAME: ${{ env.args.COMPOSE_PROJECT_NAME }}
+    GIT_IDENTITY_NAME: ${{ env.args.GIT_IDENTITY_NAME }}
+    GIT_IDENTITY_EMAIL: ${{ env.args.GIT_IDENTITY_EMAIL }}

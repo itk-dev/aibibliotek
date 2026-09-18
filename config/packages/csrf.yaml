@@ -1,0 +1,28 @@
+# Enable stateless CSRF protection for forms and logins/logouts.
+#
+# Every id listed under `stateless_token_ids` is validated by
+# Symfony's `SameOriginCsrfTokenManager` (double-submit cookie
+# pattern, backed by `csrf_protection_controller.js`) instead of
+# the session-bound default. Symfony Form auto-registers the
+# `submit` id via the form recipe — every Form-built submission
+# is stateless. The other ids on this list are the hand-rolled
+# forms' intents; each is paired with a
+# `data-controller="csrf-protection"` on its `_token` hidden
+# field so the Stimulus controller mirrors the cookie value into
+# the field on submit.
+framework:
+    form:
+        csrf_protection:
+            token_id: submit
+
+    csrf_protection:
+        stateless_token_ids:
+            - submit
+            - authenticate
+            - logout
+            - register
+            - assistant-create
+            - admin-user-action
+            - admin-organization-delete
+            - admin-settings-site
+            - admin-settings-email

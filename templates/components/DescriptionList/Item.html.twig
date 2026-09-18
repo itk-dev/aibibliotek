@@ -1,0 +1,8 @@
+{% props label %}
+{# One label/value pair inside a <twig:DescriptionList:List>. `label` is a #}
+{# translation key; the value comes from the block so call sites can pass #}
+{# plain text, entity properties, or further markup. #}
+<div class="flex flex-col gap-1">
+    <dt class="text-xs uppercase tracking-widest text-text-muted">{{ label|trans }}</dt>
+    <dd class="text-lg font-semibold text-ink">{% block content %}{% endblock %}</dd>
+</div>

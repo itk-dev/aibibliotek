@@ -1,0 +1,46 @@
+{% props steps, currentStep, ariaLabel = 'assistant.new.step_rail.label' %}
+{#
+    Vertical step rail used in the `start` slot of a
+    twig:Layout:ThreeColumn page — see /assistant/new. Renders one
+    row per step, marking the current one active and every earlier
+    one as done.
+
+    Props:
+    - `steps`       — list<{name, label, hint}>. Order matters.
+    - `currentStep` — the currently-active step name.
+    - `ariaLabel`   — translation key for the wrapper nav.
+#}
+<nav aria-label="{{ ariaLabel|trans }}" class="grid gap-3">
+    {% set activeIndex = -1 %}
+    {% for entry in steps %}
+        {% if entry.name == currentStep %}
+            {% set activeIndex = loop.index0 %}
+        {% endif %}
+    {% endfor %}
+    {% for entry in steps %}
+        {% set status = loop.index0 < activeIndex
+            ? 'done'
+            : (loop.index0 == activeIndex ? 'active' : 'todo')
+        %}
+        <div class="flex items-start gap-3
+            {% if status == 'active' %}text-ink{% elseif status == 'done' %}text-text{% else %}text-text-muted{% endif %}"
+             {% if status == 'active' %}aria-current="step"{% endif %}>
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold
+                {% if status == 'active' %}border-primary bg-primary text-primary-ink
+                {% elseif status == 'done' %}border-line bg-surface-2 text-text
+                {% else %}border-line bg-surface text-text-muted{% endif %}">
+                {% if status == 'done' %}
+                    ✓
+                {% else %}
+                    {{ '%02d'|format(loop.index) }}
+                {% endif %}
+            </span>
+            <span class="grid gap-0.5 pt-1">
+                <span class="text-sm font-medium">{{ entry.label|trans }}</span>
+                {% if entry.hint %}
+                    <span class="text-xs text-text-muted">{{ entry.hint|trans }}</span>
+                {% endif %}
+            </span>
+        </div>
+    {% endfor %}
+</nav>

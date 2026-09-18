@@ -1,0 +1,15 @@
+{% props linkHref, linkLabel %}
+{# Dark OS2ai footer: the negative logo (light mark, for dark grounds) #}
+{# links home; caption + about link sit in a light muted tone so they #}
+{# stay legible on the charcoal background. #}
+<footer class="bg-ink py-8 text-sm text-[#ababab]">
+    <div class="mx-auto flex max-w-wide flex-col gap-4 px-[clamp(20px,4vw,56px)] sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+            <a href="{{ path('app_frontpage') }}" aria-label="{{ 'layout.brand_aria_label'|trans }}" class="shrink-0">
+                <img src="{{ asset('images/os2ai-logo-neg.png') }}" alt="OS2ai" class="h-10 w-auto" width="199" height="98">
+            </a>
+            <p class="m-0">{% block content %}{% endblock %}</p>
+        </div>
+        <a class="shrink-0 text-[#ababab] no-underline hover:text-white" href="{{ linkHref }}">{{ linkLabel|trans }}</a>
+    </div>
+</footer>

@@ -1,0 +1,8 @@
+services:
+    phpfpm:
+        volumes:
+            # Shared, cross-release secrets and production configuration
+            # provisioned by DevOps in the site's `shared/` folder — APP_SECRET,
+            # DATABASE_URL, MAILER_DSN, etc. The release directory is replaced on
+            # every deploy, so the file lives one level above it and is mounted in.
+            - ../../shared/.env.local:/app/.env.local

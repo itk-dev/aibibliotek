@@ -1,0 +1,52 @@
+{#
+    Catalogue result-ordering control.
+
+    Rendered as its own box in the filter column, above the filter rail. A
+    standalone GET form posts back to the catalogue route carrying the
+    active filters as hidden inputs, so changing the sort preserves the
+    current search query and facet selections. `page` is deliberately not
+    carried, so a sort change returns the user to page 1.
+
+    The form auto-submits on `change` via the `sort-autosubmit` Stimulus
+    controller; the `<noscript>` button keeps it working without JS.
+
+    props:
+      - criteria: the active CatalogCriteria (current filters + sort)
+      - options:  list<CatalogSort> rendered as the <select> options
+#}
+{% props criteria, options %}
+<aside aria-label="{{ 'catalog.sort.heading'|trans }}"
+       class="flex flex-col gap-4 rounded-xl border border-line bg-surface p-5">
+    <twig:Heading level="3" size="sm" weight="normal">{{ 'catalog.sort.heading'|trans }}</twig:Heading>
+
+    <form method="get" action="{{ path('app_assistant_catalog') }}"
+          class="flex flex-col gap-3"
+          data-controller="sort-autosubmit"
+          data-action="change->sort-autosubmit#submit">
+        {% if criteria.q %}
+            <input type="hidden" name="q" value="{{ criteria.q }}">
+        {% endif %}
+        {% for value in criteria.languageModels %}
+            <input type="hidden" name="language_model[]" value="{{ value }}">
+        {% endfor %}
+        {% for value in criteria.frameworks %}
+            <input type="hidden" name="framework[]" value="{{ value }}">
+        {% endfor %}
+        {% for value in criteria.tags %}
+            <input type="hidden" name="tag[]" value="{{ value }}">
+        {% endfor %}
+
+        <twig:Form:Label for="catalog-sort" text="{{ 'catalog.sort.label'|trans }}" srOnly />
+        <twig:Form:Select id="catalog-sort" name="sort">
+            {% for option in options %}
+                <option value="{{ option.value }}" {{ option.value == criteria.sort.value ? 'selected' }}>
+                    {{ option.labelKey|trans }}
+                </option>
+            {% endfor %}
+        </twig:Form:Select>
+
+        <noscript>
+            <twig:Form:Button shape="pill" size="sm">{{ 'catalog.sort.apply'|trans }}</twig:Form:Button>
+        </noscript>
+    </form>
+</aside>

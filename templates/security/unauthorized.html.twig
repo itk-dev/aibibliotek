@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'security.unauthorized.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'security.unauthorized.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'security.unauthorized.heading'|trans }}</twig:Heading>
+
+        <p class="mb-6 text-sm text-text">{{ 'security.unauthorized.lead'|trans }}</p>
+
+        <div class="flex flex-wrap items-center gap-4">
+            <twig:Form:Button href="{{ path('app_login') }}">
+                {{ 'security.unauthorized.login_link'|trans }}
+            </twig:Form:Button>
+            <a class="text-sm text-text underline hover:text-primary" href="{{ path('app_register') }}">
+                {{ 'security.unauthorized.register_link'|trans }}
+            </a>
+        </div>
+    </section>
+{% endblock %}

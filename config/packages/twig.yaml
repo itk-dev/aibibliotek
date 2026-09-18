@@ -1,0 +1,9 @@
+twig:
+    file_name_pattern: '*.twig'
+    # `brand_name`, `brand_tagline`, and `brand_initials` are exposed
+    # by `App\Twig\BrandExtension` so admin overrides stored on the
+    # `Setting` entity win over the `BRAND_*` env-var defaults.
+
+when@test:
+    twig:
+        strict_variables: true

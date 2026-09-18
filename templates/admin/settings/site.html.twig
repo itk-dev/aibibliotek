@@ -1,0 +1,76 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.settings.site.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'admin.settings.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'admin.settings.site.heading'|trans }}</twig:Heading>
+
+        {{ include('admin/settings/_tabs.html.twig') }}
+
+        <p class="mb-6 text-sm text-text">{{ 'admin.settings.site.lead'|trans }}</p>
+
+        {% for flash in app.flashes('success') %}
+            <twig:Alert type="success" class="mb-4">
+                {{ flash|trans }}
+            </twig:Alert>
+        {% endfor %}
+
+        {% if error %}
+            <twig:Alert type="danger" class="mb-4">
+                {{ error|trans }}
+            </twig:Alert>
+        {% endif %}
+
+        <form action="{{ path('app_admin_settings_site') }}" method="post" class="grid gap-4">
+            <twig:Form:Label for="inputBrandName" text="{{ 'admin.settings.site.fields.brand_name.label'|trans }}">
+                <twig:Form:TextInput
+                    id="inputBrandName"
+                    name="brand_name"
+                    value="{{ submitted.brand_name }}"
+                    autocomplete="off"
+                />
+                <p class="mt-1 text-sm text-text">{{ 'admin.settings.site.fields.brand_name.help'|trans }}</p>
+            </twig:Form:Label>
+
+            <twig:Form:Label for="inputBrandTagline" text="{{ 'admin.settings.site.fields.brand_tagline.label'|trans }}">
+                <twig:Form:TextInput
+                    id="inputBrandTagline"
+                    name="brand_tagline"
+                    value="{{ submitted.brand_tagline }}"
+                    autocomplete="off"
+                />
+                <p class="mt-1 text-sm text-text">{{ 'admin.settings.site.fields.brand_tagline.help'|trans }}</p>
+            </twig:Form:Label>
+
+            <twig:Form:Label for="inputBrandInitials" text="{{ 'admin.settings.site.fields.brand_initials.label'|trans }}">
+                <twig:Form:TextInput
+                    id="inputBrandInitials"
+                    name="brand_initials"
+                    value="{{ submitted.brand_initials }}"
+                    autocomplete="off"
+                />
+                <p class="mt-1 text-sm text-text">{{ 'admin.settings.site.fields.brand_initials.help'|trans }}</p>
+            </twig:Form:Label>
+
+            <twig:Form:Label for="inputHeroText" text="{{ 'admin.settings.site.fields.hero_text.label'|trans }}">
+                <twig:Form:Textarea
+                    id="inputHeroText"
+                    name="hero_text"
+                    value="{{ submitted.hero_text }}"
+                    rows="5"
+                />
+                <p class="mt-1 text-sm text-text">{{ 'admin.settings.site.fields.hero_text.help'|trans }}</p>
+            </twig:Form:Label>
+
+            <twig:Form:CsrfInput intent="admin-settings-site" />
+
+            <div class="flex items-center gap-4">
+                <twig:Form:Button type="submit">
+                    {{ 'admin.settings.submit'|trans }}
+                </twig:Form:Button>
+            </div>
+        </form>
+    </section>
+{% endblock %}

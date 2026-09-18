@@ -1,0 +1,27 @@
+{% props
+    action,
+    reset = false,
+    heading = 'catalog.filters.heading',
+    applyLabel = 'catalog.filters.apply',
+    resetLabel = 'catalog.filters.reset',
+%}
+<aside aria-label="{{ heading|trans }}"
+       class="flex flex-col gap-6 rounded-xl border border-line bg-surface p-5 lg:sticky lg:top-28">
+    <twig:Heading level="3" size="sm" weight="normal">{{ heading|trans }}</twig:Heading>
+
+    <form method="get" action="{{ action }}" class="flex flex-col gap-6"
+          data-controller="filter-autosubmit"
+          data-action="change->filter-autosubmit#submit">
+        {% block content %}{% endblock %}
+
+        <div class="flex flex-wrap items-center gap-3">
+            <twig:Form:Button shape="pill" size="sm">{{ applyLabel|trans }}</twig:Form:Button>
+            {% if reset %}
+                <a href="{{ action }}"
+                   class="text-sm text-text-muted no-underline hover:text-primary">
+                    {{ resetLabel|trans }}
+                </a>
+            {% endif %}
+        </div>
+    </form>
+</aside>

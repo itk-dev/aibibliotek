@@ -1,0 +1,12 @@
+{% props legend, class = '' %}
+{# Section card used across admin settings: rounded panel with a labelled #}
+{# `<legend>` and slot content for the section's form fields. `class` #}
+{# appends extra layout utilities without leaking the panel's design tokens #}
+{# to callers; `{{ attributes }}` forwards data-controller / data-*-value #}
+{# pairs so Stimulus controllers can wrap the section without an extra #}
+{# `<div>`. #}
+<fieldset class="grid gap-4 rounded-xl border border-line bg-surface p-6{{ class ? ' ' ~ class : '' }}"
+          {{ attributes }}>
+    <legend class="px-2 font-medium text-ink">{{ legend }}</legend>
+    {% block content %}{% endblock %}
+</fieldset>

@@ -1,1 +1,2 @@
-// Placeholder JavaScript entry. Replace when a frontend stack is adopted.
+import "./stimulus_bootstrap.js";
+import "choices.js/public/assets/styles/choices.css";

@@ -1,22 +1,51 @@
 {
-    "name": "itk-dev/ai-lib",
+    "name": "itk-dev/ai-reolen",
     "description": "AI Lib — Symfony application for itk-dev.",
-    "license": "proprietary",
+    "license": "MPL-2.0",
     "type": "project",
     "require": {
         "php": ">=8.4",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^3.2",
+        "doctrine/doctrine-migrations-bundle": "^4.0",
+        "doctrine/orm": "^3.6",
+        "itk-dev/entity-bundle": "^0.1.1",
+        "league/commonmark": "^2.10.1",
+        "opis/json-schema": "^2.6",
+        "symfony/asset": "^8.1",
+        "symfony/asset-mapper": "^8.1",
         "symfony/console": "~8.1.0",
         "symfony/dotenv": "~8.1.0",
         "symfony/flex": "^2",
+        "symfony/form": "~8.1.0",
         "symfony/framework-bundle": "~8.1.0",
+        "symfony/mailer": "~8.1.0",
+        "symfony/rate-limiter": "~8.1.0",
         "symfony/runtime": "~8.1.0",
-        "symfony/yaml": "~8.1.0"
+        "symfony/security-bundle": "~8.1.0",
+        "symfony/stimulus-bundle": "^3.2",
+        "symfony/translation": "~8.1.0",
+        "symfony/twig-bundle": "~8.1.0",
+        "symfony/ux-twig-component": "^3.2",
+        "symfony/validator": "~8.1.0",
+        "symfony/yaml": "~8.1.0",
+        "symfonycasts/reset-password-bundle": "^1.25",
+        "symfonycasts/tailwind-bundle": "^0.14",
+        "twig/extra-bundle": "^2.12 || ^3.0",
+        "twig/twig": "^2.12 || ^3.0"
     },
     "require-dev": {
+        "dama/doctrine-test-bundle": "^8.0",
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
         "ergebnis/composer-normalize": "^2.52",
-        "friendsofphp/php-cs-fixer": "^3.95",
+        "friendsofphp/php-cs-fixer": "^3.95.10",
+        "phpunit/phpunit": "^11.5",
+        "rregeer/phpunit-coverage-check": "^0.3.1",
+        "symfony/browser-kit": "~8.1.0",
+        "symfony/css-selector": "~8.1.0",
+        "symfony/maker-bundle": "^1.67",
+        "symfony/phpunit-bridge": "~8.1.0",
         "vincentlanglet/twig-cs-fixer": "^3.14"
     },
     "replace": {
@@ -34,6 +63,12 @@
     "conflict": {
         "symfony/symfony": "*"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/itk-dev/entity-bundle.git"
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true,
     "autoload": {
@@ -71,7 +106,8 @@
         ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
         }
     }
 }

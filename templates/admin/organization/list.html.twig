@@ -1,0 +1,65 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.organization.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section>
+        <twig:Eyebrow as="p" class="mb-4">{{ 'admin.organization.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'admin.organization.heading'|trans }}</twig:Heading>
+
+        {% for flash in app.flashes('success') %}
+            <twig:Alert type="success" class="mb-4">
+                {{ flash|trans }}
+            </twig:Alert>
+        {% endfor %}
+
+        <p class="mb-6">
+            <twig:Form:Button href="{{ path('app_admin_organization_new') }}">
+                {{ 'admin.organization.action.new'|trans }}
+            </twig:Form:Button>
+        </p>
+
+        {% if organizations is empty %}
+            <p class="text-sm text-text">{{ 'admin.organization.empty'|trans }}</p>
+        {% else %}
+            <twig:Table>
+                <twig:Table:Head>
+                    <twig:Table:Row>
+                        <twig:Table:HeadCell>{{ 'admin.organization.columns.name'|trans }}</twig:Table:HeadCell>
+                        <twig:Table:HeadCell>{{ 'admin.organization.columns.email_domains'|trans }}</twig:Table:HeadCell>
+                        <twig:Table:HeadCell>{{ 'admin.organization.columns.default_framework'|trans }}</twig:Table:HeadCell>
+                        <twig:Table:HeadCell align="right">{{ 'admin.organization.columns.actions'|trans }}</twig:Table:HeadCell>
+                    </twig:Table:Row>
+                </twig:Table:Head>
+                <twig:Table:Body>
+                    {% for organization in organizations %}
+                        <twig:Table:Row>
+                            <twig:Table:Cell>
+                                <span class="font-medium text-ink">{{ organization.name }}</span>
+                            </twig:Table:Cell>
+                            <twig:Table:Cell>{{ organization.emailDomains|join(', ') }}</twig:Table:Cell>
+                            <twig:Table:Cell>{{ organization.defaultFramework }}</twig:Table:Cell>
+                            <twig:Table:Cell align="right">
+                                <div class="inline-flex flex-wrap items-center gap-2">
+                                    <a class="text-sm text-primary underline hover:text-primary-hover"
+                                       href="{{ path('app_admin_organization_edit', {id: organization.id}) }}">
+                                        {{ 'admin.organization.action.edit'|trans }}
+                                    </a>
+                                    <form action="{{ path('app_admin_organization_delete', {id: organization.id}) }}"
+                                          method="post"
+                                          class="inline"
+                                          onsubmit="return confirm('{{ 'admin.organization.action.delete_confirm'|trans|e('js') }}');">
+                                        <twig:Form:CsrfInput intent="admin-organization-delete" />
+                                        <twig:Form:Button type="submit" size="sm">
+                                            {{ 'admin.organization.action.delete'|trans }}
+                                        </twig:Form:Button>
+                                    </form>
+                                </div>
+                            </twig:Table:Cell>
+                        </twig:Table:Row>
+                    {% endfor %}
+                </twig:Table:Body>
+            </twig:Table>
+        {% endif %}
+    </section>
+{% endblock %}

@@ -1,0 +1,39 @@
+### Block merge on label
+###
+### Fails the check while a `do-not-merge` label is applied to the
+### pull request. The label is used to gate merges that depend on
+### something landing elsewhere (another PR, an upstream release, a
+### review by a specific team).
+###
+### Removing the label and re-running the check turns it green. To
+### make the merge button itself unavailable while the label is set,
+### this check has to be marked as a required status check in the
+### repository's branch-protection rules.
+
+name: Block merge on label
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+            - labeled
+            - unlabeled
+
+jobs:
+    block-on-label:
+        name: Block on do-not-merge label
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check for do-not-merge label
+              env:
+                  LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+              run: |
+                  echo "Labels on this PR: $LABELS"
+                  if echo "$LABELS" | grep -qx '"do-not-merge"' \
+                      || echo "$LABELS" | grep -q '"do-not-merge"'; then
+                      echo "::error::This PR carries the 'do-not-merge' label. Remove the label once the blocking dependency is resolved."
+                      exit 1
+                  fi
+                  echo "No blocking label present."

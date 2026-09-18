@@ -1,0 +1,11 @@
+{% props href, active = false %}
+{#
+    Primary-nav link. Pass `:active="…boolean…"` on the current
+    route so the link carries `aria-current="page"` and a
+    distinct visual treatment (bold + ink colour) instead of
+    the muted default. Inactive links stay muted with a hover
+    lift to the ink tone.
+#}
+<a class="no-underline transition-colors {% if active %}font-semibold text-ink{% else %}text-text-muted hover:text-ink{% endif %}"
+   href="{{ href }}"
+   {% if active %}aria-current="page"{% endif %}>{% block content %}{% endblock %}</a>

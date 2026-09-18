@@ -1,0 +1,15 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ 'admin.organization.new.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-2xl">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'admin.organization.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-6">{{ 'admin.organization.new.heading'|trans }}</twig:Heading>
+
+        {{ include('admin/organization/_form.html.twig', {
+            form: form,
+            submit_label: 'admin.organization.action.create',
+        }) }}
+    </section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{# Hamburger button. Class/ARIA/data-action are referenced by app.css and nav_toggle_controller.js — preserve verbatim. #}
+<button class="nav-toggle ml-auto flex h-10 w-10 flex-col items-center justify-center gap-[3px] rounded-md border border-line bg-surface md:hidden"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="{{ 'nav.toggle_label'|trans }}"
+        data-action="click->nav-toggle#toggle">
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+    <span class="nav-toggle-bar"></span>
+</button>

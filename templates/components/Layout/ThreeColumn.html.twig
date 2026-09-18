@@ -1,0 +1,24 @@
+{% props class = '' %}
+{#
+    Three-column page layout with a broad middle.
+
+    Use for catalogue / search surfaces where filters or secondary
+    navigation sit beside a wide stream of results, optionally with
+    a right rail. The grid collapses to a single stacked column
+    below 768px and wraps the end column to a second row between
+    768px and 1279px, matching the source mocks.
+
+    Slots (all named):
+    - `start` — narrow left column (filters / secondary nav, ~260px).
+    - `main`  — broad middle column.
+    - `end`   — right rail (~280px on wide viewports). May be left
+                empty; the slot still occupies a grid cell so the
+                main column keeps its column-width.
+
+    Stretches to fill the wide `<main>` container (≈ 1600px).
+#}
+<div class="layout-three-column{{ class ? ' ' ~ class : '' }}">
+    <aside>{% block start %}{% endblock %}</aside>
+    <div>{% block main %}{% endblock %}</div>
+    <aside>{% block end %}{% endblock %}</aside>
+</div>

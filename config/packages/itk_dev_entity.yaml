@@ -1,0 +1,38 @@
+# itk-dev/entity-bundle — shared entity foundation (see docs/adr/007).
+#
+# Features are opt-in twice: an entity opts in via interface + trait (here, all
+# of them are composed on App\Entity\AbstractEntity), and the bundle opts in via
+# the per-feature `enabled` flag below. Both are required for a feature to act.
+itk_dev_entity:
+    # Concrete User class behind UserInterface; resolves blame relations and is
+    # required whenever audit or blameable is enabled.
+    user_class: App\Entity\User
+
+    # Directories scanned for #[ITKDevEntity] classes (audit + anonymization
+    # auto-discovery). Matches the project's Doctrine mapping path.
+    entity_paths: ['%kernel.project_dir%/src/Entity']
+
+    # Sets createdAt on insert and updatedAt on every flush.
+    timestampable:
+        enabled: true
+
+    # Sets createdBy on insert and modifiedBy on every change from the security token.
+    blameable:
+        enabled: true
+
+    # Adds archivedAt + a Doctrine filter that hides archived rows by default.
+    archivable:
+        enabled: true
+
+    # Registers #[Auditable] entities with damienharper/auditor-bundle, writing
+    # field-level change history to per-entity `*_audit` tables.
+    audit:
+        enabled: true
+
+    # Discovers #[Anonymize] PII properties and exposes the privacy:anonymize* commands.
+    anonymization:
+        enabled: true
+
+    # Deliberately OFF: this catalogue prefers archiving over soft delete (ADR 007).
+    soft_delete:
+        enabled: false

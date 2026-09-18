@@ -1,0 +1,10 @@
+{% props intent %}
+{# Hidden CSRF token field. `intent` names the CSRF token intent so the #}
+{# server-side check with the same string succeeds. The `csrf-protection` #}
+{# Stimulus controller mints a fresh token + paired cookie at submit time #}
+{# via the SymfonyCasts bundle, so the value emitted here is only the #}
+{# initial page-render token — the controller rotates it on submit. #}
+<input type="hidden"
+       name="_token"
+       data-controller="csrf-protection"
+       value="{{ csrf_token(intent) }}">

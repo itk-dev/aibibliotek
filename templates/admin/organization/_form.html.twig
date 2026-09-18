@@ -1,0 +1,15 @@
+{{ form_start(form, {attr: {class: 'grid gap-4 max-w-xl'}}) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.emailDomains) }}
+    {{ form_row(form.defaultFramework) }}
+
+    <div class="flex items-center gap-4">
+        <twig:Form:Button type="submit">
+            {{ submit_label|trans }}
+        </twig:Form:Button>
+        <a class="text-sm text-text underline hover:text-primary"
+           href="{{ path('app_admin_organization_index') }}">
+            {{ 'admin.organization.action.cancel'|trans }}
+        </a>
+    </div>
+{{ form_end(form) }}

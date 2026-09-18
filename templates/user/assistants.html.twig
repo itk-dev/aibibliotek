@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'user.assistants.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="grid gap-8">
+        <header class="grid gap-3">
+            <twig:Eyebrow as="p">{{ 'user.assistants.eyebrow'|trans }}</twig:Eyebrow>
+            <twig:Heading level="1">{{ 'user.assistants.heading'|trans }}</twig:Heading>
+            <p class="max-w-[60ch] text-base text-text">{{ 'user.assistants.lead'|trans }}</p>
+        </header>
+
+        {% if assistants is empty %}
+            <twig:EmptyState heading="user.assistants.empty.heading" help="user.assistants.empty.help" />
+        {% else %}
+            {#
+                Full-width list — one row per assistant. The title
+                links to the detail page; the three right-aligned
+                actions ("Gå til assistent" text link, pencil-icon
+                edit, trash-icon delete) sit as siblings so the
+                whole row isn't a single clickable target.
+            #}
+            <ul role="list" aria-label="{{ 'user.assistants.list_label'|trans }}" class="grid gap-3">
+                {% for assistant in assistants %}
+                    <li class="flex flex-wrap items-start justify-between gap-4 rounded-lg border border-line bg-surface px-4 py-3">
+                        <div class="min-w-0 flex-1">
+                            <a class="text-base font-semibold text-ink no-underline hover:text-primary hover:underline"
+                               href="{{ path('app_assistant_show', {id: assistant.id}) }}">
+                                {{ assistant.title }}
+                            </a>
+                            <p class="mt-1 line-clamp-2 text-sm text-text-muted">
+                                {{ assistant.tagline ?? assistant.description }}
+                            </p>
+                            <p class="mt-2 text-xs text-text-muted">
+                                {{ assistant.framework|framework_label }} · {{ assistant.languageModel }}
+                                {% if assistant.updatedAt %}
+                                    · {{ 'user.assistants.updated_at'|trans({'%date%': assistant.updatedAt|format_date(locale: 'da')}) }}
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="flex shrink-0 items-center gap-2">
+                            <a class="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-ink no-underline transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/40"
+                               href="{{ path('app_assistant_show', {id: assistant.id}) }}">
+                                {{ 'user.assistants.action.view'|trans }}
+                            </a>
+                            {% if is_granted(constant('App\\Security\\Voter\\EditAssistantVoter::EDIT'), assistant) %}
+                                <twig:Form:IconButton
+                                    href="{{ path('app_assistant_edit', {id: assistant.id}) }}"
+                                    tone="primary"
+                                    aria-label="{{ 'user.assistants.action.edit'|trans }}"
+                                    title="{{ 'user.assistants.action.edit'|trans }}"
+                                >
+                                    <twig:Icon:Pencil class="h-4 w-4" />
+                                </twig:Form:IconButton>
+                            {% endif %}
+                            {% if is_granted(constant('App\\Security\\Voter\\EditAssistantVoter::DELETE'), assistant) %}
+                                <form action="{{ path('app_assistant_delete', {id: assistant.id}) }}"
+                                      method="post"
+                                      onsubmit="return confirm('{{ 'user.assistants.action.delete_confirm'|trans({'%title%': assistant.title})|e('js') }}');"
+                                      class="inline">
+                                    <twig:Form:CsrfInput intent="{{ 'assistant-delete-' ~ assistant.id }}" />
+                                    <twig:Form:IconButton
+                                        type="submit"
+                                        tone="danger"
+                                        aria-label="{{ 'user.assistants.action.delete'|trans }}"
+                                        title="{{ 'user.assistants.action.delete'|trans }}"
+                                    >
+                                        <twig:Icon:Trash class="h-4 w-4" />
+                                    </twig:Form:IconButton>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+{% endblock %}

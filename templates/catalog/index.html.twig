@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'catalog.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <twig:Layout:ThreeColumn>
+        <twig:block name="start">
+            <div class="flex flex-col gap-6">
+                <twig:Catalog:SortForm criteria="{{ criteria }}" options="{{ sortOptions }}" />
+
+                <twig:Filter:Rail
+                    action="{{ path('app_assistant_catalog') }}"
+                    reset="{{ not criteria.isEmpty }}"
+                >
+                    {% set query = criteria.toQueryArray %}
+                    {# Carry the search query and sort so toggling a facet keeps them. #}
+                    {% if criteria.q %}
+                        <input type="hidden" name="q" value="{{ criteria.q }}">
+                    {% endif %}
+                    {% if query.sort is defined %}
+                        <input type="hidden" name="sort" value="{{ query.sort }}">
+                    {% endif %}
+
+                    <twig:Filter:Group label="catalog.filters.language_model">
+                        {% for value, count in facets.language_model %}
+                            <twig:Filter:FacetItem
+                                name="language_model[]"
+                                value="{{ value }}"
+                                label="{{ value }}"
+                                count="{{ count }}"
+                                checked="{{ value in criteria.languageModels }}"
+                            />
+                        {% endfor %}
+                    </twig:Filter:Group>
+
+                    <twig:Filter:Group label="catalog.filters.framework">
+                        {% for value, count in facets.framework %}
+                            <twig:Filter:FacetItem
+                                name="framework[]"
+                                value="{{ value }}"
+                                label="{{ value|framework_label }}"
+                                count="{{ count }}"
+                                checked="{{ value in criteria.frameworks }}"
+                            />
+                        {% endfor %}
+                    </twig:Filter:Group>
+
+                    <twig:Filter:Group label="catalog.filters.organization">
+                        {% for value, count in facets.organization %}
+                            <twig:Filter:FacetItem
+                                name="organization[]"
+                                value="{{ value }}"
+                                label="{{ value }}"
+                                count="{{ count }}"
+                                checked="{{ value in criteria.organizations }}"
+                            />
+                        {% endfor %}
+                    </twig:Filter:Group>
+
+                    {# Facet keys are the enum's backing values, so each is
+                       resolved to its translated label for display while the
+                       checkbox still submits the machine value. #}
+                    <twig:Filter:Group label="catalog.filters.data_sensitivity">
+                        {% for value, count in facets.data_sensitivity %}
+                            <twig:Filter:FacetItem
+                                name="data_sensitivity[]"
+                                value="{{ value }}"
+                                label="{{ ('assistant.data_sensitivity.' ~ value ~ '.label')|trans }}"
+                                count="{{ count }}"
+                                checked="{{ value in criteria.dataSensitivities }}"
+                            />
+                        {% endfor %}
+                    </twig:Filter:Group>
+
+                    <twig:Filter:Group label="catalog.filters.tags">
+                        {% for value, count in facets.tag %}
+                            <twig:Filter:FacetItem
+                                name="tag[]"
+                                value="{{ value }}"
+                                label="{{ value }}"
+                                count="{{ count }}"
+                                checked="{{ value in criteria.tags }}"
+                            />
+                        {% endfor %}
+                    </twig:Filter:Group>
+                </twig:Filter:Rail>
+            </div>
+        </twig:block>
+
+        <twig:block name="main">
+            <section class="flex flex-col gap-8">
+                {# Heading kept for the document outline / screen readers, hidden visually. #}
+                <h1 class="sr-only">{{ 'catalog.heading'|trans }}</h1>
+
+                <div class="flex flex-wrap items-center gap-4">
+                    <twig:Catalog:SearchBar criteria="{{ criteria }}" />
+
+                    <p class="ml-auto text-sm text-text-muted">
+                        {% if metadata.total == 1 %}
+                            {{ 'catalog.result_count.one'|trans }}
+                        {% else %}
+                            {{ 'catalog.result_count.many'|trans({'%count%': metadata.total}) }}
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if metadata.total == 0 %}
+                    <twig:EmptyState heading="catalog.empty.heading" help="catalog.empty.help" />
+                {% else %}
+                    <twig:Catalog:ResultGrid>
+                        {% for assistant in results %}
+                            <li>
+                                <twig:Catalog:AssistantCard
+                                    assistant="{{ assistant }}"
+                                    href="{{ path('app_assistant_show', {id: assistant.id}) }}"
+                                />
+                            </li>
+                        {% endfor %}
+                    </twig:Catalog:ResultGrid>
+
+                    {% if metadata.pageCount > 1 %}
+                        <twig:Pagination:Nav
+                            route="app_assistant_catalog"
+                            query="{{ criteria.toQueryArray }}"
+                            metadata="{{ metadata }}"
+                        />
+                    {% endif %}
+                {% endif %}
+            </section>
+        </twig:block>
+
+        <twig:block name="end">
+            <div class="flex flex-col gap-4">
+                <twig:Catalog:SidebarCard title="catalog.active.heading">
+                    {% if criteria.isEmpty %}
+                        <p class="text-sm text-text-muted">{{ 'catalog.active.empty'|trans }}</p>
+                    {% else %}
+                        <ul role="list" class="flex flex-wrap gap-2">
+                            {% for filter in criteria.activeFilters %}
+                                <li>
+                                    {# `|trans` is a no-op for the facets whose chip
+                                       label is already the raw value; the
+                                       data-sensitivity chip carries a
+                                       translation key instead. #}
+                                    {% set filter_label = filter.label|trans %}
+                                    <twig:Filter:Chip
+                                        href="{{ path('app_assistant_catalog', filter.removeQuery) }}"
+                                        label="{{ filter_label }}"
+                                        removeLabel="{{ 'catalog.filters.chip_remove'|trans({'%filter%': filter_label}) }}"
+                                    />
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </twig:Catalog:SidebarCard>
+
+                <twig:Catalog:SidebarCard title="catalog.recent.heading">
+                    {% if recentSearches is empty %}
+                        <p class="text-sm text-text-muted">{{ 'catalog.recent.empty'|trans }}</p>
+                    {% else %}
+                        <ul role="list" class="flex flex-col gap-1.5">
+                            {% for term in recentSearches %}
+                                <li>
+                                    <a href="{{ path('app_assistant_catalog', {q: term}) }}"
+                                       class="text-sm text-primary no-underline hover:underline">{{ term }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </twig:Catalog:SidebarCard>
+
+                {% if metadata.total > 0 %}
+                    <twig:Catalog:SidebarCard title="catalog.export.heading">
+                        <p class="text-sm leading-relaxed text-text-muted">
+                            {{ 'catalog.export.body'|trans({'%count%': metadata.total}) }}
+                        </p>
+                    </twig:Catalog:SidebarCard>
+                {% endif %}
+            </div>
+        </twig:block>
+    </twig:Layout:ThreeColumn>
+{% endblock %}

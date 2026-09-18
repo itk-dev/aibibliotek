@@ -1,0 +1,30 @@
+{#
+    Viden tab — surfaces the assistant's knowledge guidance.
+
+    The intro paragraph is a static, translated statement of policy:
+    the guidance is shareable between kommuner, but the underlying
+    knowledge/data files are not. The body renders the entity's
+    `knowledgeDescription`, using the same `paragraphs` +
+    `whitespace-pre-wrap` treatment the Beskrivelse tab uses so
+    single line breaks stay visible while blank-line boundaries
+    split into their own <p>.
+#}
+<div class="grid gap-4">
+    <twig:Heading level="2" size="xs">
+        {{ 'assistant.detail.viden.heading'|trans }}
+    </twig:Heading>
+    <p class="text-sm text-text-muted">
+        {{ 'assistant.detail.viden.intro'|trans }}
+    </p>
+    {% if assistant.knowledgeDescription %}
+        <div class="grid gap-4 text-base leading-relaxed text-text">
+            {% for paragraph in assistant.knowledgeDescription|paragraphs %}
+                <p class="whitespace-pre-wrap">{{ paragraph }}</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-sm text-text-muted italic">
+            {{ 'assistant.detail.viden.empty'|trans }}
+        </p>
+    {% endif %}
+</div>

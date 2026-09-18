@@ -13,3 +13,15 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+        # Quiet the stray "[error] Uncaught PHP Exception …" lines that
+        # 404- and 401/403-asserting tests would otherwise print to STDERR
+        # via the default minimalist HttpKernel logger. Drop the level below
+        # the logger's STDERR threshold so the test output stays clean while
+        # the deny / not-found paths themselves still run and are asserted.
+        exceptions:
+            Symfony\Component\HttpKernel\Exception\NotFoundHttpException:
+                log_level: info
+            Symfony\Component\Security\Core\Exception\AccessDeniedException:
+                log_level: info
+            Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException:
+                log_level: info

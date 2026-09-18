@@ -1,0 +1,12 @@
+{% props align = 'left' %}
+{# Body cell. `align` (`left` | `right` | `center`, default left) governs #}
+{# horizontal alignment; use `align="right"` on the last cell of each row #}
+{# to right-flush the actions column against the table edge. #}
+{% set alignClass = {
+    left: 'text-left',
+    right: 'text-right',
+    center: 'text-center',
+}[align] ?? 'text-left' %}
+<td class="px-4 py-3 text-sm text-text {{ alignClass }}">
+    {% block content %}{% endblock %}
+</td>

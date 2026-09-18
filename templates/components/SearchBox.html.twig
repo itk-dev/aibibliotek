@@ -1,0 +1,19 @@
+{% props legend = 'search.legend', placeholder, submitLabel = 'search.submit', action = '#', name = 'q', inputId = 'frontpage-search' %}
+<section aria-label="{{ 'search.legend'|trans }}">
+    <twig:Eyebrow class="mb-3">{{ legend|trans }}</twig:Eyebrow>
+    <form class="flex w-full max-w-2xl flex-col gap-3 rounded-xl border border-line bg-surface p-2 shadow-sm sm:flex-row sm:items-center"
+          role="search"
+          action="{{ action }}"
+          method="get">
+        <twig:Form:Label for="{{ inputId }}" text="{{ legend|trans }}" srOnly />
+        <input id="{{ inputId }}"
+               class="flex-1 rounded-lg border-0 bg-transparent px-3 py-2 text-base text-ink placeholder:italic placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/40"
+               type="search"
+               name="{{ name }}"
+               placeholder="{{ placeholder|trans }}"
+               autocomplete="off">
+        <twig:Form:Button type="submit">
+            {{ submitLabel|trans }}
+        </twig:Form:Button>
+    </form>
+</section>

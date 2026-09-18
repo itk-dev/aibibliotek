@@ -1,0 +1,58 @@
+{#
+    Step 3 body — the wizard's receipt.
+
+    Two entry paths render this partial: the create wizard
+    (`draft.editingAssistantId is null`) and the edit wizard
+    (`draft.editingAssistantId is not null`). The copy differs
+    per path but the shape is identical: a heading, a permalink
+    to the persisted row, and three left-aligned actions. The
+    controller has already persisted / updated the assistant and
+    stashed its id on `draft.createdAssistantId` by the time this
+    renders.
+#}
+{% set is_edit = draft.editingAssistantId is not null %}
+{% set copy_scope = is_edit ? 'assistant.edit.step_receipt' : 'assistant.new.step_receipt' %}
+<div class="grid gap-6">
+    <div class="grid gap-2">
+        <twig:Heading level="2" size="md" class="text-primary">
+            {{ (copy_scope ~ '.heading')|trans }}
+        </twig:Heading>
+        <p class="text-sm text-text">{{ (copy_scope ~ '.body')|trans({'%title%': draft.title}) }}</p>
+    </div>
+
+    {% if draft.createdAssistantId %}
+        {% set permalink = url('app_assistant_show', {id: draft.createdAssistantId}) %}
+        <div class="rounded-lg border border-line bg-surface-2 px-4 py-3 text-sm">
+            <p class="mb-1 text-text-muted">{{ 'assistant.new.step_receipt.permalink_label'|trans }}</p>
+            <a class="text-primary underline break-all hover:text-primary-hover" href="{{ permalink }}">
+                {{ permalink }}
+            </a>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <twig:Form:Button href="{{ path('app_assistant_show', {id: draft.createdAssistantId}) }}">
+                {{ 'assistant.new.step_receipt.go_to_assistant'|trans }}
+            </twig:Form:Button>
+            {% if not is_edit %}
+                {{ form_widget(flow.navigator.finish, {
+                    label: 'assistant.new.action.share_another'|trans,
+                    attr: {class: 'rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-ink transition-colors hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary/40'},
+                }) }}
+            {% endif %}
+            <a class="text-sm text-text underline hover:text-primary" href="{{ path('app_assistant_catalog') }}">
+                {{ 'assistant.new.step_receipt.back_to_catalog'|trans }}
+            </a>
+        </div>
+    {% endif %}
+</div>
+{# `flow.receipt` is a childless compound (AssistantReceiptStepType has no
+   fields — the step is render-only), so `form_end` would otherwise emit
+   its default humanized legend "Receipt" at the bottom of the page. Mark
+   it rendered here to suppress that. #}
+{% do flow.receipt.setRendered %}
+{# `flow.navigator.previous` is still `include_if`-defined on the last step
+   (the cursor can technically move back). We only surface finish + the two
+   anchors on the receipt, so mark the whole navigator rendered here to keep
+   `form_end` from auto-emitting the leftover previous button below the
+   actions row. #}
+{% do flow.navigator.setRendered %}

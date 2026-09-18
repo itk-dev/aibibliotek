@@ -19,5 +19,11 @@ services:
     App\:
         resource: '../src/'
 
+    # CommonMark converter used by App\Mail\EmailTemplateRenderer to
+    # render admin-editable Markdown email bodies. Default config
+    # is fine — the templates are admin-trusted, so HTML in the
+    # source is allowed through.
+    League\CommonMark\CommonMarkConverter: ~
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

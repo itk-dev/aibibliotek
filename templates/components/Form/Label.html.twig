@@ -1,0 +1,13 @@
+{% props for, text, srOnly = false %}
+{# `srOnly` renders a standalone, visually-hidden label for inputs that #}
+{# already carry visible context (a heading or placeholder), so the label #}
+{# stays available to screen readers without duplicating that context on #}
+{# screen. The default renders a visible label that wraps its input. #}
+{% if srOnly %}
+<label class="sr-only" for="{{ for }}">{{ text }}</label>
+{% else %}
+<label class="grid gap-1 text-sm" for="{{ for }}">
+    <span class="font-medium text-ink">{{ text }}</span>
+    {% block content %}{% endblock %}
+</label>
+{% endif %}

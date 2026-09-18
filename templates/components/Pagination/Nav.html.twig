@@ -1,0 +1,46 @@
+{% props
+    route,
+    query = {},
+    metadata,
+    label = 'catalog.pagination.label',
+    previousLabel = 'catalog.pagination.previous',
+    nextLabel = 'catalog.pagination.next',
+    pageLabel = 'catalog.pagination.page',
+%}
+<nav aria-label="{{ label|trans }}"
+     class="flex items-center justify-center gap-2">
+    {% if metadata.page > 1 %}
+        <a href="{{ path(route, query|merge({page: metadata.page - 1})) }}"
+           class="inline-flex items-center rounded-full border border-line px-3 py-1 text-sm text-text no-underline hover:border-border-strong hover:text-primary"
+           rel="prev">
+            {{ previousLabel|trans }}
+        </a>
+    {% endif %}
+
+    <ul role="list" class="flex items-center gap-1">
+        {% for n in 1..metadata.pageCount %}
+            <li>
+                {% if n == metadata.page %}
+                    <span aria-current="page"
+                          class="inline-flex h-9 min-w-[2.25rem] items-center justify-center rounded-full bg-primary px-3 text-sm font-medium text-white">
+                        {{ n }}
+                    </span>
+                {% else %}
+                    <a href="{{ path(route, query|merge({page: n})) }}"
+                       class="inline-flex h-9 min-w-[2.25rem] items-center justify-center rounded-full border border-line px-3 text-sm text-text no-underline hover:border-border-strong hover:text-primary"
+                       aria-label="{{ pageLabel|trans({'%n%': n}) }}">
+                        {{ n }}
+                    </a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if metadata.page < metadata.pageCount %}
+        <a href="{{ path(route, query|merge({page: metadata.page + 1})) }}"
+           class="inline-flex items-center rounded-full border border-line px-3 py-1 text-sm text-text no-underline hover:border-border-strong hover:text-primary"
+           rel="next">
+            {{ nextLabel|trans }}
+        </a>
+    {% endif %}
+</nav>

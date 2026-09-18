@@ -1,0 +1,16 @@
+{#
+    A titled box for the catalogue's right-hand sidebar.
+
+    Shares the bordered-surface look of the filter rail and sort box, with an
+    eyebrow-style heading and a content slot. Used for the "Aktive filtre",
+    "Seneste søgninger" and "Klar til download" boxes.
+
+    props:
+      - title: translation key for the box heading
+#}
+{% props title %}
+<aside aria-label="{{ title|trans }}"
+       class="flex flex-col gap-3 rounded-xl border border-line bg-surface p-5">
+    <twig:Heading level="2" size="caption">{{ title|trans }}</twig:Heading>
+    {% block content %}{% endblock %}
+</aside>

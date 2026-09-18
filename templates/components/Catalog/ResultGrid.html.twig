@@ -1,0 +1,6 @@
+{% props label = 'catalog.results.label' %}
+<ul role="list"
+    aria-label="{{ label|trans }}"
+    class="flex flex-col gap-4">
+    {% block content %}{% endblock %}
+</ul>

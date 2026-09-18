@@ -1,0 +1,11 @@
+# Danish strings rendered in the `security` translation domain.
+#
+# Symfony Security's CustomUserMessageAccountStatusException carries a
+# `messageKey` that the login template renders as
+# `error.messageKey|trans(error.messageData, 'security')`. The keys
+# below match the messageKeys thrown by App\Security\AccountStatusChecker.
+
+account:
+    awaiting_email_confirmation: "Din konto er oprettet, men du skal bekræfte din e-mailadresse, før du kan logge ind."
+    pending: "Din konto venter på godkendelse fra en administrator."
+    blocked: "Din konto er spærret. Kontakt en administrator for at få den åbnet igen."

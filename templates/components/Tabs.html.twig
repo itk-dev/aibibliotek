@@ -1,0 +1,9 @@
+{% props ariaLabel = null, class = '' %}
+{# Tab-style sub-navigation. Slot in `<twig:Tabs:Tab>` children. #}
+{# `ariaLabel` is a translation key for the wrapper `<nav>`'s accessible name; #}
+{# omit it when the surrounding context already names the navigation. #}
+{# `class` appends extra utility classes (e.g. spacing) without leaking #}
+{# design tokens to callers. #}
+<nav{% if ariaLabel %} aria-label="{{ ariaLabel|trans }}"{% endif %} class="flex flex-wrap gap-6 border-b border-line text-sm{{ class ? ' ' ~ class : '' }}">
+    {% block content %}{% endblock %}
+</nav>

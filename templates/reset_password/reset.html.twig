@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'security.reset_password.reset.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'security.reset_password.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-4">{{ 'security.reset_password.reset.heading'|trans }}</twig:Heading>
+        <p class="mb-6 text-sm text-text">{{ 'security.reset_password.reset.lead'|trans }}</p>
+
+        {{ form_start(resetForm, {attr: {class: 'grid gap-4'}}) }}
+            {% set firstPassword = resetForm.plainPassword.first %}
+            {% set secondPassword = resetForm.plainPassword.second %}
+
+            <twig:Form:Label for="{{ firstPassword.vars.id }}" text="{{ 'security.reset_password.reset.new_password_label'|trans }}">
+                <twig:Form:TextInput
+                    id="{{ firstPassword.vars.id }}"
+                    name="{{ firstPassword.vars.full_name }}"
+                    type="password"
+                    autocomplete="new-password"
+                    required
+                    autofocus
+                />
+                {% do firstPassword.setRendered %}
+                {{ form_errors(firstPassword) }}
+            </twig:Form:Label>
+
+            <twig:Form:Label for="{{ secondPassword.vars.id }}" text="{{ 'security.reset_password.reset.repeat_password_label'|trans }}">
+                <twig:Form:TextInput
+                    id="{{ secondPassword.vars.id }}"
+                    name="{{ secondPassword.vars.full_name }}"
+                    type="password"
+                    autocomplete="new-password"
+                    required
+                />
+                {% do secondPassword.setRendered %}
+                {{ form_errors(secondPassword) }}
+            </twig:Form:Label>
+
+            <twig:Form:Button type="submit">
+                {{ 'security.reset_password.reset.submit'|trans }}
+            </twig:Form:Button>
+        {{ form_end(resetForm) }}
+    </section>
+{% endblock %}

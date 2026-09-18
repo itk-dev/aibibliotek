@@ -1,0 +1,87 @@
+# Cross-system base-model map.
+#
+# Translates a canonical model id to the id each target system expects on
+# export, so an assistant imported from one tool re-imports cleanly into
+# another. Keyed by a neutral canonical id; `aliases` fold the spellings a
+# source format might carry (case-insensitive) onto that key.
+#
+# A `null` target means the model has no equivalent in that system: the
+# exporter passes the canonical name through and warns, rather than
+# silently substituting a different model (which would change behaviour).
+#
+# Models absent from this map are handled by `fallback: passthrough` — the
+# raw value is used verbatim on export.
+fallback: passthrough
+
+models:
+    gpt-4o:
+        label: GPT-4o
+        aliases:
+            - gpt-4o-2024-08-06
+            - gpt-4o-2024-11-20
+            - openai/gpt-4o
+            - chatgpt-4o-latest
+        targets:
+            openai: gpt-4o
+            openwebui: gpt-4o
+            librechat: gpt-4o
+            ollama: null
+
+    gpt-4o-mini:
+        label: GPT-4o mini
+        aliases:
+            - gpt-4o-mini-2024-07-18
+            - openai/gpt-4o-mini
+        targets:
+            openai: gpt-4o-mini
+            openwebui: gpt-4o-mini
+            librechat: gpt-4o-mini
+            ollama: null
+
+    o3-mini:
+        label: o3-mini
+        aliases:
+            - openai/o3-mini
+        targets:
+            openai: o3-mini
+            openwebui: o3-mini
+            librechat: o3-mini
+            ollama: null
+
+    llama-3.1:
+        label: Llama 3.1
+        aliases:
+            - llama3.1
+            - llama3.1:latest
+            - llama3.1:8b
+            - meta-llama/Llama-3.1
+        targets:
+            ollama: llama3.1
+            openwebui: llama3.1:latest
+            librechat: llama3.1
+            openai: null
+
+    llama-3.2:
+        label: Llama 3.2
+        aliases:
+            - llama3.2
+            - llama3.2:latest
+            - llama3.2:3b
+            - meta-llama/Llama-3.2
+        targets:
+            ollama: llama3.2
+            openwebui: llama3.2:latest
+            librechat: llama3.2
+            openai: null
+
+    mistral:
+        label: Mistral
+        aliases:
+            - mistral:latest
+            - mistral-7b
+            - mistralai/Mistral-7B
+        targets:
+            ollama: mistral
+            openwebui: mistral:latest
+            librechat: mistral
+            openai: null

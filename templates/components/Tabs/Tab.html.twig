@@ -1,0 +1,10 @@
+{% props href, active = false %}
+{# Single tab inside `<twig:Tabs>`. `active` marks the current selection — #}
+{# pass it as `:active="…boolean…"` so the prop receives a real bool. #}
+{# The active tab carries an underline and `aria-current="page"`; inactive #}
+{# tabs sit on a transparent border so the row baseline stays even. #}
+<a href="{{ href }}"
+   {% if active %}aria-current="page"{% endif %}
+   class="-mb-px border-b-2 px-1 pb-3 font-medium {% if active %}border-primary text-ink{% else %}border-transparent text-text hover:text-ink{% endif %}">
+    {% block content %}{% endblock %}
+</a>

@@ -1,0 +1,9 @@
+{# Header shell. Default slot receives the nav menu. #}
+<header class="border-b border-line bg-surface">
+    <div class="mx-auto flex max-w-wide flex-wrap items-center gap-x-8 gap-y-3 px-[clamp(20px,4vw,56px)] py-4"
+         data-controller="nav-toggle">
+        <twig:Layout:Brand href="{{ path('app_frontpage') }}" />
+        <twig:Nav:Toggle />
+        {% block content %}{% endblock %}
+    </div>
+</header>

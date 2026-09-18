@@ -1,0 +1,7 @@
+{% props class = '' %}
+{# Generic <dl> wrapper. `class` lets the call site supply grid / column #}
+{# configuration so the same list can render as 1-col on profile pages #}
+{# and 2-col on the assistant detail's attribute grid. #}
+<dl class="grid gap-4{{ class ? ' ' ~ class : '' }}">
+    {% block content %}{% endblock %}
+</dl>

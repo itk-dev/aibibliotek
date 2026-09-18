@@ -1,0 +1,43 @@
+{% props
+    type = 'submit',
+    variant = 'primary',
+    shape = 'rounded',
+    size = 'md',
+    href = null,
+%}
+{# `variant`, `shape`, and `size` map to Tailwind utility groups so future #}
+{# variants (secondary, danger, etc.), shapes, and sizes can be added in #}
+{# one place. When `href` is set the component renders an anchor with the #}
+{# same shape so links can carry the button affordance without nesting an #}
+{# <a> inside a <button> (which is invalid HTML and breaks activation). #}
+{# The `link` variant is a special case: a text-styled button that sits #}
+{# inline in prose (e.g. the "Preview" trigger next to Markdown help text) #}
+{# and therefore drops the pill shape and the size padding. #}
+{% set variants = {
+    primary: 'bg-primary text-primary-ink hover:bg-primary-hover',
+    ghost: 'text-ink hover:bg-surface-2',
+    link: 'text-primary underline hover:text-primary-hover',
+} %}
+{% set shapes = {
+    rounded: 'rounded-lg',
+    pill: 'rounded-full',
+} %}
+{% set sizes = {
+    sm: 'px-3 py-1.5 text-sm font-medium',
+    md: 'px-4 py-2 font-semibold',
+    lg: 'px-6 py-2.5 text-lg font-semibold',
+} %}
+{% if variant == 'link' %}
+{% set baseClass = 'inline-flex items-center transition-colors ' ~ variants[variant] %}
+{% else %}
+{% set baseClass = 'inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-colors ' ~ shapes[shape] ~ ' ' ~ sizes[size] ~ ' ' ~ variants[variant] %}
+{% endif %}
+{% set slot %}{% block content %}{% endblock %}{% endset %}
+{# `{{ attributes }}` spreads arbitrary call-site attributes (e.g. `data-*` #}
+{# Stimulus targets/actions, `aria-*` from the WAI-ARIA Menu Button pattern) #}
+{# onto the rendered element. #}
+{% if href is not null %}
+<a href="{{ href }}" class="no-underline {{ baseClass }}" {{ attributes }}>{{ slot }}</a>
+{% else %}
+<button type="{{ type }}" class="{{ baseClass }}" {{ attributes }}>{{ slot }}</button>
+{% endif %}

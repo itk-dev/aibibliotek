@@ -1,0 +1,24 @@
+{% props class = '' %}
+{#
+    Broad main + two right-side asides.
+
+    Use for detail surfaces where the primary content is a long
+    flow with secondary panels (e.g. metadata, actions) running
+    alongside it. The asides stick at `top: 84px` on wide viewports
+    so they remain visible while the main column scrolls, and drop
+    their sticky behavior below 768px to avoid overlap on small
+    screens. At ≥ 1280px the second aside breaks out into its own
+    column.
+
+    Slots (all named):
+    - `main`    — the primary content flow.
+    - `meta`    — first sticky aside (e.g. structured metadata).
+    - `actions` — second sticky aside (e.g. download / share).
+
+    Stretches to fill the wide `<main>` container (≈ 1600px).
+#}
+<div class="layout-content-with-asides{{ class ? ' ' ~ class : '' }}">
+    <div>{% block main %}{% endblock %}</div>
+    <aside class="layout-aside-sticky">{% block meta %}{% endblock %}</aside>
+    <aside class="layout-aside-sticky">{% block actions %}{% endblock %}</aside>
+</div>

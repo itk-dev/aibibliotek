@@ -1,0 +1,43 @@
+{#
+    Catalogue free-text search bar.
+
+    Rendered at the top of the results column. A standalone GET form posts
+    back to the catalogue route carrying the active facets and the chosen
+    sort as hidden inputs, so running a search preserves them. `page` is
+    deliberately not carried, so a new search returns the user to page 1.
+
+    Unlike the facet rail and the sort box, the search bar does not
+    auto-submit — it submits on Enter or via the "Søg" button, so typing
+    doesn't fire a request on every keystroke.
+
+    props:
+      - criteria: the active CatalogCriteria (current filters + sort)
+#}
+{% props criteria %}
+<form method="get" action="{{ path('app_assistant_catalog') }}" class="flex w-full max-w-[480px] items-stretch gap-3">
+    {% for value in criteria.languageModels %}
+        <input type="hidden" name="language_model[]" value="{{ value }}">
+    {% endfor %}
+    {% for value in criteria.frameworks %}
+        <input type="hidden" name="framework[]" value="{{ value }}">
+    {% endfor %}
+    {% for value in criteria.tags %}
+        <input type="hidden" name="tag[]" value="{{ value }}">
+    {% endfor %}
+    {% set query = criteria.toQueryArray %}
+    {% if query.sort is defined %}
+        <input type="hidden" name="sort" value="{{ query.sort }}">
+    {% endif %}
+
+    <twig:Form:Label for="catalog-search" text="{{ 'catalog.filters.search'|trans }}" srOnly />
+    <twig:Form:TextInput
+        id="catalog-search"
+        name="q"
+        type="search"
+        value="{{ criteria.q }}"
+        autocomplete="off"
+        placeholder="{{ 'catalog.search.placeholder'|trans }}"
+        size="lg"
+        class="w-full flex-1" />
+    <twig:Form:Button shape="rounded" size="lg">{{ 'catalog.search.submit'|trans }}</twig:Form:Button>
+</form>

@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://ai-reolen.local.itkdev.dk/schema/librechat-preset.json",
+    "title": "LibreChat preset",
+    "description": "A LibreChat preset export, recognised by its preset-specific keys (`presetId`, `promptPrefix`, `chatGptLabel`, or `endpoint`).",
+    "type": "object",
+    "anyOf": [
+        { "required": ["presetId"] },
+        { "required": ["promptPrefix"] },
+        { "required": ["chatGptLabel"] },
+        { "required": ["endpoint"] }
+    ],
+    "properties": {
+        "presetId": { "type": ["string", "null"] },
+        "title": { "type": "string" },
+        "chatGptLabel": { "type": ["string", "null"] },
+        "modelLabel": { "type": ["string", "null"] },
+        "promptPrefix": { "type": ["string", "null"] },
+        "model": { "type": ["string", "null"] },
+        "endpoint": { "type": ["string", "null"] },
+        "greeting": { "type": "string" }
+    }
+}

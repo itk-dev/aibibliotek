@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'security.reset_password.request.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'security.reset_password.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-4">{{ 'security.reset_password.request.heading'|trans }}</twig:Heading>
+        <p class="mb-6 text-sm text-text">{{ 'security.reset_password.request.lead'|trans }}</p>
+
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <twig:Alert type="danger" class="mb-4">{{ flash_error }}</twig:Alert>
+        {% endfor %}
+
+        {{ form_start(requestForm, {attr: {class: 'grid gap-4'}}) }}
+            <twig:Form:Label for="inputResetEmail" text="{{ 'security.reset_password.request.email_label'|trans }}">
+                <twig:Form:TextInput
+                    id="inputResetEmail"
+                    name="{{ requestForm.email.vars.full_name }}"
+                    type="email"
+                    value="{{ requestForm.email.vars.value }}"
+                    autocomplete="email"
+                    required
+                    autofocus
+                />
+            </twig:Form:Label>
+            {% do requestForm.email.setRendered %}
+
+            <twig:Form:Button type="submit">
+                {{ 'security.reset_password.request.submit'|trans }}
+            </twig:Form:Button>
+        {{ form_end(requestForm) }}
+
+        <p class="mt-6 text-sm text-text-muted">
+            <a class="text-primary underline hover:text-primary-hover" href="{{ path('app_login') }}">
+                {{ 'security.reset_password.back_to_login'|trans }}
+            </a>
+        </p>
+    </section>
+{% endblock %}

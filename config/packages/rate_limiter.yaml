@@ -1,0 +1,16 @@
+# Rate limits applied at `/register` so anonymous bots can't flood the
+# database or the outbound mailer. Two buckets sit in front of the
+# registration service: a per-IP bucket that keeps a single source from
+# burning through the queue, and a system-wide ceiling that caps the
+# damage from a coordinated burst. Defaults are starting points — tune
+# via the env vars listed in `.env` once we have real traffic.
+framework:
+    rate_limiter:
+        registration_per_ip:
+            policy: 'sliding_window'
+            limit: '%env(int:REGISTRATION_RATE_LIMIT_PER_IP)%'
+            interval: '1 day'
+        registration_system_wide:
+            policy: 'sliding_window'
+            limit: '%env(int:REGISTRATION_RATE_LIMIT_SYSTEM)%'
+            interval: '1 day'

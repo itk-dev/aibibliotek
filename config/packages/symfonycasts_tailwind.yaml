@@ -1,0 +1,6 @@
+symfonycasts_tailwind:
+    binary_version: v4.3.2
+
+when@prod:
+    symfonycasts_tailwind:
+        binary_platform: 'linux-x64-musl'

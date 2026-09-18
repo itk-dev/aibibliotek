@@ -1,0 +1,7 @@
+{% props label, badge = 'tag.badge_default', title = 'tag.title_default' %}
+<span class="inline-flex items-center gap-2 rounded-full border border-line bg-surface-2 px-3 py-1 text-sm text-text"
+      aria-disabled="true"
+      title="{{ title|trans }}">
+    {{ label|trans }}
+    <span class="rounded-full bg-accent-soft px-2 py-0.5 text-[0.65rem] font-semibold uppercase tracking-widest text-accent-deep">{{ badge|trans }}</span>
+</span>

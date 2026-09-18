@@ -1,0 +1,603 @@
+# Danish UI strings. Hierarchical dot-notation keys.
+#
+# - Brand identity (name, tagline, initials) is NOT here — see BRAND_*
+#   env vars in .env and the Twig globals in config/packages/twig.yaml.
+# - Keys ending in `_html` carry HTML and must be rendered with |raw at
+#   the call site.
+# - Components apply |trans on text props themselves; call sites pass
+#   keys, not literal strings.
+
+layout:
+    skip_link: "Spring til indhold"
+    brand_aria_label: "Til forsiden"
+    footer:
+        caption_html: 'Forhåndsvisning · ingen data endnu · designet følger <a class="text-primary no-underline hover:text-primary-hover" href="%link%">prototype-mockuppet</a>'
+        about_link: "Om projektet"
+
+nav:
+    menu_label: "Hovedmenu"
+    toggle_label: "Vis menu"
+    links:
+        catalog: "Katalog"
+        share: "Del assistent"
+        mine: "Mine assistenter"
+    user:
+        section_user: "Bruger"
+        section_admin: "Administration"
+        profile_edit: "Redigér profil"
+        logout: "Log ud"
+        admin_organization: "Administrér organisationer"
+        admin_users: "Administrér brugere"
+        admin_assistants: "Organisationens assistenter"
+        admin_settings: "Indstillinger"
+
+search:
+    legend: "Find en assistent"
+    submit: "Søg"
+    placeholder: "Søg efter borgerservice, referat, journalisering…"
+
+tag:
+    badge_default: "snart"
+    title_default: "Kommer snart"
+
+security:
+    login:
+        title: "Log ind – %brand%"
+        eyebrow: "Log ind"
+        heading: "Velkommen tilbage"
+        email_label: "E-mail"
+        password_label: "Adgangskode"
+        submit: "Log ind"
+        forgot_password: "Glemt password?"
+    reset_password:
+        eyebrow: "Nulstil password"
+        back_to_login: "← Tilbage til login"
+        request:
+            title: "Nulstil password – %brand%"
+            heading: "Nulstil dit password"
+            lead: "Skriv den e-mailadresse, du bruger til at logge ind. Vi sender dig et link til at vælge et nyt password."
+            email_label: "E-mail"
+            submit: "Send link til nulstilling"
+        check_email:
+            title: "Tjek din indbakke – %brand%"
+            heading: "Vi har sendt dig et link"
+            body: "Hvis der findes en konto med den e-mailadresse, har vi netop sendt et link til at vælge et nyt password. Linket udløber om %expires_in%."
+            spam_hint: "Modtager du ingen e-mail, så tjek dit spamfilter, eller"
+            try_again: "prøv igen"
+        reset:
+            title: "Vælg nyt password – %brand%"
+            heading: "Vælg et nyt password"
+            lead: "Vælg et password på mindst 8 tegn. Passwordet gemmes hashet — vi kan ikke se det efter du har valgt det."
+            new_password_label: "Nyt password"
+            repeat_password_label: "Gentag nyt password"
+            submit: "Gem nyt password"
+    access_denied:
+        title: "Adgang nægtet – %brand%"
+        eyebrow: "Adgang nægtet"
+        heading: "Du har ikke adgang til denne side"
+        lead: "Din konto har ikke rettigheder til at se den side, du forsøgte at åbne. Kontakt en administrator, hvis du mener, det er en fejl."
+        back_link: "← Til forsiden"
+    unauthorized:
+        title: "Log ind påkrævet – %brand%"
+        eyebrow: "Log ind påkrævet"
+        heading: "Du skal være logget ind"
+        lead: "Den side du forsøgte at åbne kræver, at du er logget ind. Log ind med din konto, eller opret en ny."
+        login_link: "Log ind"
+        register_link: "Opret bruger"
+
+admin:
+    organization:
+        title: "Organisationer – %brand%"
+        eyebrow: "Administration"
+        heading: "Organisationer"
+        empty: "Ingen organisationer er oprettet endnu."
+        default_framework_label: "Standard-framework"
+        columns:
+            name: "Navn"
+            email_domains: "E-maildomæner"
+            default_framework: "Standard-framework"
+            actions: "Handlinger"
+        new:
+            title: "Opret organisation – %brand%"
+            heading: "Opret organisation"
+        edit:
+            title: "Redigér %name% – %brand%"
+            heading: "Redigér %name%"
+        form:
+            name_label: "Navn"
+            email_domains_label: "E-maildomæner"
+            email_domains_help: 'Ét domæne per linje (fx "aarhus.dk").'
+            default_framework_label: "Standard-framework"
+            default_framework_help: "Framework som nye assistenter i denne organisation som standard oprettes med."
+        action:
+            new: "Opret organisation"
+            edit: "Redigér"
+            delete: "Slet"
+            delete_confirm: "Slet denne organisation? Handlingen kan ikke fortrydes."
+            create: "Opret"
+            update: "Gem"
+            cancel: "Annuller"
+        flash:
+            created: "Organisationen er oprettet."
+            updated: "Ændringerne er gemt."
+            deleted: "Organisationen er slettet."
+    assistants:
+        title: "Organisationens assistenter – %brand%"
+        eyebrow: "Administration"
+        heading: "Organisationens assistenter"
+        lead: "Skift ejerskab på assistenter, så organisationen bevarer rådigheden over dem — også når en medarbejder stopper. Den nye ejer overtager retten til at redigere og slette."
+        organization_label: "Organisation"
+        owner_label: "Ny ejer"
+        select_all: "Vælg alle assistenter"
+        no_owner: "Ingen ejer"
+        no_organization: "Din e-mailadresse hører ikke til en registreret organisation, så der er ingen assistenter at vise."
+        empty: "%organization% har ikke delt nogen assistenter endnu."
+        no_candidates: "%organization% har ingen godkendte brugere, som ejerskabet kan overdrages til."
+        columns:
+            title: "Assistent"
+            owner: "Nuværende ejer"
+            language_model: "Sprogmodel"
+        action:
+            show: "Vis"
+            reassign: "Skift ejer"
+        flash:
+            reassigned: "{1}Ejerskabet er skiftet på én assistent.|]1,Inf[Ejerskabet er skiftet på %count% assistenter."
+            error_no_selection: "Vælg mindst én assistent, før du skifter ejer."
+            error_owner: "Den valgte bruger kan ikke overtage assistenter i denne organisation."
+            error_assistant: "En af de valgte assistenter hører ikke til denne organisation. Ingen ændringer er gemt."
+    users:
+        title: "Brugere – %brand%"
+        eyebrow: "Administration"
+        heading: "Brugere"
+        empty: "Ingen brugere matcher det valgte filter."
+        filter_label: "Filtrer brugere efter status"
+        new:
+            title: "Opret bruger – %brand%"
+            heading: "Opret bruger"
+        filter:
+            all: "Alle"
+            pending: "Afventer godkendelse"
+            approved: "Godkendte"
+            blocked: "Spærrede"
+        status:
+            awaiting_email_confirmation: "Afventer e-mail-bekræftelse"
+            pending: "Afventer"
+            approved: "Godkendt"
+            blocked: "Spærret"
+        columns:
+            name: "Navn"
+            email: "E-mail"
+            status: "Status"
+            role: "Rolle"
+            role_change: "Skift rolle"
+            actions: "Handlinger"
+        form:
+            email_label: "E-mail"
+            name_label: "Navn"
+            password_label: "Adgangskode"
+            roles_label: "Roller"
+            status_label: "Status"
+            roles:
+                admin: "Site-administrator (ROLE_ADMIN)"
+                domain_manager: "Domæne-ansvarlig (ROLE_DOMAIN_MANAGER)"
+        action:
+            new: "Opret bruger"
+            create: "Opret"
+            cancel: "Annuller"
+            approve: "Godkend"
+            block: "Spær"
+        flash:
+            created: "Brugeren er oprettet."
+            approved: "Brugeren er nu godkendt og kan logge ind."
+            blocked: "Brugeren er spærret og kan ikke logge ind."
+            last_admin_block: "Mindst én administrator skal kunne logge ind. Brugeren kan ikke spærres."
+        role:
+            admin: "Administrator"
+            manager: "Domæne-ansvarlig"
+            none: "Ingen"
+            label: "Skift rolle for %name%"
+            placeholder: "Vælg rolle …"
+            promote:
+                manager: "Forfrem til domæne-ansvarlig"
+                admin: "Forfrem til administrator"
+            remove: "Fjern alle rettigheder"
+            flash:
+                success: "Brugerens rolle er opdateret."
+                error_csrf: "Sessionen er udløbet. Genindlæs siden og prøv igen."
+                error_forbidden: "Du har ikke rettigheder til at ændre denne brugers rolle."
+                error_invalid: "Ukendt rolle valgt."
+                error_last_admin: "Mindst én administrator skal være tilbage. Rollen kan ikke fjernes."
+    settings:
+        eyebrow: "Administration"
+        submit: "Gem ændringer"
+        tabs_label: "Indstillinger – navigation"
+        tabs:
+            site: "Site"
+            email: "E-mail"
+        error:
+            invalid_token: "Sessionen er udløbet. Indsend formularen igen."
+            invalid_email: "Indtast en gyldig e-mailadresse."
+        flash:
+            saved: "Indstillingerne er gemt."
+        site:
+            title: "Site-indstillinger – %brand%"
+            heading: "Site"
+            lead: "Visuel identitet på offentlige sider. Lad et felt stå tomt for at falde tilbage til miljøvariabel-standarden."
+            fields:
+                brand_name:
+                    label: "Brandnavn"
+                    help: "Vises i nav-baren, sidetitler og footeren."
+                brand_tagline:
+                    label: "Tagline"
+                    help: "Kort sætning under brandnavnet i footeren."
+                brand_initials:
+                    label: "Initialer"
+                    help: "To bogstaver brugt som logo-glyf på små skærme."
+                hero_text:
+                    label: "Hero-tekst"
+                    help: "Den marketing-agtige tekst der vises under brandheadingen på forsiden. Lad feltet stå tomt for at falde tilbage til standardteksten."
+        email:
+            title: "E-mailindstillinger – %brand%"
+            heading: "E-mail"
+            lead: "Modtagere og indhold af systemmails. Lad et felt stå tomt for at gå tilbage til standardindholdet."
+            section:
+                recipient: "E-mailkonti"
+                admin_notification: "Admin: Ny bruger venter godkendelse"
+                registration_confirmation: "Bruger: Velkomst-mail"
+                email_confirmation: "Bruger: Bekræft e-mail-link"
+                password_reset: "Bruger: Nulstil password-link"
+            tokens_label: "Tilgængelige pladsholdere:"
+            fields:
+                admin_recipient:
+                    label: "E-mailadresse"
+                    help: "Modtager besked når en bruger registrerer sig og afventer godkendelse. Domænemanagere og administratorer med samme e-maildomæne som den nye bruger får også beskeden. Lad feltet stå tomt for at slå denne besked fra — beskeder til domænemanagere og administratorer sendes stadig."
+                subject:
+                    label: "Emne"
+                body:
+                    label: "Indhold (Markdown)"
+                    help: "Skrives som Markdown. Brug pladsholdere fra listen ovenfor."
+                    help_cheatsheet: "Markdown-oversigt"
+            actions:
+                preview: "Forhåndsvis"
+            preview:
+                modal_title: "Forhåndsvisning af e-mail"
+                subject_prefix: "Emne:"
+                close: "Luk"
+                error: "Forhåndsvisningen kunne ikke hentes. Prøv igen."
+
+catalog:
+    title: "Katalog – %brand%"
+    eyebrow: "Katalog"
+    heading: "Find en assistent"
+    result_count:
+        one: "1 resultat"
+        many: "%count% resultater"
+    search:
+        placeholder: "Søg …"
+        submit: "Søg"
+    sort:
+        heading: "Sortering"
+        label: "Sortér efter"
+        apply: "Sortér"
+        newest: "Nyeste"
+        oldest: "Ældste"
+        recently_updated: "Senest opdateret"
+        name_asc: "Navn (A–Å)"
+        name_desc: "Navn (Å–A)"
+    empty:
+        heading: "Ingen assistenter matcher"
+        help: "Prøv at slække på filtrene eller fjerne en facet."
+    active:
+        heading: "Aktive filtre"
+        empty: "Ingen filtre aktive."
+    recent:
+        heading: "Seneste søgninger"
+        empty: "Ingen søgninger endnu."
+    export:
+        heading: "Klar til download"
+        body: "Alle %count% resultater kan downloades som OpenWebUI-JSON og køres lokalt."
+    results:
+        label: "Søgeresultater"
+    filters:
+        heading: "Filtre"
+        active: "Aktive filtre"
+        chip_remove: "Fjern filter: %filter%"
+        search: "Søg"
+        language_model: "Sprogmodel"
+        framework: "Rammeværk"
+        organization: "Kommune"
+        data_sensitivity: "Datafølsomhed"
+        tags: "Tags"
+        apply: "Anvend filtre"
+        reset: "Nulstil filtre"
+    pagination:
+        label: "Sideinddeling"
+        previous: "← Forrige"
+        next: "Næste →"
+        page: "Side %n%"
+
+register:
+    title: "Opret bruger – %brand%"
+    eyebrow: "Opret bruger"
+    heading: "Opret bruger"
+    lead: "Brug din arbejds-e-mail. Når du har oprettet kontoen, skal en administrator godkende den, før du kan logge ind."
+    email_label: "E-mail"
+    name_label: "Navn"
+    password_label: "Adgangskode"
+    password_confirm_label: "Bekræft adgangskode"
+    submit: "Opret bruger"
+    login_link: "Har du allerede en konto? Log ind"
+    error:
+        invalid_email: "Indtast en gyldig e-mailadresse."
+        domain_not_allowed: "E-mailens domæne er ikke godkendt til at oprette konti her."
+        password_mismatch: "De to adgangskoder er ikke ens."
+        empty_name: "Navnet må ikke være tomt."
+        empty_password: "Adgangskoden må ikke være tom."
+        email_in_use: "Der findes allerede en konto med den e-mail."
+        invalid_token: "Sessionen er udløbet. Indsend formularen igen."
+        rate_limited: "Du har sendt for mange anmodninger. Prøv igen senere."
+    pending:
+        title: "Konto oprettet – %brand%"
+        eyebrow: "Tak"
+        heading: "Tak — tjek din indbakke"
+        body: "Vi har sendt dig en bekræftelsesmail. Klik på linket i mailen for at bekræfte din e-mailadresse. Når den er bekræftet, venter din konto på godkendelse fra en administrator, og du får besked, så snart kontoen er klar."
+        login_link: "← Tilbage til log ind"
+
+# Default templates for the admin-editable transactional email
+# settings. `SettingsManager` falls back to these keys when no
+# row exists in the `setting` table. The `%token%` placeholders
+# are intentionally NOT translator parameters — `EmailTemplateRenderer`
+# substitutes them at send time with the recipient-specific values.
+settings:
+    admin:
+        notification_subject: "Ny bruger venter godkendelse — %brand_name%"
+        notification_body: |
+            En ny bruger har netop oprettet sig:
+
+            - **Navn:** %name%
+            - **E-mail:** %email%
+
+            Brugeren afventer godkendelse. Gennemse køen på
+            [%approval_url%](%approval_url%).
+    registration:
+        confirmation_subject: "Velkommen til %brand_name%"
+        confirmation_body: |
+            Hej %name%,
+
+            Tak for din oprettelse på %brand_name%. Vi har modtaget din
+            forespørgsel og en administrator vil godkende kontoen,
+            før du kan logge ind.
+
+            Du modtager besked, så snart kontoen er klar.
+    email_confirmation:
+        subject: "Bekræft din e-mail – %brand_name%"
+        body: |
+            Hej %name%,
+
+            Du modtager denne e-mail, fordi der er oprettet en bruger
+            med denne adresse hos %brand_name%. Klik på linket for at
+            bekræfte, at du ejer adressen. Først derefter kan en
+            administrator godkende din konto.
+
+            [Bekræft min e-mail](%confirmation_url%)
+
+            Linket virker i 24 timer og kan kun bruges én gang.
+    password_reset:
+        subject: "Nulstil dit password – %brand_name%"
+        body: |
+            Hej %name%,
+
+            Du modtager denne e-mail, fordi der er anmodet om at
+            nulstille passwordet for din konto hos %brand_name%. Klik
+            på linket for at vælge et nyt password:
+
+            [Vælg nyt password](%reset_url%)
+
+            Linket udløber om %expires_in% og kan kun bruges én gang.
+            Hvis det ikke var dig, kan du ignorere denne e-mail —
+            passwordet ændres først, når linket klikkes.
+
+profile:
+    edit:
+        title: "Redigér profil – %brand%"
+        eyebrow: "Min profil"
+        heading: "Redigér profil"
+        lead: "Opdatér oplysningerne om din egen konto. E-mail, rolle og status ændres af en administrator."
+        name_label: "Navn"
+        submit: "Gem ændringer"
+        flash:
+            saved: "Profilen er opdateret."
+
+user:
+    assistants:
+        title: "Mine assistenter – %brand%"
+        eyebrow: "Mine assistenter"
+        heading: "Assistenter du har delt"
+        lead: "På denne side kan du se assistenter, du har uploadet til biblioteket."
+        list_label: "Mine assistenter"
+        updated_at: "Opdateret %date%"
+        action:
+            view: "Gå til assistent"
+            edit: "Rediger assistent"
+            delete: "Slet assistent"
+            delete_confirm: "Slet »%title%«? Handlingen kan ikke fortrydes."
+        empty:
+            heading: "Ingen assistenter endnu"
+            help: "Du har ikke delt en assistent endnu. Klik på »Del assistent« for at komme i gang."
+
+assistant:
+    detail:
+        title: "%title% – %brand%"
+        back: "← Tilbage til kataloget"
+        eyebrow: "Assistent"
+        breadcrumb_label: "Sti"
+        breadcrumb_catalog: "Katalog"
+        runtime_heading: "Driftsplatform"
+        framework_label: "Framework"
+        language_model_label: "Sprogmodel"
+        tags_heading: "Tags"
+        experimental: "eksperimentel"
+        tabs_label: "Assistentdetaljer"
+        tab:
+            beskrivelse: "Beskrivelse"
+            viden: "Viden"
+            json: "JSON"
+        meta_heading: "Detaljer"
+        meta_origin: "Oprindelseskommune"
+        meta_language_model: "Sprogmodel"
+        meta_framework: "Rammeværk"
+        meta_sensitivity: "Datafølsomhed"
+        meta_created_at: "Dato oprettet"
+        meta_updated_at: "Dato opdateret"
+        no_organization: "Ingen tilknyttet organisation"
+        no_data_sensitivity: "Ikke klassificeret"
+        actions_heading: "Handlinger"
+        action:
+            export: "Download konfiguration"
+            edit: "Rediger assistent"
+        flash:
+            deleted: "Assistenten er slettet."
+        viden:
+            heading: "Vejledning"
+            intro: "Selve videns- og datafilerne kan ikke deles mellem kommuner. Hver kommune leverer sit eget grundlag efter denne vejledning."
+            empty: "Denne assistent har endnu ingen vejledning."
+        json:
+            heading: "Download konfiguration"
+            lead: "Download assistentens konfiguration som OpenWebUI-JSON og importér den i din egen OpenWebUI."
+            empty: "Ingen konfiguration gemt for denne assistent."
+        placeholder_versions: "Versionsvalg kommer senere."
+        placeholder_body: "Indholdet for dette faneblad tilføjes, når det pågældende felt er en del af assistentens datamodel."
+    new:
+        title: "Del assistent – %brand%"
+        eyebrow: "Del assistent"
+        heading: "Del en assistent"
+        step_rail:
+            label: "Trin i deling"
+        step_json:
+            rail_label: "Indsæt konfiguration"
+            rail_hint: "Vælg fil eller indsæt konfiguration"
+            file_label: "Upload assistent-konfiguration"
+            dropzone_prompt: "Slip en fil her, eller klik for at vælge"
+            dropzone_hint: "OpenWebUI, OpenAI, LibreChat eller AI-reolen (.json) · Ollama (.modelfile)"
+            textarea_label: "…eller indsæt konfiguration direkte"
+            textarea_help: "Formatet genkendes automatisk og der foreslås metadata i næste trin."
+            unrecognised_format: "Konfigurationen matcher ingen af de kendte formater."
+            config_help: "Slip en fil på feltet, eller indsæt konfigurationen direkte i tekstfeltet."
+            config_validating: "Validerer konfiguration…"
+            config_valid: "Konfigurationen er gyldig."
+            config_invalid: "Konfigurationen er ugyldig:"
+        step_metadata:
+            rail_label: "Gennemgang"
+            rail_hint: "Ret og bekræft foreslåede metadata"
+            title_label: "Titel"
+            description_label: "Beskrivelse"
+            language_model_label: "Sprogmodel"
+            language_model_help: "Vælg en sprogmodel fra listen."
+            language_model_placeholder: "Skriv eller vælg en sprogmodel"
+            language_model_add_item: 'Tilføj "__QUERY__"'
+            tagline_label: "Kort beskrivelse"
+            tagline_help: "Én linje der kort forklarer, hvad assistenten bruges til."
+            knowledge_description_label: "Videns- og datagrundlag"
+            knowledge_description_help: "Beskriv hvilke kilder eller data assistenten trækker på."
+            organization_label: "Organisation"
+            organization_help: "Organisationen der deler assistenten. Vælges automatisk ud fra din e-mail-adresse — ret hvis en anden organisation deler."
+            organization_placeholder: "Vælg organisation …"
+            data_sensitivity_label: "Datafølsomhed"
+            data_sensitivity_help: "Klassificér følsomheden af det data og videnindhold assistenten anvender."
+            data_sensitivity_placeholder: "Vælg klassifikation …"
+            tags_label: "Tags"
+            tags_help: "Komma-separeret. Fx borgerservice, jura."
+            experimental_notice: "%format% er et eksperimentelt format. Import og download er endnu ikke manuelt testet, så kontrollér resultatet før du deler."
+            changed_badge: "Ændret"
+        step_receipt:
+            rail_label: "Kvittering"
+            rail_hint: "Permalink til din assistent"
+            heading: "Assistenten er delt"
+            body: '"%title%" er nu tilgængelig i biblioteket og kan downloades af andre kommuner.'
+            permalink_label: "Permalink:"
+            go_to_assistant: "Gå til assistent"
+            back_to_catalog: "Tilbage til kataloget"
+        action:
+            previous: "Indsæt anden JSON"
+            next: "Næste trin"
+            finish: "Afslut"
+            share_another: "Del en til"
+        responsibility:
+            heading: "Ansvar"
+            body: "Du har som deler ansvaret for, at assistenten kan deles, og at det beskrevne datagrundlag ikke indeholder data, der ikke må deles. Selve videns- og datafiler deles ikke — kun konfiguration og vejledning der beskriver hvilke data du selv skal levere."
+    edit:
+        title: "Rediger assistent – %brand%"
+        eyebrow: "Rediger assistent"
+        heading: 'Rediger "%title%"'
+        step_json:
+            rail_label: "Ret konfiguration"
+        step_receipt:
+            rail_label: "Kvittering"
+            rail_hint: "Ændringer gemt"
+            heading: "Ændringer er gemt"
+            body: '"%title%" er opdateret i biblioteket.'
+        action:
+            previous: "Ret konfiguration"
+            next: "Næste trin"
+            save: "Gem ændringer"
+    data_sensitivity:
+        no_personal:
+            label: "Ingen personoplysninger"
+            description: "Assistenten arbejder ikke med personoplysninger — kun offentligt eller rent fagligt materiale."
+            example: "Fx lovtekster, vejledninger, mødereferater uden navne eller åbne datasæt."
+        ordinary_personal:
+            label: "Almindelige personoplysninger"
+            description: "Assistenten arbejder med almindelige personoplysninger efter databeskyttelsesforordningens artikel 6 — altså oplysninger der kan identificere en person, men som ikke er fortrolige eller følsomme."
+            example: "Fx navn, adresse, e-mail, telefonnummer eller sagsnummer på en borger."
+        confidential:
+            label: "Fortrolige data"
+            description: "Beregnet til fortrolige data — kræver passende organisatoriske foranstaltninger."
+            example: "Fx udbudsmateriale, kontrakter, interne notater eller CPR-numre."
+        sensitive_personal:
+            label: "Personfølsomme data"
+            description: "Beregnet til personfølsomme oplysninger (særlige kategorier) — kræver skærpet beskyttelse."
+            example: "Fx helbred, etnisk oprindelse, religiøs overbevisning, fagforeningsforhold eller strafbare forhold."
+
+frontpage:
+    title: "%brand% – forhåndsvisning"
+    hero:
+        eyebrow: "Del & download · dansk offentlig AI"
+        heading_html: 'Et fælles bibliotek over <em class="italic text-primary">kommunale</em> AI-assistenter.'
+        lead: "Find, del og download AI-assistenter bygget af danske myndigheder. Når en kommune løser en opgave, kan andre kommuner downloade assistenten og køre den lokalt — så gode løsninger skalerer nationalt."
+    stats:
+        assistants: "Assistenter"
+        organizations: "Kommuner"
+        models: "Sprogmodeller"
+    rail:
+        eyebrow: "Forhåndsvisning"
+        link: "Se hele kataloget →"
+        list_label: "Eksempler på assistenter"
+    steps:
+        eyebrow: "Sådan virker det"
+        "1":
+            lead: "Opret bruger"
+            body: " og log ind som repræsentant for din myndighed."
+        "2":
+            lead: "Find en assistent"
+            body: " – søg og filtrér på kommune, sprogmodel og datafølsomhed."
+        "3":
+            lead: "Download"
+            body: " – download assistentens JSON og følg vejledningen, der beskriver hvilke data du selv skal levere."
+        "4":
+            lead: "Tilpas lokalt"
+            body: " – importér i din egen OpenWebUI, tilføj kommunens viden og tag den i brug."
+
+auth:
+    email_confirmation:
+        success:
+            title: "E-mail bekræftet – %brand%"
+            eyebrow: "Tak"
+            heading: "Tak %name% – din e-mail er bekræftet."
+            body: "Din konto venter nu på godkendelse fra en administrator. Du modtager en e-mail, så snart kontoen er godkendt og klar til brug."
+            frontpage_link: "← Til forsiden"
+        invalid:
+            title: "Linket er udløbet – %brand%"
+            eyebrow: "Link udløbet"
+            heading: "Linket virker ikke længere"
+            body: "Bekræftelseslinket er udløbet eller allerede brugt. Du kan oprette dig igen for at få et nyt link, eller kontakte administratoren hvis du tror, der er sket en fejl."
+            register_link: "Opret bruger igen"

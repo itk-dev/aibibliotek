@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'frontpage.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <twig:Layout:SingleColumn>
+        <twig:Hero eyebrow="frontpage.hero.eyebrow">
+            <twig:block name="heading">{{ 'frontpage.hero.heading_html'|trans|raw }}</twig:block>
+            <twig:block name="lead">{{ hero_text }}</twig:block>
+
+            <twig:Stats:List>
+                <twig:Stats:Item label="frontpage.stats.assistants" value="{{ stats.assistants }}" />
+                <twig:Stats:Item label="frontpage.stats.organizations"  value="{{ stats.organizations }}" />
+                <twig:Stats:Item label="frontpage.stats.models"     value="{{ stats.models }}" />
+            </twig:Stats:List>
+        </twig:Hero>
+
+        <twig:SearchBox
+            placeholder="search.placeholder"
+            action="{{ path('app_assistant_catalog') }}"
+        />
+
+        <twig:CardRail:Container
+            eyebrow="frontpage.rail.eyebrow"
+            linkHref="{{ path('app_assistant_catalog') }}"
+            linkLabel="frontpage.rail.link"
+        >
+            {# Card prop names (`kommune`, `model`, `name`, `summary`) come from #}
+            {# the original prototype design; today we map them to the fields #}
+            {# the Assistant entity actually carries. Once the Organization #}
+            {# entity lands (ADR 005), the `kommune` slot returns to a real #}
+            {# organisation name. #}
+            {% for assistant in assistants %}
+                <twig:CardRail:Card
+                    class="assistant-card"
+                    kommune="{{ assistant.framework }}"
+                    model="{{ assistant.languageModel }}"
+                    name="{{ assistant.title }}"
+                    summary="{{ assistant.tagline ?? assistant.description }}"
+                    href="{{ path('app_assistant_show', {id: assistant.id}) }}" />
+            {% endfor %}
+        </twig:CardRail:Container>
+
+        <twig:Box eyebrow="frontpage.steps.eyebrow">
+            {% set steps = [
+                {lead: 'frontpage.steps.1.lead', body: 'frontpage.steps.1.body'},
+                {lead: 'frontpage.steps.2.lead', body: 'frontpage.steps.2.body'},
+                {lead: 'frontpage.steps.3.lead', body: 'frontpage.steps.3.body'},
+                {lead: 'frontpage.steps.4.lead', body: 'frontpage.steps.4.body'},
+            ] %}
+            <twig:StepList:List>
+                {% for step in steps %}
+                    <twig:StepList:Item index="{{ loop.index }}" lead="{{ step.lead }}" body="{{ step.body }}" />
+                {% endfor %}
+            </twig:StepList:List>
+        </twig:Box>
+    </twig:Layout:SingleColumn>
+{% endblock %}

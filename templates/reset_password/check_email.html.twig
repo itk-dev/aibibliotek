@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'security.reset_password.check_email.title'|trans({'%brand%': brand_name}) }}{% endblock %}
+
+{% block body %}
+    <section class="max-w-md">
+        <twig:Eyebrow as="p" class="mb-4">{{ 'security.reset_password.eyebrow'|trans }}</twig:Eyebrow>
+        <twig:Heading level="1" size="lg" class="mb-4">{{ 'security.reset_password.check_email.heading'|trans }}</twig:Heading>
+
+        <twig:Alert type="info" class="mb-4">
+            {{ 'security.reset_password.check_email.body'|trans({
+                '%expires_in%': resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle'),
+            }) }}
+        </twig:Alert>
+
+        <p class="mb-4 text-sm text-text">
+            {{ 'security.reset_password.check_email.spam_hint'|trans }}
+            <a class="text-primary underline hover:text-primary-hover" href="{{ path('app_forgot_password_request') }}">
+                {{ 'security.reset_password.check_email.try_again'|trans }}
+            </a>
+        </p>
+
+        <p class="mt-6 text-sm text-text-muted">
+            <a class="text-primary underline hover:text-primary-hover" href="{{ path('app_login') }}">
+                {{ 'security.reset_password.back_to_login'|trans }}
+            </a>
+        </p>
+    </section>
+{% endblock %}

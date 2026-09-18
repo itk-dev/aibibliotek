@@ -1,0 +1,8 @@
+{% props eyebrow, lead = null %}
+<section class="rounded-xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+    <twig:Eyebrow class="{{ lead ? 'mb-2' : 'mb-4' }}">{{ eyebrow|trans }}</twig:Eyebrow>
+    {% if lead %}
+        <p class="mt-1 mb-4 text-sm text-text-muted">{{ lead|trans }}</p>
+    {% endif %}
+    {% block content %}{% endblock %}
+</section>

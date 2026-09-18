@@ -1,0 +1,12 @@
+{% props name, value, checked = false, id = null %}
+{# `{{ attributes }}` spreads arbitrary call-site attributes (e.g. `data-*` #}
+{# Stimulus targets/actions, `aria-*`) and merges any extra `class` onto the #}
+{# default appearance. #}
+<input
+    type="checkbox"
+    {% if id %}id="{{ id }}"{% endif %}
+    name="{{ name }}"
+    value="{{ value }}"
+    {% if checked %}checked{% endif %}
+    {{ attributes.defaults({class: 'h-4 w-4 rounded border-line text-primary accent-primary focus:outline-none focus:ring-2 focus:ring-primary/40'}) }}
+>

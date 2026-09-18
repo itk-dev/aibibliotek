@@ -1,0 +1,45 @@
+{# Capture the component's getters into locals: inside the nested #}
+{# `<twig:Form:Button>` below, `this` rebinds to that component, so #}
+{# we'd lose access to this UserMenu instance's accessors otherwise. #}
+{% set userDisplayName = this.displayName %}
+{% set userMenuSections = this.sections %}
+<div class="relative"
+     data-controller="user-menu"
+     data-action="keydown.esc@window->user-menu#close click@window->user-menu#closeOnOutsideClick">
+    <twig:Form:Button type="button"
+                      variant="ghost"
+                      size="sm"
+                      class="gap-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      data-user-menu-target="trigger"
+                      data-action="click->user-menu#toggle"
+                      aria-haspopup="menu"
+                      aria-expanded="false">
+        <span>{{ userDisplayName }}</span>
+        <svg aria-hidden="true" class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+    </twig:Form:Button>
+
+    <div class="absolute right-0 z-10 mt-2 hidden w-64 origin-top-right rounded-lg border border-line bg-surface py-2 shadow-lg focus:outline-none"
+         data-user-menu-target="menu"
+         role="menu">
+        {% for section in userMenuSections %}
+            <div class="px-3 py-1">
+                <p class="text-xs font-semibold uppercase tracking-widest text-text-muted">
+                    {{ section.label_key|trans }}
+                </p>
+            </div>
+            <ul class="mb-1">
+                {% for item in section.items %}
+                    <li>
+                        <a href="{{ item.url }}"
+                           class="block px-3 py-2 text-sm text-ink no-underline hover:bg-surface-2"
+                           role="menuitem">
+                            {{ item.label_key|trans }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+</div>

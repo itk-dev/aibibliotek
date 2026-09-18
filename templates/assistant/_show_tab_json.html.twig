@@ -1,0 +1,38 @@
+{#
+    JSON tab — pretty-printed config + the OpenWebUI download link.
+
+    Only OpenWebUI is offered here; other registered formats stay
+    reachable through the export route's ?format= parameter. Any note
+    about a model that won't map cleanly is shown beneath the button
+    (the download still succeeds).
+#}
+<div class="grid gap-4">
+    <twig:Heading level="2" size="xs">
+        {{ 'assistant.detail.json.heading'|trans }}
+    </twig:Heading>
+    <p class="text-sm text-text-muted">
+        {{ 'assistant.detail.json.lead'|trans }}
+    </p>
+
+    <div class="grid gap-2">
+        <span class="text-sm font-medium text-ink">{{ 'assistant.detail.action.export'|trans }}</span>
+        <div class="flex flex-wrap items-center gap-2">
+            {% for id, label in exportFormats %}
+                <twig:Form:Button href="{{ path('app_assistant_export', {id: assistant.id, format: id}) }}" size="sm">
+                    {{ label }}{% if id|framework_experimental %} · {{ 'assistant.detail.experimental'|trans }}{% endif %}
+                </twig:Form:Button>
+            {% endfor %}
+        </div>
+        {% for warning in exportWarnings %}
+            <p class="text-xs text-text-muted italic">⚠ {{ warning }}</p>
+        {% endfor %}
+    </div>
+
+    {% if assistant.sourceConfig %}
+        <pre class="max-h-[420px] overflow-auto whitespace-pre rounded-lg border border-line bg-surface-2 p-4 text-xs text-ink">{{ assistant.sourceConfig|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE')) }}</pre>
+    {% else %}
+        <p class="text-sm text-text-muted italic">
+            {{ 'assistant.detail.json.empty'|trans }}
+        </p>
+    {% endif %}
+</div>
