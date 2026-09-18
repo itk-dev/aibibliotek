@@ -14,6 +14,13 @@ jobs:
         env:
             COMPOSER_ALLOW_SUPERUSER: 1
             APP_ENV: prod
+            # Build the release in the same stack the servers run, so the
+            # assets are produced against the alpine image rather than the
+            # glibc one used for local development. `when@prod` pins the musl
+            # Tailwind binary, which only works in the alpine container.
+            COMPOSE_FILE: docker-compose.yml:docker-compose.server.yml
+            # Only nginx reads it, but compose interpolates every service.
+            COMPOSE_SERVER_DOMAIN: localhost
         steps:
             - name: Checkout
               uses: actions/checkout@v6
