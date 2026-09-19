@@ -94,7 +94,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $notifier->confirmRegistration($this->makeUser());
     }
 
-    // Ensures EmailConfirmationNotifier skips the send when the sender address is null, so a missing MAILER_FROM doesn't break the registration flow.
+    // Ensures EmailConfirmationNotifier skips the send when the sender address is null, so a missing APP_MAIL_FROM doesn't break the registration flow.
     public function testEmailConfirmationNotifierSkipsWhenSenderUnset(): void
     {
         $mailer = $this->createMock(MailerInterface::class);
