@@ -85,15 +85,16 @@ class Organization extends AbstractEntity
      * right-hand side of an e-mail address at signup time, and stops admin
      * CRUD from accidentally storing "Aarhus.DK " alongside "aarhus.dk".
      *
-     * @param list<string> $domains
+     * @param array<array-key, string> $domains keys are ignored; callers may pass a
+     *                                           filtered array whose keys have gaps
      *
      * @return list<string>
      */
     private function normaliseDomains(array $domains): array
     {
-        return array_map(
+        return array_values(array_map(
             static fn (string $domain): string => strtolower(trim($domain)),
             $domains,
-        );
+        ));
     }
 }
