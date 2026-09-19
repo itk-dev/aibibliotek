@@ -86,7 +86,7 @@ class Organization extends AbstractEntity
      * CRUD from accidentally storing "Aarhus.DK " alongside "aarhus.dk".
      *
      * @param array<array-key, string> $domains keys are ignored; callers may pass a
-     *                                           filtered array whose keys have gaps
+     *                                          filtered array whose keys have gaps
      *
      * @return list<string>
      */

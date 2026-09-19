@@ -140,13 +140,19 @@ final readonly class OpenWebUiAdapter implements FormatAdapter
     {
         $name = $source['name'] ?? null;
 
+        // `$source` is an arbitrary decoded payload, so the nested containers
+        // are mixed until proven otherwise. Narrowing them once here keeps the
+        // field list below readable and avoids indexing into mixed.
+        $meta = \is_array($source['meta'] ?? null) ? $source['meta'] : [];
+        $params = \is_array($source['params'] ?? null) ? $source['params'] : [];
+
         return new CanonicalModel(
             name: \is_string($name) ? $name : '',
-            description: $this->firstNonEmptyString($source['meta']['description'] ?? null),
-            systemPrompt: $this->firstNonEmptyString($source['params']['system'] ?? null),
+            description: $this->firstNonEmptyString($meta['description'] ?? null),
+            systemPrompt: $this->firstNonEmptyString($params['system'] ?? null),
             baseModel: $this->firstNonEmptyString($source['base_model_id'] ?? null, $source['model'] ?? null),
-            tags: $this->normaliseTags($source['meta']['tags'] ?? null),
-            conversationStarters: $this->extractStarters($source['meta']['suggestion_prompts'] ?? null),
+            tags: $this->normaliseTags($meta['tags'] ?? null),
+            conversationStarters: $this->extractStarters($meta['suggestion_prompts'] ?? null),
             sourceExtras: [self::ID => $source],
         );
     }
