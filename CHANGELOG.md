@@ -24,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   through the filter, which checks that it works rather than that it is
   declared.
 
-
 ### Added
 
 - [Rector](https://getrector.com/) as a dev dependency, with `rector.php`,
