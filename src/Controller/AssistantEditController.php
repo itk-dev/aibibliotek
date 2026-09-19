@@ -88,6 +88,7 @@ final class AssistantEditController extends AbstractController
 
         $flow->handleRequest($request);
         $stepForm = $flow->getStepForm();
+        \assert($stepForm instanceof FormFlowInterface);
 
         $draft = $stepForm->getData();
         if ($draft instanceof AssistantDraft
@@ -162,11 +163,14 @@ final class AssistantEditController extends AbstractController
      */
     private function buildFlow(Assistant $assistant, SessionDataStorage $dataStorage): FormFlowInterface
     {
-        return $this->createForm(
+        $flow = $this->createForm(
             AssistantCreateFlowType::class,
             $this->hydrateDraft($assistant),
             ['data_storage' => $dataStorage],
         );
+        \assert($flow instanceof FormFlowInterface);
+
+        return $flow;
     }
 
     /**
