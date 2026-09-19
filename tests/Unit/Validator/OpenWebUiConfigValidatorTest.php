@@ -163,7 +163,7 @@ final class OpenWebUiConfigValidatorTest extends TestCase
 
         try {
             $this->expectException(\RuntimeException::class);
-            (new OpenWebUiConfigValidator($path))->validateSchema('{"name":"demo"}');
+            new OpenWebUiConfigValidator($path)->validateSchema('{"name":"demo"}');
         } finally {
             unlink($path);
         }

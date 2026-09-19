@@ -60,7 +60,7 @@ final class UserController extends AbstractController
     }
 
     #[Route(path: '/admin/users/pending', name: 'app_admin_users_pending', methods: ['GET'])]
-    public function pending(): Response
+    public function pending(): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         return $this->redirectToRoute('app_admin_users', ['status' => UserStatus::Pending->value]);
     }
@@ -95,7 +95,7 @@ final class UserController extends AbstractController
         ], new Response('', $invalid ? Response::HTTP_UNPROCESSABLE_ENTITY : Response::HTTP_OK));
     }
 
-    #[Route(path: '/admin/users/{id}/approve', name: 'app_admin_user_approve', methods: ['POST'], requirements: ['id' => Requirement::ULID])]
+    #[Route(path: '/admin/users/{id}/approve', name: 'app_admin_user_approve', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     #[IsGranted(ManageUserVoter::APPROVE, subject: 'user')]
     public function approve(User $user, Request $request): Response
     {
@@ -109,7 +109,7 @@ final class UserController extends AbstractController
         return $this->redirectToBackUrl($request);
     }
 
-    #[Route(path: '/admin/users/{id}/block', name: 'app_admin_user_block', methods: ['POST'], requirements: ['id' => Requirement::ULID])]
+    #[Route(path: '/admin/users/{id}/block', name: 'app_admin_user_block', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     #[IsGranted(ManageUserVoter::BLOCK, subject: 'user')]
     public function block(User $user, Request $request): Response
     {
@@ -133,7 +133,7 @@ final class UserController extends AbstractController
         return $this->redirectToBackUrl($request);
     }
 
-    #[Route(path: '/admin/users/{id}/role', name: 'app_admin_user_role', methods: ['POST'], requirements: ['id' => Requirement::ULID])]
+    #[Route(path: '/admin/users/{id}/role', name: 'app_admin_user_role', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     public function role(User $user, Request $request): JsonResponse
     {
         $payload = json_decode((string) $request->getContent(), associative: true);
@@ -204,7 +204,7 @@ final class UserController extends AbstractController
         return UserStatus::tryFrom($raw);
     }
 
-    private function redirectToBackUrl(Request $request): Response
+    private function redirectToBackUrl(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         $back = (string) $request->request->get('back', '');
         if (str_starts_with($back, '/admin/users')) {

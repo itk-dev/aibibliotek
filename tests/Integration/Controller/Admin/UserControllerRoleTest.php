@@ -219,7 +219,7 @@ final class UserControllerRoleTest extends WebTestCase
         // load the list to scrape one.
         $this->client->request(
             'POST',
-            '/admin/users/'.((string) $target->getId()).'/role',
+            '/admin/users/'.$target->getId().'/role',
             content: json_encode(['role' => 'manager', '_token' => 'irrelevant'], JSON_THROW_ON_ERROR),
         );
 
@@ -241,9 +241,9 @@ final class UserControllerRoleTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/admin/users/'.((string) $userId).'/role',
-            content: json_encode(['role' => $role, '_token' => $token], JSON_THROW_ON_ERROR),
+            '/admin/users/'.$userId.'/role',
             server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode(['role' => $role, '_token' => $token], JSON_THROW_ON_ERROR),
         );
     }
 

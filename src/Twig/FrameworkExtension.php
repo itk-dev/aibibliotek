@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Twig;
 
 use App\Assistant\Format\FormatAdapterRegistry;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 
 /**
  * Exposes Twig filters over the {@see \App\Assistant\Format\FormatAdapter}
@@ -17,7 +15,7 @@ use Twig\TwigFilter;
  * Both fall back gracefully for anything without a registered adapter, so
  * a legacy row whose format was removed still renders something meaningful.
  */
-final class FrameworkExtension extends AbstractExtension
+final class FrameworkExtension
 {
     /**
      * @param FormatAdapterRegistry $formats registry the filter delegates label lookups to
@@ -27,23 +25,13 @@ final class FrameworkExtension extends AbstractExtension
     }
 
     /**
-     * @return list<TwigFilter> the filter set this extension registers
-     */
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('framework_label', $this->label(...)),
-            new TwigFilter('framework_experimental', $this->experimental(...)),
-        ];
-    }
-
-    /**
      * Resolve a stored format id to its readable display label.
      *
      * @param string $id the stored format identifier
      *
      * @return string the human-readable label, or the id itself when no adapter is registered
      */
+    #[\Twig\Attribute\AsTwigFilter(name: 'framework_label')]
     public function label(string $id): string
     {
         return $this->formats->label($id);
@@ -59,6 +47,7 @@ final class FrameworkExtension extends AbstractExtension
      *
      * @return bool true when the format is registered and experimental
      */
+    #[\Twig\Attribute\AsTwigFilter(name: 'framework_experimental')]
     public function experimental(string $id): bool
     {
         return $this->formats->has($id) && $this->formats->get($id)->isExperimental();

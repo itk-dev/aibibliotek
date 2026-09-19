@@ -55,7 +55,7 @@ final class DomainNotifierTest extends KernelTestCase
 
         $messages = self::getMailerMessages();
         $recipients = array_map(
-            static fn ($m): ?string => $m->getTo()[0]->getAddress(),
+            static fn (\Symfony\Component\Mime\RawMessage $m): ?string => $m->getTo()[0]->getAddress(),
             $messages,
         );
         self::assertContains(UserFixtures::DOMAIN_MANAGER_EMAIL, $recipients);
@@ -83,7 +83,7 @@ final class DomainNotifierTest extends KernelTestCase
         $this->notifier->notifyOfNewRegistration($this->newUserOnDomain('newbie@aarhus.dk', 'Newbie'));
 
         $recipients = array_map(
-            static fn ($m): ?string => $m->getTo()[0]->getAddress(),
+            static fn (\Symfony\Component\Mime\RawMessage $m): ?string => $m->getTo()[0]->getAddress(),
             self::getMailerMessages(),
         );
         self::assertNotContains(UserFixtures::COLLEAGUE_EMAIL, $recipients);
@@ -92,7 +92,7 @@ final class DomainNotifierTest extends KernelTestCase
     // Ensures the notifier skips silently when the user has no resolvable email domain.
     public function testSkipsWhenUserHasNoEmail(): void
     {
-        $headless = (new User())->setName('Headless');
+        $headless = new User()->setName('Headless');
 
         $this->notifier->notifyOfNewRegistration($headless);
 
@@ -106,7 +106,7 @@ final class DomainNotifierTest extends KernelTestCase
      */
     private function newUserOnDomain(string $email, string $name): User
     {
-        return (new User())
+        return new User()
             ->setEmail($email)
             ->setName($name)
             ->setStatus(UserStatus::Pending);

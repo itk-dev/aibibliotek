@@ -193,7 +193,7 @@ final class AssistantMetadataStepType extends AbstractType
                 static fn (?array $tags): string => null === $tags ? '' : implode(', ', $tags),
                 /** @return list<string> */
                 static fn (?string $raw): array => array_values(array_filter(
-                    array_map(static fn (string $t): string => trim($t), explode(',', (string) $raw)),
+                    array_map(trim(...), explode(',', (string) $raw)),
                     static fn (string $t): bool => '' !== $t,
                 )),
             ))

@@ -98,7 +98,7 @@ final class FormatAdapterRegistryTest extends TestCase
     // Verifies default() is an empty string when no adapter is registered.
     public function testDefaultIsEmptyWhenNoAdapters(): void
     {
-        self::assertSame('', (new FormatAdapterRegistry([]))->default());
+        self::assertSame('', new FormatAdapterRegistry([])->default());
     }
 
     // Verifies requiredForAnyExport() unions each adapter's required fields, deduped.

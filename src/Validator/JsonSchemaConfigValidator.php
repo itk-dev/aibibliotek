@@ -129,7 +129,7 @@ abstract class JsonSchemaConfigValidator
             return new ValidationResult([$e->getMessage()]);
         }
 
-        $result = (new SchemaValidator())->validate($data, $this->schema());
+        $result = new SchemaValidator()->validate($data, $this->schema());
 
         if ($result->isValid()) {
             return ValidationResult::valid();
@@ -142,7 +142,7 @@ abstract class JsonSchemaConfigValidator
         $error = $result->error();
 
         return new ValidationResult(
-            null === $error ? [] : array_values(array_unique((new ErrorFormatter())->formatFlat($error))),
+            $error instanceof \Opis\JsonSchema\Errors\ValidationError ? array_values(array_unique(new ErrorFormatter()->formatFlat($error))) : [],
         );
     }
 

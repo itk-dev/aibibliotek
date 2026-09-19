@@ -211,7 +211,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return [];
         }
 
-        if (null !== $statusFilter) {
+        if ($statusFilter instanceof UserStatus) {
             $qb->andWhere('u.status = :status')
                 ->setParameter('status', $statusFilter->value);
         }

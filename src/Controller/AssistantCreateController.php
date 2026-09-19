@@ -43,7 +43,6 @@ final class AssistantCreateController extends AbstractController
         // but the initial construction always needs an object to
         // read the `step` property off.
         $flow = $this->createForm(AssistantCreateFlowType::class, new AssistantDraft());
-        \assert($flow instanceof FormFlowInterface);
 
         // A fresh GET landing on the page after a completed run
         // (session still holds a draft with a persisted id) should
@@ -56,7 +55,6 @@ final class AssistantCreateController extends AbstractController
             if ($stored instanceof AssistantDraft && null !== $stored->createdAssistantId) {
                 $flow->reset();
                 $flow = $this->createForm(AssistantCreateFlowType::class, new AssistantDraft());
-                \assert($flow instanceof FormFlowInterface);
             }
         }
 
@@ -67,7 +65,6 @@ final class AssistantCreateController extends AbstractController
         // step's form for re-rendering with errors.
         $flow->handleRequest($request);
         $stepForm = $flow->getStepForm();
-        \assert($stepForm instanceof FormFlowInterface);
 
         // The transition from `metadata` → `receipt` is the commit
         // moment: persist the assistant and stash its id on the
@@ -128,7 +125,7 @@ final class AssistantCreateController extends AbstractController
         // doesn't define (e.g. `schema` for the text-based Ollama Modelfile)
         // counts as passed, so the client's progress steps still complete.
         $adapter = $this->formats->detect($json);
-        if (null === $adapter) {
+        if (!$adapter instanceof \App\Assistant\Format\FormatAdapter) {
             return new JsonResponse([
                 'valid' => false,
                 'errors' => [$this->translator->trans('assistant.new.step_json.unrecognised_format')],

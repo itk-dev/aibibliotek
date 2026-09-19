@@ -80,7 +80,7 @@ final class AssistantEditorTest extends KernelTestCase
         self::assertSame(DataSensitivity::Confidential, $updated->getDataSensitivity());
         self::assertSame(
             ['alpha', 'beta'],
-            array_values(array_map(static fn (Tag $t) => $t->getName(), $updated->getTags()->toArray())),
+            array_values(array_map(static fn (Tag $t): string => $t->getName(), $updated->getTags()->toArray())),
         );
         self::assertSame(['name' => 'demo', 'base_model_id' => 'gpt-4o-mini'], $updated->getSourceConfig());
     }
@@ -96,10 +96,8 @@ final class AssistantEditorTest extends KernelTestCase
             'openwebui',
             [],
             '{"name":"demo","base_model_id":"gpt-4o"}',
-            organizationId: null,
             tagline: '   ',
             knowledgeDescription: '',
-            dataSensitivity: null,
         );
 
         self::assertNull($updated->getOrganization());

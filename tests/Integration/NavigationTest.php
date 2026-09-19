@@ -44,7 +44,7 @@ final class NavigationTest extends WebTestCase
         $nav = $crawler->filter('nav[aria-label="Hovedmenu"]');
         self::assertCount(1, $nav);
 
-        $links = $nav->filter('a[href]')->each(static fn ($node) => (string) $node->attr('href'));
+        $links = $nav->filter('a[href]')->each(static fn ($node): string => (string) $node->attr('href'));
         self::assertContains('/search', $links);
         self::assertContains('/assistant/new', $links);
         self::assertContains('/mine/assistenter', $links);
@@ -59,7 +59,7 @@ final class NavigationTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $nav = $crawler->filter('nav[aria-label="Hovedmenu"]');
 
-        $links = $nav->filter('a[href]')->each(static fn ($node) => (string) $node->attr('href'));
+        $links = $nav->filter('a[href]')->each(static fn ($node): string => (string) $node->attr('href'));
         self::assertContains('/search', $links);
         self::assertContains('/assistant/new', $links);
         self::assertNotContains('/mine/assistenter', $links);

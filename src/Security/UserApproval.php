@@ -29,15 +29,15 @@ use Doctrine\ORM\EntityManagerInterface;
  * cannot enforce this — voters authorise an action, the service
  * refuses to apply one the data model can't survive.
  */
-final class UserApproval
+final readonly class UserApproval
 {
     /**
      * @param EntityManagerInterface $entityManager  Doctrine entity manager used to flush the status change
      * @param UserRepository         $userRepository read-side lookup used to count active admins for the last-admin guard
      */
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository,
+        private EntityManagerInterface $entityManager,
+        private UserRepository $userRepository,
     ) {
     }
 

@@ -87,7 +87,7 @@ final class RegistrationTest extends TestCase
     {
         $em = $this->createMock(EntityManagerInterface::class);
         $repo = $this->createMock(UserRepository::class);
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
 
         // UserManager's duplicate-email path returns the existing user
         // from the repository on the pre-flight findOneBy lookup.
@@ -100,7 +100,7 @@ final class RegistrationTest extends TestCase
         $reg = new Registration(
             new UserManager($em, $repo, $hasher),
             $this->allowedDomains(['example.test']),
-            $this->createMock(EmailConfirmationNotifier::class),
+            $this->createStub(EmailConfirmationNotifier::class),
             new NullLogger(),
             $this->openLimiter(),
             $this->openLimiter(),
@@ -159,7 +159,7 @@ final class RegistrationTest extends TestCase
     // Verifies a transport failure on the confirmation-link mail is logged but doesn't undo the persisted user.
     public function testNotifierTransportFailureIsSwallowed(): void
     {
-        $em = $this->createMock(EntityManagerInterface::class);
+        $em = $this->createStub(EntityManagerInterface::class);
         $repo = $this->createMock(UserRepository::class);
         $hasher = $this->createMock(UserPasswordHasherInterface::class);
         $repo->method('findOneBy')->willReturn(null);
@@ -190,7 +190,7 @@ final class RegistrationTest extends TestCase
         $reg = new Registration(
             $this->buildUserManager(),
             $this->allowedDomains(['example.test']),
-            $this->createMock(EmailConfirmationNotifier::class),
+            $this->createStub(EmailConfirmationNotifier::class),
             new NullLogger(),
             $this->closedLimiter(),
             $this->openLimiter(),
@@ -208,7 +208,7 @@ final class RegistrationTest extends TestCase
         $reg = new Registration(
             $this->buildUserManager(),
             $this->allowedDomains(['example.test']),
-            $this->createMock(EmailConfirmationNotifier::class),
+            $this->createStub(EmailConfirmationNotifier::class),
             new NullLogger(),
             $this->openLimiter(),
             $this->closedLimiter(),
@@ -227,14 +227,10 @@ final class RegistrationTest extends TestCase
      */
     private function registration(string $allowList): Registration
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-        $repo = $this->createMock(UserRepository::class);
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
-
         return new Registration(
-            new UserManager($em, $repo, $hasher),
+            new UserManager($this->createStub(EntityManagerInterface::class), $this->createStub(UserRepository::class), $this->createStub(UserPasswordHasherInterface::class)),
             $this->allowedDomains([$allowList]),
-            $this->createMock(EmailConfirmationNotifier::class),
+            $this->createStub(EmailConfirmationNotifier::class),
             new NullLogger(),
             $this->openLimiter(),
             $this->openLimiter(),
@@ -264,9 +260,9 @@ final class RegistrationTest extends TestCase
     private function buildUserManager(): UserManager
     {
         return new UserManager(
-            $this->createMock(EntityManagerInterface::class),
-            $this->createMock(UserRepository::class),
-            $this->createMock(UserPasswordHasherInterface::class),
+            $this->createStub(EntityManagerInterface::class),
+            $this->createStub(UserRepository::class),
+            $this->createStub(UserPasswordHasherInterface::class),
         );
     }
 

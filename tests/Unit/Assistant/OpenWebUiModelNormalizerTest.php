@@ -18,7 +18,7 @@ final class OpenWebUiModelNormalizerTest extends TestCase
     {
         $model = ['name' => 'demo', 'base_model_id' => 'gpt-4o'];
 
-        self::assertSame($model, (new OpenWebUiModelNormalizer())->normalise([$model]));
+        self::assertSame($model, new OpenWebUiModelNormalizer()->normalise([$model]));
     }
 
     // Verifies an `info`-wrapped object is unwrapped to its `info` value.
@@ -26,7 +26,7 @@ final class OpenWebUiModelNormalizerTest extends TestCase
     {
         $model = ['name' => 'demo'];
 
-        self::assertSame($model, (new OpenWebUiModelNormalizer())->normalise(['info' => $model]));
+        self::assertSame($model, new OpenWebUiModelNormalizer()->normalise(['info' => $model]));
     }
 
     // Verifies a flat model object is returned unchanged.
@@ -34,30 +34,30 @@ final class OpenWebUiModelNormalizerTest extends TestCase
     {
         $model = ['name' => 'demo', 'params' => ['system' => 'p']];
 
-        self::assertSame($model, (new OpenWebUiModelNormalizer())->normalise($model));
+        self::assertSame($model, new OpenWebUiModelNormalizer()->normalise($model));
     }
 
     // Ensures an empty array yields null — there is no single model.
     public function testEmptyArrayYieldsNull(): void
     {
-        self::assertNull((new OpenWebUiModelNormalizer())->normalise([]));
+        self::assertNull(new OpenWebUiModelNormalizer()->normalise([]));
     }
 
     // Ensures a multi-element array yields null — not exactly one model.
     public function testMultiElementArrayYieldsNull(): void
     {
-        self::assertNull((new OpenWebUiModelNormalizer())->normalise([['name' => 'a'], ['name' => 'b']]));
+        self::assertNull(new OpenWebUiModelNormalizer()->normalise([['name' => 'a'], ['name' => 'b']]));
     }
 
     // Ensures a one-element array whose element is not an object yields null.
     public function testOneElementScalarArrayYieldsNull(): void
     {
-        self::assertNull((new OpenWebUiModelNormalizer())->normalise([42]));
+        self::assertNull(new OpenWebUiModelNormalizer()->normalise([42]));
     }
 
     // Ensures a non-array scalar yields null.
     public function testScalarYieldsNull(): void
     {
-        self::assertNull((new OpenWebUiModelNormalizer())->normalise('not a model'));
+        self::assertNull(new OpenWebUiModelNormalizer()->normalise('not a model'));
     }
 }

@@ -31,12 +31,12 @@ use Twig\Environment;
  *
  * @see https://symfony.com/doc/current/security/access_denied_handler.html
  */
-final class AccessDeniedHandler implements AccessDeniedHandlerInterface
+final readonly class AccessDeniedHandler implements AccessDeniedHandlerInterface
 {
     /**
      * @param Environment $twig Twig environment used to render the 403 template
      */
-    public function __construct(private readonly Environment $twig)
+    public function __construct(private Environment $twig)
     {
     }
 

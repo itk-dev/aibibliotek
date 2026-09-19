@@ -50,10 +50,10 @@ final class EmailConfirmationTest extends TestCase
 
         $service = new EmailConfirmation(
             $this->makeCacheHitting($user),
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $this->makeRepositoryReturning($user),
             $adminNotifier,
-            $this->createMock(DomainRegistrationNotifier::class),
+            $this->createStub(DomainRegistrationNotifier::class),
             $confirmationNotifier,
             $logger,
         );
@@ -86,7 +86,7 @@ final class EmailConfirmationTest extends TestCase
 
         $service = new EmailConfirmation(
             $this->makeCacheHitting($user),
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $this->makeRepositoryReturning($user),
             $adminNotifier,
             $domainNotifier,
@@ -118,10 +118,10 @@ final class EmailConfirmationTest extends TestCase
 
         $service = new EmailConfirmation(
             $this->makeCacheHitting($user),
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $this->makeRepositoryReturning($user),
             $adminNotifier,
-            $this->createMock(DomainRegistrationNotifier::class),
+            $this->createStub(DomainRegistrationNotifier::class),
             $confirmationNotifier,
             $logger,
         );

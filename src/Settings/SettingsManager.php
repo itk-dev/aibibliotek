@@ -90,13 +90,13 @@ class SettingsManager
         private readonly SettingRepository $repository,
         private readonly EntityManagerInterface $em,
         private readonly TranslatorInterface $translator,
-        #[Autowire('%env(BRAND_NAME)%')]
+        #[Autowire(env: 'BRAND_NAME')]
         private readonly string $defaultBrandName,
-        #[Autowire('%env(BRAND_TAGLINE)%')]
+        #[Autowire(env: 'BRAND_TAGLINE')]
         private readonly string $defaultBrandTagline,
-        #[Autowire('%env(BRAND_INITIALS)%')]
+        #[Autowire(env: 'BRAND_INITIALS')]
         private readonly string $defaultBrandInitials,
-        #[Autowire('%env(APP_MAIL_FROM)%')]
+        #[Autowire(env: 'APP_MAIL_FROM')]
         private readonly string $defaultSenderAddress,
     ) {
     }
@@ -494,14 +494,14 @@ class SettingsManager
         ?string $passwordResetSubject = null,
         ?string $passwordResetBody = null,
     ): void {
-        $this->setAdminNotificationSubject(self::emptyToNull($adminNotificationSubject));
-        $this->setAdminNotificationBody(self::emptyToNull($adminNotificationBody));
-        $this->setRegistrationConfirmationSubject(self::emptyToNull($registrationConfirmationSubject));
-        $this->setRegistrationConfirmationBody(self::emptyToNull($registrationConfirmationBody));
-        $this->setEmailConfirmationSubject(self::emptyToNull($emailConfirmationSubject));
-        $this->setEmailConfirmationBody(self::emptyToNull($emailConfirmationBody));
-        $this->setPasswordResetSubject(self::emptyToNull($passwordResetSubject));
-        $this->setPasswordResetBody(self::emptyToNull($passwordResetBody));
+        $this->setAdminNotificationSubject($this->emptyToNull($adminNotificationSubject));
+        $this->setAdminNotificationBody($this->emptyToNull($adminNotificationBody));
+        $this->setRegistrationConfirmationSubject($this->emptyToNull($registrationConfirmationSubject));
+        $this->setRegistrationConfirmationBody($this->emptyToNull($registrationConfirmationBody));
+        $this->setEmailConfirmationSubject($this->emptyToNull($emailConfirmationSubject));
+        $this->setEmailConfirmationBody($this->emptyToNull($emailConfirmationBody));
+        $this->setPasswordResetSubject($this->emptyToNull($passwordResetSubject));
+        $this->setPasswordResetBody($this->emptyToNull($passwordResetBody));
     }
 
     /**
@@ -520,10 +520,10 @@ class SettingsManager
      */
     public function applyBrandIdentity(?string $name, ?string $tagline, ?string $initials, ?string $heroText): void
     {
-        $this->setBrandName(self::emptyToNull($name));
-        $this->setBrandTagline(self::emptyToNull($tagline));
-        $this->setBrandInitials(self::emptyToNull($initials));
-        $this->setHeroText(self::emptyToNull($heroText));
+        $this->setBrandName($this->emptyToNull($name));
+        $this->setBrandTagline($this->emptyToNull($tagline));
+        $this->setBrandInitials($this->emptyToNull($initials));
+        $this->setHeroText($this->emptyToNull($heroText));
     }
 
     /**
@@ -544,7 +544,7 @@ class SettingsManager
      */
     public function validateAdminRecipient(?string $address): string|false|null
     {
-        $normalised = self::emptyToNull($address);
+        $normalised = $this->emptyToNull($address);
         if (null !== $normalised && !filter_var($normalised, \FILTER_VALIDATE_EMAIL)) {
             return false;
         }
@@ -590,7 +590,7 @@ class SettingsManager
      *
      * @return string|null trimmed value, or null when input is null or only whitespace
      */
-    private static function emptyToNull(?string $value): ?string
+    private function emptyToNull(?string $value): ?string
     {
         if (null === $value) {
             return null;
@@ -629,7 +629,7 @@ class SettingsManager
     private function setString(string $name, ?string $value): void
     {
         $setting = $this->repository->findOneByName($name);
-        if (null === $setting) {
+        if (!$setting instanceof Setting) {
             $setting = new Setting($name, $value);
             $this->em->persist($setting);
         } else {

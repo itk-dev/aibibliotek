@@ -242,7 +242,7 @@ final class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/users');
 
         self::assertResponseIsSuccessful();
-        $headers = $crawler->filter('thead th')->each(fn ($th) => trim($th->text()));
+        $headers = $crawler->filter('thead th')->each(fn ($th): string => trim($th->text()));
         self::assertContains('Rolle', $headers, 'Role column header must render.');
         // The fixture manager renders with the "Domæne-ansvarlig" label.
         $bodyText = $crawler->filter('tbody')->text();
@@ -257,7 +257,7 @@ final class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/users');
 
         self::assertResponseIsSuccessful();
-        $optionLabels = $crawler->filter('select option')->each(fn ($o) => trim($o->text()));
+        $optionLabels = $crawler->filter('select option')->each(fn ($o): string => trim($o->text()));
         self::assertContains('Forfrem til administrator', $optionLabels);
     }
 
@@ -269,7 +269,7 @@ final class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/users');
 
         self::assertResponseIsSuccessful();
-        $optionLabels = $crawler->filter('select option')->each(fn ($o) => trim($o->text()));
+        $optionLabels = $crawler->filter('select option')->each(fn ($o): string => trim($o->text()));
         // A dropdown must exist (proving the manager has at least one
         // actionable target) and it must not include the admin option.
         self::assertNotEmpty($optionLabels, 'Manager must have at least one dropdown to make this assertion meaningful.');

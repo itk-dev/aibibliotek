@@ -33,7 +33,7 @@ final class AssistantRepositoryTest extends KernelTestCase
         self::assertSame('Borgerservice-vejviser', $assistant->getTitle());
         self::assertSame(
             ['borgerservice', 'social', 'jura'],
-            array_map(static fn (Tag $t) => $t->getName(), $assistant->getTags()->toArray()),
+            array_map(static fn (Tag $t): string => $t->getName(), $assistant->getTags()->toArray()),
         );
     }
 
@@ -91,8 +91,8 @@ final class AssistantRepositoryTest extends KernelTestCase
         $firstPage = $this->repository->findPaginated($criteria, page: 1, perPage: $perPage);
         $secondPage = $this->repository->findPaginated($criteria, page: 2, perPage: $perPage);
 
-        $firstIds = array_map(static fn (Assistant $a) => $a->getId(), iterator_to_array($firstPage->getIterator()));
-        $secondIds = array_map(static fn (Assistant $a) => $a->getId(), iterator_to_array($secondPage->getIterator()));
+        $firstIds = array_map(static fn (Assistant $a): \Symfony\Component\Uid\Ulid => $a->getId(), iterator_to_array($firstPage->getIterator()));
+        $secondIds = array_map(static fn (Assistant $a): \Symfony\Component\Uid\Ulid => $a->getId(), iterator_to_array($secondPage->getIterator()));
 
         self::assertCount(10, $firstIds);
         self::assertCount(10, $secondIds);
@@ -133,7 +133,7 @@ final class AssistantRepositoryTest extends KernelTestCase
 
         $paginator = $this->repository->findPaginated($criteria, page: 1, perPage: 100);
 
-        $titles = array_map(static fn (Assistant $a) => $a->getTitle(), iterator_to_array($paginator->getIterator()));
+        $titles = array_map(static fn (Assistant $a): string => $a->getTitle(), iterator_to_array($paginator->getIterator()));
         self::assertSame(['Journaliseringsassistent'], $titles, 'query matches the title case-insensitively');
     }
 
@@ -165,7 +165,7 @@ final class AssistantRepositoryTest extends KernelTestCase
         foreach ($paginator as $assistant) {
             self::assertContains(
                 'jura',
-                array_map(static fn (Tag $t) => $t->getName(), $assistant->getTags()->toArray()),
+                array_map(static fn (Tag $t): string => $t->getName(), $assistant->getTags()->toArray()),
             );
         }
     }
@@ -179,7 +179,7 @@ final class AssistantRepositoryTest extends KernelTestCase
 
         // jura (3 rows) ∪ arkiv (1 distinct row) = 4, no duplicates from the join.
         self::assertCount(4, $paginator);
-        $ids = array_map(static fn (Assistant $a) => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
+        $ids = array_map(static fn (Assistant $a): string => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
         self::assertSame($ids, array_values(array_unique($ids)), 'no assistant appears twice');
     }
 
@@ -221,7 +221,7 @@ final class AssistantRepositoryTest extends KernelTestCase
         $paginator = $this->repository->findPaginated($criteria, page: 1, perPage: 100);
 
         self::assertCount(6, $paginator, 'three rows per kommune, unioned');
-        $ids = array_map(static fn (Assistant $a) => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
+        $ids = array_map(static fn (Assistant $a): string => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
         self::assertSame($ids, array_values(array_unique($ids)), 'no assistant appears twice');
     }
 
@@ -313,7 +313,7 @@ final class AssistantRepositoryTest extends KernelTestCase
     {
         $paginator = $this->repository->findPaginated($criteria, page: 1, perPage: 100);
 
-        return array_map(static fn (Assistant $a) => $a->getTitle(), iterator_to_array($paginator->getIterator()));
+        return array_map(static fn (Assistant $a): string => $a->getTitle(), iterator_to_array($paginator->getIterator()));
     }
 
     /**
@@ -327,6 +327,6 @@ final class AssistantRepositoryTest extends KernelTestCase
     {
         $paginator = $this->repository->findPaginated($criteria, page: 1, perPage: 100);
 
-        return array_map(static fn (Assistant $a) => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
+        return array_map(static fn (Assistant $a): string => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
     }
 }

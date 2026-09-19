@@ -101,7 +101,7 @@ final class CatalogCriteriaTest extends TestCase
 
         self::assertCount(5, $filters);
         self::assertSame(['q', 'language_model', 'language_model', 'framework', 'tag'], array_map(
-            static fn ($f) => $f->type,
+            static fn (\App\Catalog\ActiveFilter $f): string => $f->type,
             $filters,
         ));
         self::assertSame('borger', $filters[0]->value);
@@ -226,7 +226,7 @@ final class CatalogCriteriaTest extends TestCase
             dataSensitivities: ['confidential'],
         );
 
-        $types = array_map(static fn ($f) => $f->type, $criteria->activeFilters());
+        $types = array_map(static fn (\App\Catalog\ActiveFilter $f): string => $f->type, $criteria->activeFilters());
 
         self::assertSame(['tag', 'organization', 'data_sensitivity'], $types);
     }

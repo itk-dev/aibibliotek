@@ -32,7 +32,7 @@ final class ResetPasswordControllerTest extends WebTestCase
     // Verifies GET /reset-password renders the request form with the e-mail input.
     public function testRequestFormRenders(): void
     {
-        $crawler = $this->client->request('GET', '/reset-password');
+        $this->client->request('GET', '/reset-password');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Nulstil dit password');
@@ -108,7 +108,7 @@ final class ResetPasswordControllerTest extends WebTestCase
         $this->client->request('GET', '/reset-password/reset');
 
         self::assertResponseRedirects('/reset-password');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         self::assertResponseIsSuccessful();
     }
 

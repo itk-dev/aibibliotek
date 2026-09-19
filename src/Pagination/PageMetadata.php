@@ -6,7 +6,7 @@ namespace App\Pagination;
 
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
-final class PageMetadata
+final readonly class PageMetadata
 {
     /**
      * Read-only snapshot of a paginated view's state.
@@ -20,10 +20,10 @@ final class PageMetadata
      * @param int $pageCount total number of pages; always `>= 1`, even when `$total === 0`
      */
     public function __construct(
-        public readonly int $total,
-        public readonly int $perPage,
-        public readonly int $page,
-        public readonly int $pageCount,
+        public int $total,
+        public int $perPage,
+        public int $page,
+        public int $pageCount,
     ) {
     }
 

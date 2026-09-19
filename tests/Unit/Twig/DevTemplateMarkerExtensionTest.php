@@ -13,7 +13,7 @@ final class DevTemplateMarkerExtensionTest extends TestCase
     // Tests that the extension registers the marker visitor when the kernel runs in `dev`.
     public function testRegistersVisitorInDevEnvironment(): void
     {
-        $visitors = (new DevTemplateMarkerExtension('dev'))->getNodeVisitors();
+        $visitors = new DevTemplateMarkerExtension('dev')->getNodeVisitors();
 
         self::assertCount(1, $visitors);
         self::assertInstanceOf(DevTemplateMarkerNodeVisitor::class, $visitors[0]);
@@ -24,7 +24,7 @@ final class DevTemplateMarkerExtensionTest extends TestCase
     {
         self::assertSame(
             [],
-            (new DevTemplateMarkerExtension('prod'))->getNodeVisitors(),
+            new DevTemplateMarkerExtension('prod')->getNodeVisitors(),
         );
     }
 
@@ -33,7 +33,7 @@ final class DevTemplateMarkerExtensionTest extends TestCase
     {
         self::assertSame(
             [],
-            (new DevTemplateMarkerExtension('test'))->getNodeVisitors(),
+            new DevTemplateMarkerExtension('test')->getNodeVisitors(),
         );
     }
 }

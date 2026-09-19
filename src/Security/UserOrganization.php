@@ -23,13 +23,13 @@ use App\Repository\OrganizationRepository;
  * the union allow-list, and an organisation row can be deleted after
  * the fact — so callers must fail closed rather than assume a match.
  */
-final class UserOrganization
+final readonly class UserOrganization
 {
     /**
      * @param OrganizationRepository $organizations repository the domain lookup goes through
      */
     public function __construct(
-        private readonly OrganizationRepository $organizations,
+        private OrganizationRepository $organizations,
     ) {
     }
 
@@ -67,15 +67,15 @@ final class UserOrganization
      */
     public function covers(User $user, ?Organization $organization): bool
     {
-        if (null === $organization) {
+        if (!$organization instanceof Organization) {
             return false;
         }
 
         $actorOrganization = $this->of($user);
-        if (null === $actorOrganization) {
+        if (!$actorOrganization instanceof Organization) {
             return false;
         }
 
-        return (bool) $actorOrganization->getId()?->equals($organization->getId());
+        return $actorOrganization->getId()->equals($organization->getId());
     }
 }

@@ -62,7 +62,7 @@ final class ValidAssistantConfigValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'string');
         }
 
-        if (null !== $this->formats->detect($value)) {
+        if ($this->formats->detect($value) instanceof \App\Assistant\Format\FormatAdapter) {
             return;
         }
 

@@ -47,7 +47,7 @@ final class OrganizationControllerTest extends WebTestCase
     // Tests that GET /admin/organization/new renders the create form with every expected field, including the framework `<select>` populated from SUPPORTED_FRAMEWORKS.
     public function testNewFormRenders(): void
     {
-        $crawler = $this->client->request('GET', '/admin/organization/new');
+        $this->client->request('GET', '/admin/organization/new');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('input[name="organization[name]"]');
@@ -132,7 +132,7 @@ final class OrganizationControllerTest extends WebTestCase
         $form['organization[name]']->setValue('Vejle Kommune');
         $form['organization[emailDomains]']->setValue('vejle.dk');
         $form['organization[defaultFramework]']->disableValidation()->setValue('not-a-real-framework');
-        $crawler = $this->client->submit($form);
+        $this->client->submit($form);
 
         self::assertResponseStatusCodeSame(422);
 

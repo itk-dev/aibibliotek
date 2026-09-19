@@ -88,7 +88,6 @@ final class AssistantEditController extends AbstractController
 
         $flow->handleRequest($request);
         $stepForm = $flow->getStepForm();
-        \assert($stepForm instanceof FormFlowInterface);
 
         $draft = $stepForm->getData();
         if ($draft instanceof AssistantDraft
@@ -163,14 +162,11 @@ final class AssistantEditController extends AbstractController
      */
     private function buildFlow(Assistant $assistant, SessionDataStorage $dataStorage): FormFlowInterface
     {
-        $flow = $this->createForm(
+        return $this->createForm(
             AssistantCreateFlowType::class,
             $this->hydrateDraft($assistant),
             ['data_storage' => $dataStorage],
         );
-        \assert($flow instanceof FormFlowInterface);
-
-        return $flow;
     }
 
     /**
@@ -206,7 +202,7 @@ final class AssistantEditController extends AbstractController
         $draft->framework = $assistant->getFramework();
         $draft->languageModel = $assistant->getLanguageModel();
         $draft->tags = $tagNames;
-        $draft->organizationId = null !== $assistant->getOrganization()
+        $draft->organizationId = $assistant->getOrganization() instanceof \App\Entity\Organization
             ? (string) $assistant->getOrganization()->getId()
             : null;
         $draft->tagline = $assistant->getTagline() ?? '';

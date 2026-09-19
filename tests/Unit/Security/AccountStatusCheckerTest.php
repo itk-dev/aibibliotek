@@ -16,11 +16,11 @@ final class AccountStatusCheckerTest extends TestCase
     // Tests that an Approved user passes the pre-auth hook without raising.
     public function testApprovedUserPassesPreAuth(): void
     {
-        $user = (new User())
+        $user = new User()
             ->setName('Alice')
             ->setStatus(UserStatus::Approved);
 
-        (new AccountStatusChecker())->checkPreAuth($user);
+        new AccountStatusChecker()->checkPreAuth($user);
 
         // No exception thrown is the assertion; explicit to keep PHPUnit happy.
         self::assertTrue(true);
@@ -29,48 +29,48 @@ final class AccountStatusCheckerTest extends TestCase
     // Ensures an AwaitingEmailConfirmation user is rejected with the 'account.awaiting_email_confirmation' message key (issue #103).
     public function testAwaitingEmailConfirmationUserIsRejectedWithLocalisedMessage(): void
     {
-        $user = (new User())
+        $user = new User()
             ->setName('Awaiting')
             ->setStatus(UserStatus::AwaitingEmailConfirmation);
 
         $this->expectException(CustomUserMessageAccountStatusException::class);
         $this->expectExceptionMessage('account.awaiting_email_confirmation');
 
-        (new AccountStatusChecker())->checkPreAuth($user);
+        new AccountStatusChecker()->checkPreAuth($user);
     }
 
     // Ensures a Pending user is rejected with the 'account.pending' message key.
     public function testPendingUserIsRejectedWithLocalisedMessage(): void
     {
-        $user = (new User())
+        $user = new User()
             ->setName('Pending')
             ->setStatus(UserStatus::Pending);
 
         $this->expectException(CustomUserMessageAccountStatusException::class);
         $this->expectExceptionMessage('account.pending');
 
-        (new AccountStatusChecker())->checkPreAuth($user);
+        new AccountStatusChecker()->checkPreAuth($user);
     }
 
     // Ensures a Blocked user is rejected with the 'account.blocked' message key.
     public function testBlockedUserIsRejectedWithLocalisedMessage(): void
     {
-        $user = (new User())
+        $user = new User()
             ->setName('Blocked')
             ->setStatus(UserStatus::Blocked);
 
         $this->expectException(CustomUserMessageAccountStatusException::class);
         $this->expectExceptionMessage('account.blocked');
 
-        (new AccountStatusChecker())->checkPreAuth($user);
+        new AccountStatusChecker()->checkPreAuth($user);
     }
 
     // Verifies non-App User implementations fall through to the password checker.
     public function testForeignUserImplementationsAreIgnored(): void
     {
-        $foreignUser = $this->createMock(UserInterface::class);
+        $foreignUser = $this->createStub(UserInterface::class);
 
-        (new AccountStatusChecker())->checkPreAuth($foreignUser);
+        new AccountStatusChecker()->checkPreAuth($foreignUser);
 
         self::assertTrue(true);
     }
@@ -78,9 +78,9 @@ final class AccountStatusCheckerTest extends TestCase
     // Tests that checkPostAuth does nothing (required by the interface).
     public function testCheckPostAuthIsANoOp(): void
     {
-        $user = (new User())->setStatus(UserStatus::Approved);
+        $user = new User()->setStatus(UserStatus::Approved);
 
-        (new AccountStatusChecker())->checkPostAuth($user);
+        new AccountStatusChecker()->checkPostAuth($user);
 
         self::assertTrue(true);
     }
