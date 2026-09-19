@@ -27,7 +27,7 @@ use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
  */
 final class PasswordResetNotifierTest extends TestCase
 {
-    // Ensures the notifier skips the send with a warning when the sender is unset — a fresh install with no MAILER_FROM must not crash the reset flow.
+    // Ensures the notifier skips the send with a warning when the sender is unset — a fresh install with no APP_MAIL_FROM must not crash the reset flow.
     public function testSkipsSendWhenSenderAddressIsUnset(): void
     {
         $mailer = $this->createMock(MailerInterface::class);

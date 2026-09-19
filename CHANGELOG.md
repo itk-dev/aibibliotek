@@ -19,6 +19,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   versions with the lock. No advisories were outstanding, but the same gap is
   how the `league/commonmark` advisories reached a release branch.
 
+## [1.0.2] - 2026-09-18
+
+### Added
+
+- `APP_MAIL_REPLY_TO` env var, applied as a default `Reply-To` header on every
+  outbound mail through `framework.mailer.headers` in
+  `config/packages/mailer.yaml`. Transactional mail is sent from an unattended
+  address, so replies had nowhere to go; the header points them at a monitored
+  mailbox without touching the five notifiers, none of which set a `Reply-To`
+  of their own.
+
+### Changed
+
+- Renamed `MAILER_FROM` to `APP_MAIL_FROM`. `MAILER_*` is the namespace
+  Symfony's mailer recipe owns — it manages `MAILER_DSN` between the
+  `###> symfony/mailer ###` markers in `.env` — so an application variable
+  sitting next to it invited both confusion and a future collision. The
+  `APP_` prefix marks the two addresses as ours. Behaviour is unchanged:
+  `SettingsManager::getSenderAddress()` still returns `null` for an empty
+  value, and notifiers still skip the send rather than fail.
+- Both `APP_MAIL_FROM` and `APP_MAIL_REPLY_TO` default to
+  `changeme@example.org` in `.env`, so a fresh checkout carries a
+  visibly-wrong placeholder instead of an empty string. `APP_MAIL_REPLY_TO`
+  must not be left empty in a deploy: it is set as a default header, and an
+  unparseable address makes the send throw instead of skipping the way an
+  unset `APP_MAIL_FROM` does.
+
 ## [1.0.1] - 2026-09-18
 
 ### Fixed
