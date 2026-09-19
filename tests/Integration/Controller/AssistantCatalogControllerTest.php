@@ -105,7 +105,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node) => str_contains((string) $node->attr('aria-label'), 'gpt-4o'));
+        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node): bool => str_contains((string) $node->attr('aria-label'), 'gpt-4o'));
         self::assertCount(1, $chip, 'a removal chip for gpt-4o must be rendered');
 
         $params = [];
@@ -165,7 +165,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node) => str_contains((string) $node->attr('aria-label'), 'jura'));
+        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node): bool => str_contains((string) $node->attr('aria-label'), 'jura'));
         self::assertCount(1, $chip, 'a removal chip for the jura tag must be rendered');
 
         $params = [];

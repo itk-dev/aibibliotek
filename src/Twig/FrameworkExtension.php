@@ -15,12 +15,12 @@ use App\Assistant\Format\FormatAdapterRegistry;
  * Both fall back gracefully for anything without a registered adapter, so
  * a legacy row whose format was removed still renders something meaningful.
  */
-final class FrameworkExtension
+final readonly class FrameworkExtension
 {
     /**
      * @param FormatAdapterRegistry $formats registry the filter delegates label lookups to
      */
-    public function __construct(private readonly FormatAdapterRegistry $formats)
+    public function __construct(private FormatAdapterRegistry $formats)
     {
     }
 

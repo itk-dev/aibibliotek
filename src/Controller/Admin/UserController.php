@@ -97,7 +97,7 @@ final class UserController extends AbstractController
 
     #[Route(path: '/admin/users/{id}/approve', name: 'app_admin_user_approve', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     #[IsGranted(ManageUserVoter::APPROVE, subject: 'user')]
-    public function approve(User $user, Request $request): Response
+    public function approve(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$this->isCsrfTokenValid('admin-user-action', (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -111,7 +111,7 @@ final class UserController extends AbstractController
 
     #[Route(path: '/admin/users/{id}/block', name: 'app_admin_user_block', requirements: ['id' => Requirement::ULID], methods: ['POST'])]
     #[IsGranted(ManageUserVoter::BLOCK, subject: 'user')]
-    public function block(User $user, Request $request): Response
+    public function block(User $user, Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$this->isCsrfTokenValid('admin-user-action', (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();

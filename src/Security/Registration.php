@@ -48,7 +48,7 @@ final readonly class Registration
 {
     /**
      * @param UserManager                 $userManager            owns the persistence + password-hashing step
-     * @param AllowedEmailDomains         $allowedEmailDomains    domain allow-list parsed from the env var
+     * @param AllowedEmailDomains         $allowedEmailDomains    domain allow-list collected from the organisations
      * @param EmailConfirmationNotifier   $emailLinkNotifier      fires the single-use email-confirmation link
      * @param LoggerInterface             $logger                 receives a warning on transient mailer failures
      * @param RateLimiterFactoryInterface $registrationPerIp      per-IP rate limiter (10/day by default)

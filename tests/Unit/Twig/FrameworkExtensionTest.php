@@ -44,7 +44,7 @@ final class FrameworkExtensionTest extends TestCase
         ]));
         $twig->addExtension(new AttributeExtension(FrameworkExtension::class));
         $twig->addRuntimeLoader(new FactoryRuntimeLoader([
-            FrameworkExtension::class => fn (): FrameworkExtension => $this->extension(),
+            FrameworkExtension::class => $this->extension(...),
         ]));
 
         self::assertNotNull($twig->getFilter('framework_label'));
