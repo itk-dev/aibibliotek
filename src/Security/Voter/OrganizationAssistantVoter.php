@@ -41,6 +41,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * assistant's own author: reassigning ownership is a
  * municipality-level correction, so it stays with the domain manager
  * and the site admin even for an assistant the actor wrote.
+ *
+ * @extends Voter<string, \App\Entity\Assistant>
  */
 final class OrganizationAssistantVoter extends Voter
 {

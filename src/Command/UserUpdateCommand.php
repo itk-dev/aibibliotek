@@ -70,19 +70,19 @@ final class UserUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $email = (string) $input->getArgument('email');
+        $email = self::text($input->getArgument('email'));
         $name = $input->getOption('name');
         /** @var list<string> $rolesOption */
         $rolesOption = $input->getOption('role');
-        $roles = [] === $rolesOption ? null : array_values($rolesOption);
+        $roles = [] === $rolesOption ? null : $rolesOption;
         $statusOption = $input->getOption('status');
 
         $status = null;
         if (null !== $statusOption) {
-            $status = UserStatus::tryFrom((string) $statusOption);
+            $status = UserStatus::tryFrom(self::text($statusOption));
             if (null === $status) {
                 $accepted = array_map(static fn (UserStatus $s): string => $s->value, UserStatus::cases());
-                $io->error(\sprintf('Unknown status "%s". Accepted values: %s.', $statusOption, implode(', ', $accepted)));
+                $io->error(\sprintf('Unknown status "%s". Accepted values: %s.', self::text($statusOption), implode(', ', $accepted)));
 
                 return Command::FAILURE;
             }
@@ -91,7 +91,7 @@ final class UserUpdateCommand extends Command
         try {
             $user = $this->userManager->updateUser(
                 $email,
-                null === $name ? null : (string) $name,
+                null === $name ? null : self::text($name),
                 $roles,
                 $status,
             );
@@ -104,5 +104,24 @@ final class UserUpdateCommand extends Command
         $io->success(\sprintf('Updated user "%s".', $user->getUserIdentifier()));
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Read a console value as a string.
+     *
+     * `InputInterface::getArgument()` and `getOption()` are typed to
+     * `mixed`, so every use needs narrowing. A blanket `(string)` cast
+     * hides the case the type system is pointing at — an array option
+     * would raise a conversion error rather than a usable message — so
+     * anything that is not a string becomes an empty string, which the
+     * caller already treats as "not supplied".
+     *
+     * @param mixed $value the raw console value
+     *
+     * @return string the value when it is a string, otherwise an empty string
+     */
+    private static function text(mixed $value): string
+    {
+        return \is_string($value) ? $value : '';
     }
 }

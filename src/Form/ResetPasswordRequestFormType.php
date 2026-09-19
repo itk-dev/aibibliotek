@@ -17,6 +17,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * so the class only needs to declare the field's constraints; the
  * bundled scaffolded form was rendering through `form_row()`, which
  * doesn't reach the project's component look-and-feel.
+ *
+ * @extends AbstractType<array<string, mixed>>
  */
 final class ResetPasswordRequestFormType extends AbstractType
 {

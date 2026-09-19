@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Twig\Components\Layout;
 
+use App\Security\CurrentUser;
 use App\Twig\Components\Layout\UserMenu;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -34,7 +35,7 @@ final class UserMenuRouteMissingTest extends TestCase
         $router = $this->createMock(RouterInterface::class);
         $router->method('generate')->willThrowException(new RouteNotFoundException('test: route not registered'));
 
-        $menu = new UserMenu($security, $router);
+        $menu = new UserMenu($security, $router, new CurrentUser($security));
 
         self::assertSame([], $menu->getSections());
     }

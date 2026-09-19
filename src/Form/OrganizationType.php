@@ -28,6 +28,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  *
  * `emailDomains` is presented as a textarea with one domain per line
  * and transformed to / from the entity's `list<string>` shape.
+ *
+ * @extends AbstractType<\App\Entity\Organization>
  */
 final class OrganizationType extends AbstractType
 {

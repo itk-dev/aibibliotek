@@ -9,6 +9,7 @@ use App\Entity\Assistant;
 use App\Entity\User;
 use App\Repository\AssistantRepository;
 use App\Repository\UserRepository;
+use App\Security\CurrentUser;
 use App\Security\Roles;
 use App\Security\Voter\OrganizationAssistantVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +27,7 @@ final class AssistantOwnershipController extends AbstractController
         private readonly AssistantOwnership $ownership,
         private readonly AssistantRepository $assistants,
         private readonly UserRepository $users,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
@@ -125,8 +127,7 @@ final class AssistantOwnershipController extends AbstractController
 
     private function currentUser(): User
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
+        $user = $this->currentUser->get();
 
         return $user;
     }

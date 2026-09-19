@@ -43,6 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * does (description) → what it draws on (knowledge, language model
  * paired with organisation) → how it's classified (tags, data
  * sensitivity).
+ *
+ * @extends AbstractType<\App\Assistant\AssistantDraft>
  */
 final class AssistantMetadataStepType extends AbstractType
 {

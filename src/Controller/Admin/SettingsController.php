@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
 use App\Mail\EmailTemplateRenderer;
+use App\Security\CurrentUser;
 use App\Security\Roles;
 use App\Settings\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,6 +53,7 @@ final class SettingsController extends AbstractController
     public function __construct(
         private readonly SettingsManager $settingsManager,
         private readonly EmailTemplateRenderer $emailTemplateRenderer,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
@@ -213,8 +214,7 @@ final class SettingsController extends AbstractController
             );
         }
 
-        $actor = $this->getUser();
-        \assert($actor instanceof User);
+        $actor = $this->currentUser->get();
 
         $tokens = [
             'name' => '' !== $actor->getName() ? $actor->getName() : self::PREVIEW_NAME_FALLBACK,

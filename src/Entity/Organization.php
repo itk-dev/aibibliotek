@@ -91,9 +91,9 @@ class Organization extends AbstractEntity
      */
     private function normaliseDomains(array $domains): array
     {
-        return array_values(array_map(
+        return array_map(
             static fn (string $domain): string => strtolower(trim($domain)),
             $domains,
-        ));
+        );
     }
 }

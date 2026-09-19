@@ -29,6 +29,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * `roles` is a multi-checkbox over the application-defined roles
  * other than the implicit `ROLE_USER` floor; `status` is the
  * lifecycle enum from {@see UserStatus}.
+ *
+ * @extends AbstractType<array<string, mixed>>
  */
 final class UserCreateType extends AbstractType
 {

@@ -113,9 +113,12 @@ final readonly class OpenWebUiAdapter implements FormatAdapter
         }
 
         $decoded = json_decode($raw, associative: true, flags: \JSON_THROW_ON_ERROR);
-        // Validation guarantees an accepted shape, so normalise() returns a model.
-        $model = $this->normalizer->normalise($decoded);
-        \assert(null !== $model);
+        // normalise() returns null only for a list that is not exactly one
+        // element, or a non-array — and validate() above rejects every one of
+        // those, so this cannot fire unless the validator and the normalizer
+        // stop agreeing. `?? throw` keeps the narrowing without inventing a
+        // branch that no input can reach.
+        $model = $this->normalizer->normalise($decoded) ?? throw new \LogicException('Normalisation produced no model.');
 
         return $this->sanitizer->sanitize($model);
     }

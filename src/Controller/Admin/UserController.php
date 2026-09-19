@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Enum\UserStatus;
 use App\Form\UserCreateType;
 use App\Repository\UserRepository;
+use App\Security\CurrentUser;
 use App\Security\LastAdminException;
 use App\Security\Roles;
 use App\Security\UserApproval;
@@ -32,6 +33,7 @@ final class UserController extends AbstractController
         private readonly UserManager $userManager,
         private readonly UserRoles $userRoles,
         private readonly TranslatorInterface $translator,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
@@ -189,8 +191,7 @@ final class UserController extends AbstractController
 
     private function currentUser(): User
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
+        $user = $this->currentUser->get();
 
         return $user;
     }

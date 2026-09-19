@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\AssistantRepository;
+use App\Security\CurrentUser;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,14 +28,14 @@ final class UserAssistantController extends AbstractController
 {
     public function __construct(
         private readonly AssistantRepository $assistantRepository,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
     #[Route(path: '/mine/assistenter', name: 'app_user_assistants', methods: ['GET'])]
     public function index(): Response
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
+        $user = $this->currentUser->get();
 
         return $this->render('user/assistants.html.twig', [
             'assistants' => $this->assistantRepository->findCreatedBy($user),

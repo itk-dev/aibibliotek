@@ -161,7 +161,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->addOrderBy('u.id', 'ASC');
 
         $clauses = [];
-        foreach (array_values($domains) as $index => $domain) {
+        foreach ($domains as $index => $domain) {
             $parameter = 'domain'.$index;
             $clauses[] = 'LOWER(u.email) LIKE :'.$parameter;
             $qb->setParameter($parameter, '%@'.strtolower(trim($domain)));

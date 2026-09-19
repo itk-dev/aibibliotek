@@ -8,6 +8,7 @@ use App\Assistant\AssistantCreator;
 use App\Assistant\AssistantDraft;
 use App\Assistant\Format\FormatAdapterRegistry;
 use App\Form\AssistantCreateFlowType;
+use App\Form\FlowFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,6 +33,7 @@ final class AssistantCreateController extends AbstractController
         private readonly FormatAdapterRegistry $formats,
         private readonly AssistantCreator $creator,
         private readonly TranslatorInterface $translator,
+        private readonly FlowFactory $flowFactory,
     ) {
     }
 
@@ -42,8 +44,7 @@ final class AssistantCreateController extends AbstractController
         // replaces it with the persisted DTO on subsequent requests,
         // but the initial construction always needs an object to
         // read the `step` property off.
-        $flow = $this->createForm(AssistantCreateFlowType::class, new AssistantDraft());
-        \assert($flow instanceof FormFlowInterface);
+        $flow = $this->flowFactory->create(AssistantCreateFlowType::class, new AssistantDraft());
 
         // A fresh GET landing on the page after a completed run
         // (session still holds a draft with a persisted id) should
@@ -55,8 +56,7 @@ final class AssistantCreateController extends AbstractController
             $stored = $flow->getData();
             if ($stored instanceof AssistantDraft && null !== $stored->createdAssistantId) {
                 $flow->reset();
-                $flow = $this->createForm(AssistantCreateFlowType::class, new AssistantDraft());
-                \assert($flow instanceof FormFlowInterface);
+                $flow = $this->flowFactory->create(AssistantCreateFlowType::class, new AssistantDraft());
             }
         }
 
@@ -67,7 +67,6 @@ final class AssistantCreateController extends AbstractController
         // step's form for re-rendering with errors.
         $flow->handleRequest($request);
         $stepForm = $flow->getStepForm();
-        \assert($stepForm instanceof FormFlowInterface);
 
         // The transition from `metadata` → `receipt` is the commit
         // moment: persist the assistant and stash its id on the
