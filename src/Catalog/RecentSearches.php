@@ -6,7 +6,7 @@ namespace App\Catalog;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class RecentSearches
+final readonly class RecentSearches
 {
     /**
      * Per-session history of the user's most recent catalogue searches.
@@ -16,15 +16,15 @@ final class RecentSearches
      * links that re-run the search. State lives in the session so it is
      * per-user and survives navigation without touching the database.
      */
-    private const SESSION_KEY = 'catalog.recent_searches';
+    private const string SESSION_KEY = 'catalog.recent_searches';
 
     /**
      * How many queries to keep. Oldest entries fall off the end once the
      * list grows past this length.
      */
-    private const MAX = 5;
+    private const int MAX = 5;
 
-    public function __construct(private readonly RequestStack $requestStack)
+    public function __construct(private RequestStack $requestStack)
     {
     }
 

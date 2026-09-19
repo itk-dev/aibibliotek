@@ -6,20 +6,26 @@ namespace App\Tests\Unit\Twig;
 
 use App\Twig\TextExtension;
 use PHPUnit\Framework\TestCase;
-use Twig\TwigFilter;
+use Twig\Environment;
+use Twig\Extension\AttributeExtension;
+use Twig\Loader\ArrayLoader;
+use Twig\RuntimeLoader\FactoryRuntimeLoader;
 
 final class TextExtensionTest extends TestCase
 {
-    // Verifies the extension registers a single `paragraphs` filter.
-    public function testGetFiltersRegistersParagraphs(): void
+    // Verifies the `paragraphs` filter is registered with Twig and callable from a template.
+    public function testParagraphsFilterIsRegisteredWithTwig(): void
     {
-        $extension = new TextExtension();
+        $twig = new Environment(new ArrayLoader([
+            'template' => '{{ text|paragraphs|length }}',
+        ]));
+        $twig->addExtension(new AttributeExtension(TextExtension::class));
+        $twig->addRuntimeLoader(new FactoryRuntimeLoader([
+            TextExtension::class => static fn (): TextExtension => new TextExtension(),
+        ]));
 
-        $filters = $extension->getFilters();
-
-        self::assertCount(1, $filters);
-        self::assertInstanceOf(TwigFilter::class, $filters[0]);
-        self::assertSame('paragraphs', $filters[0]->getName());
+        self::assertNotNull($twig->getFilter('paragraphs'));
+        self::assertSame('2', $twig->render('template', ['text' => "first\n\nsecond"]));
     }
 
     // Ensures a null / empty input yields an empty list.

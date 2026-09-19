@@ -22,13 +22,13 @@ use App\Repository\OrganizationRepository;
  * (or the `OrganizationFixtures` for local dev) is the intended
  * way to populate the list.
  */
-final class AllowedEmailDomains
+final readonly class AllowedEmailDomains
 {
     /**
      * @param OrganizationRepository $organizationRepository read-side lookup of every organisation's email domains
      */
     public function __construct(
-        private readonly OrganizationRepository $organizationRepository,
+        private OrganizationRepository $organizationRepository,
     ) {
     }
 

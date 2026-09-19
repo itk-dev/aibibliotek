@@ -130,7 +130,7 @@ class DomainRegistrationNotifier
 
         foreach ($recipients as $approver) {
             $recipient = (string) $approver->getEmail();
-            $email = (new TemplatedEmail())
+            $email = new TemplatedEmail()
                 ->from(Address::create($sender))
                 ->to(Address::create($recipient))
                 ->subject($rendered->subject)

@@ -12,12 +12,12 @@ namespace App\Validator;
  * shared validator service composes per-check results into a single
  * result by concatenating their errors.
  */
-final class ValidationResult
+final readonly class ValidationResult
 {
     /**
      * @param list<string> $errors human-readable error messages, one per failed assertion
      */
-    public function __construct(private readonly array $errors = [])
+    public function __construct(private array $errors = [])
     {
     }
 

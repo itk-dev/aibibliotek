@@ -57,7 +57,7 @@ final class UserObfuscatePasswordsCommand extends Command
     public function __construct(
         private readonly UserManager $userManager,
         private readonly UserRepository $userRepository,
-        #[Autowire('%kernel.environment%')]
+        #[Autowire(param: 'kernel.environment')]
         private readonly string $environment,
     ) {
         parent::__construct();
@@ -125,7 +125,7 @@ final class UserObfuscatePasswordsCommand extends Command
 
         foreach ($users as $user) {
             $plain = null === $sharedPassword
-                ? self::randomPassword()
+                ? $this->randomPassword()
                 : (string) $sharedPassword;
             $this->userManager->changePassword($user->getUserIdentifier(), $plain);
         }
@@ -145,7 +145,7 @@ final class UserObfuscatePasswordsCommand extends Command
      *
      * @return string a fresh URL-safe random password
      */
-    private static function randomPassword(): string
+    private function randomPassword(): string
     {
         return rtrim(strtr(base64_encode(random_bytes(self::RANDOM_BYTES)), '+/', '-_'), '=');
     }

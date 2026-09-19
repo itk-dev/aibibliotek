@@ -42,6 +42,6 @@ final class SettingFixturesTest extends TestCase
 
         $fixture = new SettingFixtures($settings);
 
-        $fixture->load($this->createMock(ObjectManager::class));
+        $fixture->load($this->createStub(ObjectManager::class));
     }
 }

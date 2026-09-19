@@ -26,16 +26,16 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * adapter, so {@see FormatAdapterRegistry::detect()} stays deterministic.
  */
 #[AsTaggedItem(priority: 20)]
-final class OpenWebUiAdapter implements FormatAdapter
+final readonly class OpenWebUiAdapter implements FormatAdapter
 {
     private const string ID = 'openwebui';
     private const string LABEL = 'Open WebUI';
 
     public function __construct(
-        private readonly OpenWebUiConfigValidator $validator,
-        private readonly OpenWebUiModelNormalizer $normalizer,
-        private readonly OpenWebUiConfigSanitizer $sanitizer,
-        private readonly ModelMap $modelMap,
+        private OpenWebUiConfigValidator $validator,
+        private OpenWebUiModelNormalizer $normalizer,
+        private OpenWebUiConfigSanitizer $sanitizer,
+        private ModelMap $modelMap,
     ) {
     }
 

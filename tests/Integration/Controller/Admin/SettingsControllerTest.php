@@ -378,12 +378,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'Velkommen %name%',
                 'body' => "Hej **%name%**!\n\nDin e-mail: %email%",
                 '_token' => $token,
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseIsSuccessful();
@@ -402,12 +402,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'ignored',
                 'body' => 'Approve: %approval_url%',
                 '_token' => $token,
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseIsSuccessful();
@@ -423,12 +423,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'x',
                 'body' => 'y',
                 '_token' => 'not-a-real-token',
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(403);
@@ -442,12 +442,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'x',
                 'body' => 'y',
                 '_token' => 'irrelevant',
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(403);

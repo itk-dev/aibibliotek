@@ -9,15 +9,108 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `actions/checkout` moves from v6 to v7 across every workflow, matching the
+  version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
+  Action the project uses. Upstream also reindented the mirrored files from
+  four spaces to two; that is deliberately not copied, since it would bury a
+  one-line change per file in a reformat and `.github/` is outside the
+  project's Prettier glob either way.
+- Updated every dependency that moves within its existing constraint. The
+  Symfony stack goes from 8.1.0 to 8.1.7 across the board — seven patch
+  releases of fixes that had accumulated in `framework-bundle`,
+  `security-bundle`, `form`, `validator`, `mailer` and `console` — alongside
+  `doctrine/orm` 3.6.7 to 3.7.1, `doctrine/doctrine-bundle` 3.2.4 to 3.3.2,
+  and the Twig and PHP CS Fixer tooling. `composer.json` carries
+  `"bump-after-update": true`, so the constraints move to the installed
+  versions with the lock. No advisories were outstanding, but the same gap is
+  how the `league/commonmark` advisories reached a release branch.
+- README states that self-signup stays closed until an organisation exists.
+  A fresh install rejects every registration, by design, and nothing said so;
+  the note explains the bootstrap path via `app:user:create` and
+  `/admin/organization`. The `@param` on `App\Security\Registration` no longer
+  claims the allow-list is parsed from an env var.
+- `app:user:create` and `app:user:change-password` no longer accept the
+  password as an argument. It is prompted for with `askHidden()` every time.
+  A password on the command line survives in shell history, is readable in
+  the process list for as long as the command runs, and is echoed into
+  deployment logs — and there was no way to avoid it, since neither command
+  implemented `interact()`. The argument is removed outright rather than made
+  optional, so nothing can quietly keep passing one.
+- `app:user:create` takes the e-mail and display name as optional arguments
+  and prompts for whichever is missing; `app:user:change-password` does the
+  same for the e-mail, completing against the addresses already in the user
+  table, since rotating a password usually starts with finding the account.
+  Both fail with a clear message under `--no-interaction`, where the password
+  cannot be collected.
+- Applied the configured Rector sets across `src/` and `tests/` — 104 files,
+  a net deletion of 78 lines. The bulk is mechanical: 28 classes become
+  `readonly`, `new Foo()->bar()` loses its parentheses under PHP 8.4, dead
+  assignments and redundant casts go, arrow functions gain return types, and
+  PHPUnit mocks become stubs where nothing is asserted on them. No Doctrine
+  entity was made `readonly`, which would have broken hydration.
+- `App\Twig\TextExtension` and `App\Twig\FrameworkExtension` no longer extend
+  `AbstractExtension`; their filters are declared with Twig's `#[AsTwigFilter]`
+  attribute instead. This is the one behavioural change in the pass —
+  registration moves from a `getFilters()` method to container
+  autoconfiguration — and the two tests that asserted registration by calling
+  `getFilters()` now build a Twig environment from the attributes and render
+  through the filter, which checks that it works rather than that it is
+  declared.
 - Taskfile task names follow the [official style guide](https://taskfile.dev/docs/styleguide#use-a-colon-to-separate-the-task-namespace-and-name)
   and use a colon between namespace and name: `coding-standards:php:check`
   rather than `coding-standards-php-check`, `test:coverage` rather than
   `test-coverage`, and so on. `task --list` now groups by namespace instead of
   presenting thirty flat kebab-case names. Single-word tasks — `compose`,
   `composer`, `console`, `test` — have no namespace and are unchanged.
+  The tasks added further down the stack follow the same rule:
+  `static-analysis:check`, `rector:check` and `rector:apply`.
   `README.md`, `CONTRIBUTING.md` and `CLAUDE.md` follow suit. Earlier
   changelog entries keep the old names, since they record what was true when
   written.
+
+### Removed
+
+- `REGISTRATION_ALLOWED_EMAIL_DOMAINS` from `.env` and `.env.test`. Nothing
+  read it: the signup allow-list is collected from `Organization.emailDomains`
+  via `OrganizationRepository::collectAllowedEmailDomains()`, so the variable
+  and its comments described behaviour that no longer existed. Leaving it in
+  place was worse than useless — a production signup was rejected for a domain
+  the comment in `.env` claimed was allowed.
+
+### Added
+
+- `UserRepository::collectEmails()`, the read-side lookup backing that
+  completion.
+- [Rector](https://getrector.com/) as a dev dependency, with `rector.php`,
+  `task rector-check` / `task rector-apply`, and a section in `CLAUDE.md`.
+  The coding-standards family decides how code is laid out; Rector decides
+  what it says, which is the half that was missing — and the one that pays
+  off on the major upgrades currently queued.
+  The configuration covers `src/` and `tests/`. `withComposerBased()` enables
+  the Symfony, Doctrine, PHPUnit and Twig rules that match the installed
+  versions, so migrations follow `composer.lock` rather than a pinned version;
+  on top sit the PHP 8.4 migration and the dead-code, code-quality and
+  type-declaration sets. Sets that rewrite structure rather than expression —
+  naming, privatization, early return — are left off, since their output needs
+  judging line by line. `RemoveDeadInstanceOfAssertRector` is skipped
+  explicitly: `\assert($x instanceof Foo)` after `createForm()` looks redundant
+  to static analysis precisely because the assert is what narrows the type, so
+  removing it makes the declared return type stop matching — the rule converts
+  a non-issue into a real error that no test catches, since runtime behaviour
+  is unchanged. `task rector-check` therefore reports changes on the
+  current codebase, since the sets have never been applied; it is not wired
+  into CI, and applying them is a separate pull request so the rewrite is
+  reviewed on its own terms rather than riding along with a feature.
+- PHPStan static analysis at level 8 over `src/` and `tests/`, with
+  `phpstan/phpstan-symfony` resolving container services, a
+  `task static-analysis-check` target, and a section in `CLAUDE.md`. Nothing
+  type-checked the code before this: undefined methods, wrong argument types
+  and impossible conditions all passed CI, since the 100% coverage gate proves
+  lines execute rather than that types line up.
+- `phpstan-baseline.neon` capturing the 102 errors that already existed, so
+  the gate protects new code immediately instead of waiting on a cleanup. The
+  baseline is deferred work, not an allow-list; clearing it is tracked
+  separately.
 
 ## [1.0.2] - 2026-09-18
 

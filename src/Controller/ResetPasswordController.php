@@ -55,7 +55,7 @@ class ResetPasswordController extends AbstractController
     {
         // Generate a fake token if the user does not exist or someone hit this page directly.
         // This prevents exposing whether or not a user was found with the given email address or not
-        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+        if (!($resetToken = $this->getTokenObjectFromSession()) instanceof \SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken) {
             $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
         }
 
@@ -140,13 +140,13 @@ class ResetPasswordController extends AbstractController
         ]);
 
         // Do not reveal whether a user account was found or not.
-        if (!$user) {
+        if (!$user instanceof User) {
             return $this->redirectToRoute('app_check_email');
         }
 
         $resetToken = $this->notifier->requestReset($user);
 
-        if (null !== $resetToken) {
+        if ($resetToken instanceof \SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordToken) {
             // Store the token object in session for retrieval in check-email route.
             $this->setTokenObjectInSession($resetToken);
         }

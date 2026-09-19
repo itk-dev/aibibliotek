@@ -19,7 +19,7 @@ namespace App\Assistant\Format;
  * produced it, so a same-format round-trip can re-inject it without
  * leaking it into a different target format.
  */
-final class CanonicalModel
+final readonly class CanonicalModel
 {
     /**
      * @param string                              $name                 human title of the assistant
@@ -31,13 +31,13 @@ final class CanonicalModel
      * @param array<string, array<string, mixed>> $sourceExtras         unmapped fields, keyed by originating format id
      */
     public function __construct(
-        public readonly string $name,
-        public readonly ?string $description = null,
-        public readonly ?string $systemPrompt = null,
-        public readonly ?string $baseModel = null,
-        public readonly array $tags = [],
-        public readonly array $conversationStarters = [],
-        public readonly array $sourceExtras = [],
+        public string $name,
+        public ?string $description = null,
+        public ?string $systemPrompt = null,
+        public ?string $baseModel = null,
+        public array $tags = [],
+        public array $conversationStarters = [],
+        public array $sourceExtras = [],
     ) {
     }
 

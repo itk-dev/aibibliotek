@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * highest detection priority.
  */
 #[AsTaggedItem(priority: 50)]
-final class NativeAdapter implements FormatAdapter
+final readonly class NativeAdapter implements FormatAdapter
 {
     private const string ID = 'native';
     private const string LABEL = 'AI-reolen';
@@ -32,7 +32,7 @@ final class NativeAdapter implements FormatAdapter
     private const string FORMAT_TOKEN = 'ai-reolen';
 
     public function __construct(
-        private readonly NativeConfigValidator $validator,
+        private NativeConfigValidator $validator,
     ) {
     }
 

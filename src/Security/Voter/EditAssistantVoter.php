@@ -80,6 +80,6 @@ final class EditAssistantVoter extends Voter
 
         $author = $subject->getCreatedBy();
 
-        return $author instanceof User && $author->getId()?->equals($actor->getId());
+        return $author instanceof User && $author->getId()->equals($actor->getId());
     }
 }

@@ -80,6 +80,13 @@ task coding-standards:composer:apply
 # Run every check at once
 task coding-standards:check
 
+# Static analysis
+task static-analysis:check          # PHPStan, level 8
+
+# Automated refactoring (Rector)
+task rector:check                   # dry-run, shows what would change
+task rector:apply                   # rewrites the files
+
 # Tests
 task test                           # PHPUnit, no coverage
 task test:coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
@@ -91,6 +98,60 @@ Actions workflow on every pull request — see `.github/workflows/tests.yaml`.
 Run the matching check before committing changes in that area. For
 commands without a dedicated task, fall back to `task compose -- <args>`
 or `itkdev-docker-compose <args>`.
+
+## Static analysis
+
+`phpstan.dist.neon` configures PHPStan at **level 8** over `src/` and `tests/`,
+with the Symfony extension resolving services so container lookups are
+type-checked rather than assumed to return `object`.
+
+`phpstan-baseline.neon` holds the 102 errors that existed when the tool was
+introduced. The distinction that matters: **the baseline is not a list of
+things that are fine.** It is deferred work. Code you add is analysed at full
+level 8 and must pass; the baseline only excuses what was already there.
+
+So: never regenerate the baseline to make a new error go away. If
+`task static-analysis:check` fails on something you wrote, fix the code. If it
+fails on something you merely touched, that error was already deferred — fix it
+if the fix is small, and say so in the PR description either way. Regenerating
+the baseline silently converts a real finding into permanent debt, and the diff
+makes it look like a routine update.
+
+## Automated refactoring
+
+`rector.php` configures [Rector](https://getrector.com/), which rewrites code
+rather than reformatting it. It is a separate tool from the coding-standards
+family: PHP CS Fixer decides how code is laid out, Rector decides what it says.
+
+Reach for it when the task is a mechanical transformation across many files —
+a PHP or Symfony version migration, removing dead code, adopting a new idiom
+the whole codebase should follow. Don't reach for it for a change you can make
+in one file by hand.
+
+**Never run `task rector:apply` as part of an unrelated change.** Rector
+rewrites whatever its configured sets match, so an apply run inside a feature
+branch buries the feature in hundreds of lines of unrelated refactoring. An
+apply run is its own pull request, with the rule set that produced it named in
+the description, so a reviewer can judge the rewrite on its own terms.
+
+`task rector:check` is **expected to report changes** on the current codebase —
+the configured sets have never been applied. That is tracked separately; it is
+not a signal that something is broken, and it is not wired into CI. Before
+using its output, check whether the files it wants to touch are files your
+change touches.
+
+The configuration covers `src/` and `tests/`. `withComposerBased()` reads
+`composer.lock` and enables only the Symfony, Doctrine, PHPUnit and Twig rules
+matching the installed versions, so the migrations follow the dependencies
+instead of being pinned to a version someone has to remember to bump. On top
+of that sit the PHP 8.4 migration and three prepared sets: dead code, code
+quality, type declarations.
+
+Sets that rewrite structure rather than expression — naming, privatization,
+early return — are deliberately off. They produce diffs that need judging line
+by line, which is the opposite of what a bulk automated pass is good at. If you
+want one, enable it in its own pull request so the output can be reviewed as
+the subject rather than as noise around something else.
 
 ## Coding standards
 

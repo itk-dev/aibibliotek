@@ -20,7 +20,7 @@ final class EmailConfirmationController extends AbstractController
     {
         $user = $this->emailConfirmation->consume($token);
 
-        if (null === $user) {
+        if (!$user instanceof \App\Entity\User) {
             return $this->render(
                 'auth/email_confirmation_invalid.html.twig',
                 [],
