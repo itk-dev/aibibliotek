@@ -39,9 +39,9 @@ final readonly class FlowFactory
     /**
      * Build `$type` and return it as a flow.
      *
-     * @param class-string<\Symfony\Component\Form\FormTypeInterface<mixed>> $type the form type to build, expected to produce a flow
-     * @param mixed                $data    the form's underlying data
-     * @param array<string, mixed> $options options forwarded to the form factory
+     * @param class-string<\Symfony\Component\Form\FormTypeInterface<mixed>> $type    the form type to build, expected to produce a flow
+     * @param mixed                                                          $data    the form's underlying data
+     * @param array<string, mixed>                                           $options options forwarded to the form factory
      *
      * @return FormFlowInterface the constructed flow
      *
