@@ -318,7 +318,7 @@ final class SettingsControllerTest extends WebTestCase
         );
     }
 
-    // Ensures the email settings form no longer renders a sender-address input — MAILER_FROM is deploy-time only.
+    // Ensures the email settings form no longer renders a sender-address input — APP_MAIL_FROM is deploy-time only.
     public function testEmailFormOmitsSenderAddressField(): void
     {
         $this->loginAsAdmin();

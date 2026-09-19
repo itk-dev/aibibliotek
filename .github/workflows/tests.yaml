@@ -11,7 +11,7 @@ jobs:
         name: PHPUnit + coverage gate
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
 
             - name: Create docker network
               run: docker network create frontend

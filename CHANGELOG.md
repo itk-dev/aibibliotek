@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `actions/checkout` moves from v6 to v7 across every workflow, matching the
+  version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
+  Action the project uses. Upstream also reindented the mirrored files from
+  four spaces to two; that is deliberately not copied, since it would bury a
+  one-line change per file in a reformat and `.github/` is outside the
+  project's Prettier glob either way.
+- Updated every dependency that moves within its existing constraint. The
+  Symfony stack goes from 8.1.0 to 8.1.7 across the board — seven patch
+  releases of fixes that had accumulated in `framework-bundle`,
+  `security-bundle`, `form`, `validator`, `mailer` and `console` — alongside
+  `doctrine/orm` 3.6.7 to 3.7.1, `doctrine/doctrine-bundle` 3.2.4 to 3.3.2,
+  and the Twig and PHP CS Fixer tooling. `composer.json` carries
+  `"bump-after-update": true`, so the constraints move to the installed
+  versions with the lock. No advisories were outstanding, but the same gap is
+  how the `league/commonmark` advisories reached a release branch.
+- README states that self-signup stays closed until an organisation exists.
+  A fresh install rejects every registration, by design, and nothing said so;
+  the note explains the bootstrap path via `app:user:create` and
+  `/admin/organization`. The `@param` on `App\Security\Registration` no longer
+  claims the allow-list is parsed from an env var.
+
 ### Removed
 
 - `REGISTRATION_ALLOWED_EMAIL_DOMAINS` from `.env` and `.env.test`. Nothing
@@ -16,13 +39,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   place was worse than useless — a production signup was rejected for a domain
   the comment in `.env` claimed was allowed.
 
+## [1.0.2] - 2026-09-18
+
+### Added
+
+- `APP_MAIL_REPLY_TO` env var, applied as a default `Reply-To` header on every
+  outbound mail through `framework.mailer.headers` in
+  `config/packages/mailer.yaml`. Transactional mail is sent from an unattended
+  address, so replies had nowhere to go; the header points them at a monitored
+  mailbox without touching the five notifiers, none of which set a `Reply-To`
+  of their own.
+
 ### Changed
 
-- README states that self-signup stays closed until an organisation exists.
-  A fresh install rejects every registration, by design, and nothing said so;
-  the note explains the bootstrap path via `app:user:create` and
-  `/admin/organization`. The `@param` on `App\Security\Registration` no longer
-  claims the allow-list is parsed from an env var.
+- Renamed `MAILER_FROM` to `APP_MAIL_FROM`. `MAILER_*` is the namespace
+  Symfony's mailer recipe owns — it manages `MAILER_DSN` between the
+  `###> symfony/mailer ###` markers in `.env` — so an application variable
+  sitting next to it invited both confusion and a future collision. The
+  `APP_` prefix marks the two addresses as ours. Behaviour is unchanged:
+  `SettingsManager::getSenderAddress()` still returns `null` for an empty
+  value, and notifiers still skip the send rather than fail.
+- Both `APP_MAIL_FROM` and `APP_MAIL_REPLY_TO` default to
+  `changeme@example.org` in `.env`, so a fresh checkout carries a
+  visibly-wrong placeholder instead of an empty string. `APP_MAIL_REPLY_TO`
+  must not be left empty in a deploy: it is set as a default header, and an
+  unparseable address makes the send throw instead of skipping the way an
+  unset `APP_MAIL_FROM` does.
 
 ## [1.0.1] - 2026-09-18
 
