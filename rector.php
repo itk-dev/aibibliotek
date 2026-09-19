@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\StmtsAwareInterface\RemoveDeadInstanceOfAssertRector;
 
 /*
  * Rector configuration.
@@ -39,4 +40,11 @@ return RectorConfig::configure()
         deadCode: true,
         codeQuality: true,
         typeDeclarations: true,
-    );
+    )
+    ->withSkip([
+        // `\assert($x instanceof Foo)` after `createForm()` looks redundant to
+        // static analysis precisely because the assert is what narrows the
+        // type. Removing it makes the declared return type stop matching, so
+        // the rule turns a non-issue into a real error.
+        RemoveDeadInstanceOfAssertRector::class,
+    ]);
