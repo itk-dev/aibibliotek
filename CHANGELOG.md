@@ -14,12 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The coding-standards family decides how code is laid out; Rector decides
   what it says, which is the half that was missing — and the one that pays
   off on the major upgrades currently queued.
-  The configuration is deliberately narrow: the dead-code set plus the PHP 8.4
-  migration, scoped to `src/` and `tests/`. `task rector-check` therefore
-  reports changes on the current codebase, since the sets have never been
-  applied; it is not wired into CI, and applying them is tracked separately so
-  the rewrite gets reviewed on its own terms rather than riding along with a
-  feature.
+  The configuration covers `src/` and `tests/`. `withComposerBased()` enables
+  the Symfony, Doctrine, PHPUnit and Twig rules that match the installed
+  versions, so migrations follow `composer.lock` rather than a pinned version;
+  on top sit the PHP 8.4 migration and the dead-code, code-quality and
+  type-declaration sets. Sets that rewrite structure rather than expression —
+  naming, privatization, early return — are left off, since their output needs
+  judging line by line. `task rector-check` therefore reports changes on the
+  current codebase, since the sets have never been applied; it is not wired
+  into CI, and applying them is a separate pull request so the rewrite is
+  reviewed on its own terms rather than riding along with a feature.
 
 ## [1.0.2] - 2026-09-18
 

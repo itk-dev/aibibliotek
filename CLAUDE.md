@@ -119,9 +119,18 @@ not a signal that something is broken, and it is not wired into CI. Before
 using its output, check whether the files it wants to touch are files your
 change touches.
 
-The configuration is deliberately narrow — the dead-code set and the PHP 8.4
-migration, scoped to `src/` and `tests/`. Widen it one set at a time, in its
-own pull request.
+The configuration covers `src/` and `tests/`. `withComposerBased()` reads
+`composer.lock` and enables only the Symfony, Doctrine, PHPUnit and Twig rules
+matching the installed versions, so the migrations follow the dependencies
+instead of being pinned to a version someone has to remember to bump. On top
+of that sit the PHP 8.4 migration and three prepared sets: dead code, code
+quality, type declarations.
+
+Sets that rewrite structure rather than expression — naming, privatization,
+early return — are deliberately off. They produce diffs that need judging line
+by line, which is the opposite of what a bulk automated pass is good at. If you
+want one, enable it in its own pull request so the output can be reviewed as
+the subject rather than as noise around something else.
 
 ## Coding standards
 
