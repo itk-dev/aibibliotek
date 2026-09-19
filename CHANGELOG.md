@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   four spaces to two; that is deliberately not copied, since it would bury a
   one-line change per file in a reformat and `.github/` is outside the
   project's Prettier glob either way.
+- Updated every dependency that moves within its existing constraint. The
+  Symfony stack goes from 8.1.0 to 8.1.7 across the board — seven patch
+  releases of fixes that had accumulated in `framework-bundle`,
+  `security-bundle`, `form`, `validator`, `mailer` and `console` — alongside
+  `doctrine/orm` 3.6.7 to 3.7.1, `doctrine/doctrine-bundle` 3.2.4 to 3.3.2,
+  and the Twig and PHP CS Fixer tooling. `composer.json` carries
+  `"bump-after-update": true`, so the constraints move to the installed
+  versions with the lock. No advisories were outstanding, but the same gap is
+  how the `league/commonmark` advisories reached a release branch.
 
 ## [1.0.2] - 2026-09-18
 
