@@ -25,7 +25,7 @@ use Symfony\Bundle\SecurityBundle\Security;
  * {@see ModelMap} so the step-2 model selector defaults to a recognised
  * choice; an unrecognised model is kept verbatim as a custom value.
  */
-final class AssistantDraftPrefiller
+final readonly class AssistantDraftPrefiller
 {
     /**
      * @param FormatAdapterRegistry  $formats       detects the format and converts it to the canonical model
@@ -34,10 +34,10 @@ final class AssistantDraftPrefiller
      * @param Security               $security      resolves the currently-authenticated user for the organization default
      */
     public function __construct(
-        private readonly FormatAdapterRegistry $formats,
-        private readonly ModelMap $modelMap,
-        private readonly OrganizationRepository $organizations,
-        private readonly Security $security,
+        private FormatAdapterRegistry $formats,
+        private ModelMap $modelMap,
+        private OrganizationRepository $organizations,
+        private Security $security,
     ) {
     }
 
@@ -74,7 +74,7 @@ final class AssistantDraftPrefiller
     public function prefill(AssistantDraft $draft): void
     {
         $adapter = $this->formats->detect($draft->sourceConfig);
-        if (null === $adapter) {
+        if (!$adapter instanceof Format\FormatAdapter) {
             return;
         }
 
@@ -195,7 +195,7 @@ final class AssistantDraftPrefiller
 
         if (null === $draft->organizationId) {
             $organization = $this->resolveOrganizationFromActingUser();
-            if (null !== $organization) {
+            if ($organization instanceof \App\Entity\Organization) {
                 $draft->organizationId = (string) $organization->getId();
             }
         }

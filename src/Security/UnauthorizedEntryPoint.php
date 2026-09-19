@@ -29,12 +29,12 @@ use Twig\Environment;
  * The 403 counterpart for already-authenticated users lives in
  * {@see AccessDeniedHandler}.
  */
-final class UnauthorizedEntryPoint implements AuthenticationEntryPointInterface
+final readonly class UnauthorizedEntryPoint implements AuthenticationEntryPointInterface
 {
     /**
      * @param Environment $twig Twig environment used to render the 401 template
      */
-    public function __construct(private readonly Environment $twig)
+    public function __construct(private Environment $twig)
     {
     }
 

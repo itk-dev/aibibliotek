@@ -240,7 +240,7 @@ final class AssistantCreateControllerTest extends WebTestCase
         self::assertNotNull($created);
         self::assertSame(
             ['alpha', 'beta'],
-            array_map(static fn (Tag $t) => $t->getName(), $created->getTags()->toArray()),
+            array_map(static fn (Tag $t): string => $t->getName(), $created->getTags()->toArray()),
         );
         self::assertSame(
             ['name' => 'Demo assistant', 'base_model_id' => 'gpt-4o', 'meta' => ['description' => 'A demo assistant', 'tags' => ['alpha', 'beta']]],
@@ -248,7 +248,7 @@ final class AssistantCreateControllerTest extends WebTestCase
         );
 
         // The permalink to the created row is on the receipt page.
-        self::assertStringContainsString('/assistant/'.(string) $created->getId(), $body);
+        self::assertStringContainsString('/assistant/'.$created->getId(), $body);
     }
 
     // Verifies importing a non-OpenWebUI (Ollama) config detects the format, normalises the model, and flags step 2 as experimental.

@@ -40,7 +40,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
  * moderator approves the user. This matches the project's "Pending
  * users have no site access" rule documented in ADR 006.
  */
-final class EmailConfirmation
+final readonly class EmailConfirmation
 {
     /**
      * Lifetime of an issued confirmation token, in seconds. A
@@ -61,13 +61,13 @@ final class EmailConfirmation
      */
     public function __construct(
         #[Autowire(service: 'cache.email_confirmation')]
-        private readonly CacheItemPoolInterface $tokens,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository,
-        private readonly AdminRegistrationNotifier $adminNotifier,
-        private readonly DomainRegistrationNotifier $domainNotifier,
-        private readonly RegistrationConfirmationNotifier $confirmationNotifier,
-        private readonly LoggerInterface $logger,
+        private CacheItemPoolInterface $tokens,
+        private EntityManagerInterface $entityManager,
+        private UserRepository $userRepository,
+        private AdminRegistrationNotifier $adminNotifier,
+        private DomainRegistrationNotifier $domainNotifier,
+        private RegistrationConfirmationNotifier $confirmationNotifier,
+        private LoggerInterface $logger,
     ) {
     }
 

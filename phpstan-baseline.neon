@@ -7,12 +7,6 @@ parameters:
 			path: src/Assistant/AssistantEditor.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 2
-			path: src/Assistant/AssistantOwnership.php
-
-		-
 			message: '#^Offset 1 might not exist on array\{\}\|array\{non\-empty\-string, non\-empty\-string, string\}\.$#'
 			identifier: offsetAccess.notFound
 			count: 1
@@ -71,18 +65,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: src/Controller/AssistantEditController.php
-
-		-
-			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/DataFixtures/AssistantFixtures.php
-
-		-
-			message: '#^Instanceof between App\\Entity\\Organization and App\\Entity\\Organization will always evaluate to true\.$#'
-			identifier: instanceof.alwaysTrue
-			count: 1
-			path: src/DataFixtures/AssistantFixtures.php
 
 		-
 			message: '#^Parameter \#1 \$array \(list\<string\>\) of array_values is already a list, call has no effect\.$#'
@@ -187,20 +169,8 @@ parameters:
 			path: src/Security/UserManager.php
 
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: src/Security/UserOrganization.php
-
-		-
 			message: '#^Class App\\Security\\Voter\\EditAssistantVoter extends generic class Symfony\\Component\\Security\\Core\\Authorization\\Voter\\Voter but does not specify its types\: TAttribute, TSubject$#'
 			identifier: missingType.generics
-			count: 1
-			path: src/Security/Voter/EditAssistantVoter.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
 			count: 1
 			path: src/Security/Voter/EditAssistantVoter.php
 
@@ -250,12 +220,6 @@ parameters:
 			message: '#^Call to an undefined method Symfony\\Component\\Security\\Core\\User\\UserInterface\:\:getId\(\)\.$#'
 			identifier: method.notFound
 			count: 6
-			path: tests/Integration/Controller/Admin/AssistantOwnershipControllerTest.php
-
-		-
-			message: '#^Using nullsafe method call on non\-nullable type Symfony\\Component\\Uid\\Ulid\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
 			path: tests/Integration/Controller/Admin/AssistantOwnershipControllerTest.php
 
 		-
@@ -383,12 +347,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: tests/Integration/Repository/AssistantRepositoryTest.php
-
-		-
-			message: '#^Anonymous function never returns null so it can be removed from the return type\.$#'
-			identifier: return.unusedType
-			count: 2
-			path: tests/Integration/Repository/UserRepositoryTest.php
 
 		-
 			message: '#^Call to static method PHPUnit\\Framework\\Assert\:\:assertNotNull\(\) with Symfony\\Component\\Uid\\Ulid will always evaluate to true\.$#'

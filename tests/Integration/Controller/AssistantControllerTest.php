@@ -136,7 +136,7 @@ final class AssistantControllerTest extends WebTestCase
         $assistant = $repository->findOneBy(['title' => 'Borgerservice-vejviser']);
         self::assertNotNull($assistant);
 
-        $crawler = $this->client->request('GET', '/assistant/'.$assistant->getId().'?tab=no-such-tab');
+        $this->client->request('GET', '/assistant/'.$assistant->getId().'?tab=no-such-tab');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('nav[aria-label="Assistentdetaljer"] a[aria-current="page"]', 'Beskrivelse');

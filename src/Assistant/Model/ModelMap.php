@@ -204,7 +204,7 @@ final class ModelMap
             foreach ((array) ($definition['targets'] ?? []) as $formatId => $targetId) {
                 $targets[(string) $formatId] = \is_string($targetId) ? $targetId : null;
             }
-            $aliases = array_values(array_filter((array) ($definition['aliases'] ?? []), 'is_string'));
+            $aliases = array_values(array_filter((array) ($definition['aliases'] ?? []), is_string(...)));
             $definitions[$id] = ['label' => $label, 'targets' => $targets, 'aliases' => $aliases];
 
             foreach ([$id, ...$aliases] as $spelling) {

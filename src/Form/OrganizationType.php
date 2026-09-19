@@ -108,7 +108,7 @@ final class OrganizationType extends AbstractType
         $lines = preg_split('/\r?\n/', $text) ?: [];
 
         return array_values(array_filter(
-            array_map(static fn (string $line): string => trim($line), $lines),
+            array_map(trim(...), $lines),
             static fn (string $line): bool => '' !== $line,
         ));
     }

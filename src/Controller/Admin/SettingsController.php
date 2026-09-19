@@ -57,7 +57,7 @@ final class SettingsController extends AbstractController
     }
 
     #[Route(path: '/admin/settings', name: 'app_admin_settings', methods: ['GET'])]
-    public function index(): Response
+    public function index(): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         return $this->redirectToRoute('app_admin_settings_site');
     }

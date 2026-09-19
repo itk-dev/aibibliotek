@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog;
 
-final class ActiveFilter
+final readonly class ActiveFilter
 {
     /**
      * One entry in the "Aktive filtre" chip rail.
@@ -21,10 +21,10 @@ final class ActiveFilter
      * @param array<string, mixed> $removeQuery query map that, when passed to `path()`, yields a URL with this specific filter value dropped while preserving the rest
      */
     public function __construct(
-        public readonly string $type,
-        public readonly string $value,
-        public readonly string $label,
-        public readonly array $removeQuery,
+        public string $type,
+        public string $value,
+        public string $label,
+        public array $removeQuery,
     ) {
     }
 }

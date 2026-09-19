@@ -84,7 +84,7 @@ final class DevTemplateMarkerNodeVisitorTest extends TestCase
     // Tests that getPriority() returns 0 so the visitor runs at Twig's default position in the node-visitor chain.
     public function testPriorityIsZero(): void
     {
-        self::assertSame(0, (new DevTemplateMarkerNodeVisitor())->getPriority());
+        self::assertSame(0, new DevTemplateMarkerNodeVisitor()->getPriority());
     }
 
     /**

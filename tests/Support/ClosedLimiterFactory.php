@@ -20,8 +20,8 @@ final class ClosedLimiterFactory
     public static function create(): RateLimiterFactoryInterface
     {
         $rejected = new RateLimit(0, new \DateTimeImmutable('+1 hour'), false, 1);
-        $limiter = new class($rejected) implements LimiterInterface {
-            public function __construct(private readonly RateLimit $rejected)
+        $limiter = new readonly class($rejected) implements LimiterInterface {
+            public function __construct(private RateLimit $rejected)
             {
             }
 
@@ -40,8 +40,8 @@ final class ClosedLimiterFactory
             }
         };
 
-        return new class($limiter) implements RateLimiterFactoryInterface {
-            public function __construct(private readonly LimiterInterface $limiter)
+        return new readonly class($limiter) implements RateLimiterFactoryInterface {
+            public function __construct(private LimiterInterface $limiter)
             {
             }
 

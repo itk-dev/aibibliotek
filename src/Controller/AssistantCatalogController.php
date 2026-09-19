@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class AssistantCatalogController extends AbstractController
 {
-    private const PER_PAGE = 12;
+    private const int PER_PAGE = 12;
 
     public function __construct(
         private readonly AssistantRepository $assistants,

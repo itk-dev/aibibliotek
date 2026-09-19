@@ -42,7 +42,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
             $mailer,
             $settings,
             new EmailTemplateRenderer(new \League\CommonMark\CommonMarkConverter()),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             new NullLogger(),
         );
 
@@ -67,7 +67,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
             $mailer,
             $settings,
             new EmailTemplateRenderer(new \League\CommonMark\CommonMarkConverter()),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             $userRepository,
             new NullLogger(),
         );
@@ -116,14 +116,14 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
             new EmailTemplateRenderer(new \League\CommonMark\CommonMarkConverter()),
             new EmailConfirmation(
                 $cache,
-                $this->createMock(EntityManagerInterface::class),
-                $this->createMock(UserRepository::class),
-                $this->createMock(AdminRegistrationNotifier::class),
-                $this->createMock(DomainRegistrationNotifier::class),
-                $this->createMock(RegistrationConfirmationNotifier::class),
+                $this->createStub(EntityManagerInterface::class),
+                $this->createStub(UserRepository::class),
+                $this->createStub(AdminRegistrationNotifier::class),
+                $this->createStub(DomainRegistrationNotifier::class),
+                $this->createStub(RegistrationConfirmationNotifier::class),
                 new NullLogger(),
             ),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             new NullLogger(),
         );
 
@@ -132,7 +132,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
 
     private function makeUser(): User
     {
-        return (new User())
+        return new User()
             ->setEmail('carol@example.test')
             ->setName('Carol')
             ->setStatus(UserStatus::AwaitingEmailConfirmation);

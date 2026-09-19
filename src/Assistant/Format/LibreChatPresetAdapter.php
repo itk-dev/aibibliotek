@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * sampling params, greeting) is preserved under `sourceExtras`.
  */
 #[AsTaggedItem(priority: 30)]
-final class LibreChatPresetAdapter implements FormatAdapter
+final readonly class LibreChatPresetAdapter implements FormatAdapter
 {
     private const string ID = 'librechat';
     private const string LABEL = 'LibreChat';
@@ -36,8 +36,8 @@ final class LibreChatPresetAdapter implements FormatAdapter
     ];
 
     public function __construct(
-        private readonly LibreChatConfigValidator $validator,
-        private readonly ModelMap $modelMap,
+        private LibreChatConfigValidator $validator,
+        private ModelMap $modelMap,
     ) {
     }
 

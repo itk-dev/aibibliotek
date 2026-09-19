@@ -14,7 +14,10 @@ use App\Twig\FrameworkExtension;
 use App\Validator\NativeConfigValidator;
 use App\Validator\OpenWebUiConfigValidator;
 use PHPUnit\Framework\TestCase;
-use Twig\TwigFilter;
+use Twig\Environment;
+use Twig\Extension\AttributeExtension;
+use Twig\Loader\ArrayLoader;
+use Twig\RuntimeLoader\FactoryRuntimeLoader;
 
 final class FrameworkExtensionTest extends TestCase
 {
@@ -33,13 +36,20 @@ final class FrameworkExtensionTest extends TestCase
         ]));
     }
 
-    // Verifies the extension registers the framework filters.
-    public function testGetFiltersRegistersFrameworkFilters(): void
+    // Verifies the framework filters are registered with Twig and callable from a template.
+    public function testFrameworkFiltersAreRegisteredWithTwig(): void
     {
-        $names = array_map(static fn (TwigFilter $f): string => $f->getName(), $this->extension()->getFilters());
+        $twig = new Environment(new ArrayLoader([
+            'template' => '{{ "openwebui"|framework_label }}',
+        ]));
+        $twig->addExtension(new AttributeExtension(FrameworkExtension::class));
+        $twig->addRuntimeLoader(new FactoryRuntimeLoader([
+            FrameworkExtension::class => $this->extension(...),
+        ]));
 
-        self::assertContains('framework_label', $names);
-        self::assertContains('framework_experimental', $names);
+        self::assertNotNull($twig->getFilter('framework_label'));
+        self::assertNotNull($twig->getFilter('framework_experimental'));
+        self::assertSame('Open WebUI', $twig->render('template'));
     }
 
     // Tests that the filter resolves a registered format id to its adapter label.

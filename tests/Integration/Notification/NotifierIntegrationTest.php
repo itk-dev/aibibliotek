@@ -116,7 +116,7 @@ final class NotifierIntegrationTest extends KernelTestCase
 
     private function makeUser(): User
     {
-        return (new User())
+        return new User()
             ->setEmail('carol@example.test')
             ->setName('Carol')
             ->setStatus(UserStatus::AwaitingEmailConfirmation);

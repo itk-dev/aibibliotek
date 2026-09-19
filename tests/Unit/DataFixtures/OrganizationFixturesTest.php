@@ -15,7 +15,7 @@ final class OrganizationFixturesTest extends TestCase
     // Ensures the fixture declares UserFixtures as a dependency so users load — and creators resolve — first.
     public function testDependsOnUserFixtures(): void
     {
-        self::assertSame([UserFixtures::class], (new OrganizationFixtures())->getDependencies());
+        self::assertSame([UserFixtures::class], new OrganizationFixtures()->getDependencies());
     }
 
     // Ensures the fixture is grouped under `default` so the stg pipeline can load it with `--group=default`.
@@ -32,7 +32,7 @@ final class OrganizationFixturesTest extends TestCase
         self::assertCount(4, $persisted);
 
         $names = array_map(
-            static fn (Organization $o) => $o->getName(),
+            static fn (Organization $o): string => $o->getName(),
             $persisted,
         );
         self::assertSame(
@@ -56,11 +56,11 @@ final class OrganizationFixturesTest extends TestCase
     public function testLoadIsDeterministic(): void
     {
         $first = array_map(
-            static fn (Organization $o) => $o->getName(),
+            static fn (Organization $o): string => $o->getName(),
             $this->captureLoad(),
         );
         $second = array_map(
-            static fn (Organization $o) => $o->getName(),
+            static fn (Organization $o): string => $o->getName(),
             $this->captureLoad(),
         );
 
@@ -80,7 +80,7 @@ final class OrganizationFixturesTest extends TestCase
         });
         $manager->expects(self::once())->method('flush');
 
-        (new OrganizationFixtures())->load($manager);
+        new OrganizationFixtures()->load($manager);
 
         return $captured;
     }

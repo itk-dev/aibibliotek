@@ -88,7 +88,7 @@ final class DomainRegistrationNotifierTest extends TestCase
      */
     private function makeApprover(string $email, string $name, string $role): User
     {
-        return (new User())
+        return new User()
             ->setEmail($email)
             ->setName($name)
             ->setRoles([$role])
@@ -100,7 +100,7 @@ final class DomainRegistrationNotifierTest extends TestCase
      */
     private function makeNewUser(string $email, string $name): User
     {
-        return (new User())
+        return new User()
             ->setEmail($email)
             ->setName($name)
             ->setStatus(UserStatus::Pending);

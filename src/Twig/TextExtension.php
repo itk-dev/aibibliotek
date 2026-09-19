@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
-
 /**
  * Small text-shaping filters for templates.
  *
@@ -18,18 +15,8 @@ use Twig\TwigFilter;
  * the string-handling out of Twig so templates don't need
  * double-quoted escape sequences the linter flags.
  */
-final class TextExtension extends AbstractExtension
+final class TextExtension
 {
-    /**
-     * @return list<TwigFilter> the filter set this extension registers
-     */
-    public function getFilters(): array
-    {
-        return [
-            new TwigFilter('paragraphs', $this->paragraphs(...)),
-        ];
-    }
-
     /**
      * Split a text blob into a list of non-empty paragraphs.
      *
@@ -43,6 +30,7 @@ final class TextExtension extends AbstractExtension
      *
      * @return list<string> zero or more non-empty paragraphs
      */
+    #[\Twig\Attribute\AsTwigFilter(name: 'paragraphs')]
     public function paragraphs(?string $text): array
     {
         if (null === $text || '' === $text) {
@@ -52,7 +40,7 @@ final class TextExtension extends AbstractExtension
         $blocks = preg_split('/(?:\r?\n){2,}/', $text) ?: [];
 
         return array_values(array_filter(
-            array_map(static fn (string $block): string => trim($block), $blocks),
+            array_map(trim(...), $blocks),
             static fn (string $block): bool => '' !== $block,
         ));
     }

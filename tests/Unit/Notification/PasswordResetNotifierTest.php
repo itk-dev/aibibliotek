@@ -49,8 +49,8 @@ final class PasswordResetNotifierTest extends TestCase
             $logger,
         );
 
-        $user = (new User())->setEmail('curator@example.test');
-        $token = new ResetPasswordToken('raw-token', new \DateTimeImmutable('+1 hour'), (new \DateTimeImmutable('+1 hour'))->getTimestamp());
+        $user = new User()->setEmail('curator@example.test');
+        $token = new ResetPasswordToken('raw-token', new \DateTimeImmutable('+1 hour'), new \DateTimeImmutable('+1 hour')->getTimestamp());
 
         $notifier->sendResetLink($user, $token);
     }
@@ -87,12 +87,12 @@ final class PasswordResetNotifierTest extends TestCase
             $this->createStub(ResetPasswordHelperInterface::class),
             $urls,
             $translator,
-            $this->createMock(LoggerInterface::class),
+            $this->createStub(LoggerInterface::class),
         );
 
-        $user = (new User())->setEmail('curator@example.test');
+        $user = new User()->setEmail('curator@example.test');
         $user->setName('Curator');
-        $token = new ResetPasswordToken('raw-token', new \DateTimeImmutable('+1 hour'), (new \DateTimeImmutable('+1 hour'))->getTimestamp());
+        $token = new ResetPasswordToken('raw-token', new \DateTimeImmutable('+1 hour'), new \DateTimeImmutable('+1 hour')->getTimestamp());
 
         $notifier->sendResetLink($user, $token);
 
@@ -126,7 +126,7 @@ final class PasswordResetNotifierTest extends TestCase
             $logger,
         );
 
-        $user = (new User())->setEmail('curator@example.test');
+        $user = new User()->setEmail('curator@example.test');
 
         self::assertNull($notifier->requestReset($user));
     }
@@ -142,7 +142,7 @@ final class PasswordResetNotifierTest extends TestCase
                 $captured = $email;
             });
 
-        $token = new ResetPasswordToken('raw-token', new \DateTimeImmutable('+1 hour'), (new \DateTimeImmutable('+1 hour'))->getTimestamp());
+        $token = new ResetPasswordToken('raw-token', new \DateTimeImmutable('+1 hour'), new \DateTimeImmutable('+1 hour')->getTimestamp());
 
         $helper = $this->createMock(ResetPasswordHelperInterface::class);
         $helper->expects(self::once())
@@ -168,10 +168,10 @@ final class PasswordResetNotifierTest extends TestCase
             $helper,
             $urls,
             $translator,
-            $this->createMock(LoggerInterface::class),
+            $this->createStub(LoggerInterface::class),
         );
 
-        $user = (new User())->setEmail('curator@example.test');
+        $user = new User()->setEmail('curator@example.test');
         $user->setName('Curator');
 
         $returned = $notifier->requestReset($user);

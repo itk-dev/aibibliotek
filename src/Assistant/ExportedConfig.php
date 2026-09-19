@@ -8,7 +8,7 @@ namespace App\Assistant;
  * The result of exporting an assistant to a target format: the
  * serialised payload plus the metadata a download response needs.
  */
-final class ExportedConfig
+final readonly class ExportedConfig
 {
     /**
      * @param string       $payload   the serialised, re-importable config
@@ -17,10 +17,10 @@ final class ExportedConfig
      * @param list<string> $warnings  non-blocking notes about the export (e.g. a model with no equivalent in the target); the payload is still valid and importable
      */
     public function __construct(
-        public readonly string $payload,
-        public readonly string $mediaType,
-        public readonly string $extension,
-        public readonly array $warnings = [],
+        public string $payload,
+        public string $mediaType,
+        public string $extension,
+        public array $warnings = [],
     ) {
     }
 }
