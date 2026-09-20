@@ -78,7 +78,7 @@ final class EmailConfirmationControllerTest extends WebTestCase
     private function awaitingFixtureUser(): \App\Entity\User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixtures::AWAITING_EMAIL]);
-        \assert(null !== $user, 'UserFixtures must seed the AwaitingEmailConfirmation baseline.');
+        self::assertNotNull($user, 'UserFixtures must seed the AwaitingEmailConfirmation baseline.');
         self::assertSame(UserStatus::AwaitingEmailConfirmation, $user->getStatus());
 
         return $user;

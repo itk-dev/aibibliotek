@@ -208,7 +208,13 @@ class AssistantRepository extends ServiceEntityRepository
         $qb->setFirstResult(($page - 1) * $perPage)
             ->setMaxResults($perPage);
 
-        return new Paginator($qb->getQuery(), false);
+        // Paginator's generic parameter comes from the hydrated row type,
+        // which the Query object does not carry; the builder selects `a`,
+        // so every row is an Assistant.
+        /** @var Paginator<Assistant> $paginator */
+        $paginator = new Paginator($qb->getQuery(), false);
+
+        return $paginator;
     }
 
     /**

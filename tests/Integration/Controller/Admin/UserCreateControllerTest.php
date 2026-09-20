@@ -154,7 +154,7 @@ final class UserCreateControllerTest extends WebTestCase
     private function loginAsApproved(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'Test user must be created before login.');
+        self::assertNotNull($user, 'Test user must be created before login.');
         $this->client->loginUser($user);
     }
 }

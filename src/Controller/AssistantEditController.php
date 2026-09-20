@@ -194,10 +194,10 @@ final class AssistantEditController extends AbstractController
      */
     private function hydrateDraft(Assistant $assistant): AssistantDraft
     {
-        $tagNames = array_map(
+        $tagNames = array_values(array_map(
             static fn (Tag $tag): string => $tag->getName(),
             $assistant->getTags()->toArray(),
-        );
+        ));
 
         $draft = new AssistantDraft();
         $draft->editingAssistantId = (string) $assistant->getId();

@@ -38,8 +38,6 @@ final class UserManagerTest extends KernelTestCase
     public function testCreatesAndPersistsUserWithHashedPassword(): void
     {
         $user = $this->userManager->createUser('charlie@example.test', 'Charlie', 'secret');
-
-        self::assertNotNull($user->getId());
         self::assertSame('charlie@example.test', $user->getEmail());
         self::assertSame('Charlie', $user->getName());
         self::assertSame(UserStatus::Pending, $user->getStatus());

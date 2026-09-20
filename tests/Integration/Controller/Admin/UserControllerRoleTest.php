@@ -248,13 +248,13 @@ final class UserControllerRoleTest extends WebTestCase
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     private function jsonResponse(): array
     {
         $content = (string) $this->client->getResponse()->getContent();
         $decoded = json_decode($content, true);
-        \assert(\is_array($decoded));
+        self::assertIsArray($decoded);
 
         return $decoded;
     }
@@ -262,7 +262,7 @@ final class UserControllerRoleTest extends WebTestCase
     private function fixtureUser(string $email): \App\Entity\User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'UserFixtures must seed '.$email);
+        self::assertNotNull($user, 'UserFixtures must seed '.$email);
 
         return $user;
     }

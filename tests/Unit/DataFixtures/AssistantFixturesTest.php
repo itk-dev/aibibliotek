@@ -103,7 +103,7 @@ final class AssistantFixturesTest extends TestCase
         $captured = [];
         $manager = $this->createMock(ObjectManager::class);
         $manager->method('persist')->willReturnCallback(function (object $entity) use (&$captured): void {
-            \assert($entity instanceof Assistant);
+            self::assertInstanceOf(Assistant::class, $entity);
             $captured[] = $entity;
         });
         $manager->expects(self::once())->method('flush');

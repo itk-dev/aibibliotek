@@ -77,7 +77,7 @@ final class UserController extends AbstractController
         $domainError = null;
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->userManager->createFromInput($form->getData());
+                $this->userManager->createFromInput((array) $form->getData());
 
                 $this->addFlash('success', 'admin.users.flash.created');
 
@@ -143,12 +143,13 @@ final class UserController extends AbstractController
             $payload = [];
         }
 
-        if (!$this->isCsrfTokenValid('admin-user-action', (string) ($payload['_token'] ?? ''))) {
+        $token = $payload['_token'] ?? null;
+        if (!\is_string($token) || !$this->isCsrfTokenValid('admin-user-action', $token)) {
             return $this->jsonError('csrf', 'admin.users.role.flash.error_csrf', Response::HTTP_FORBIDDEN);
         }
 
-        $roleKey = (string) ($payload['role'] ?? '');
-        $transition = self::ROLE_TRANSITIONS[$roleKey] ?? null;
+        $roleKey = $payload['role'] ?? null;
+        $transition = \is_string($roleKey) ? self::ROLE_TRANSITIONS[$roleKey] ?? null : null;
         if (null === $transition) {
             return $this->jsonError('invalid_role', 'admin.users.role.flash.error_invalid', Response::HTTP_UNPROCESSABLE_ENTITY);
         }

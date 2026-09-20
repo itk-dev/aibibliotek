@@ -213,14 +213,14 @@ final readonly class OllamaModelfileAdapter implements FormatAdapter
                 continue;
             }
 
-            // The pattern always matches a non-empty, non-comment line, but
-            // preg_match reports that through its return value rather than
-            // through the shape of $matches.
-            if (1 !== preg_match('/^(\S+)\s*(.*)$/', $line, $matches)) {
-                continue;
-            }
-            $keyword = strtoupper($matches[1]);
-            $rest = $matches[2];
+            // The pattern always matches a non-empty, non-comment line, so
+            // the groups are always present — but preg_match reports that
+            // through its return value, not the shape of $matches. Defaulting
+            // the offsets states the same thing without a branch no input can
+            // take, which the coverage gate would then refuse.
+            preg_match('/^(\S+)\s*(.*)$/', $line, $matches);
+            $keyword = strtoupper($matches[1] ?? '');
+            $rest = $matches[2] ?? '';
 
             switch ($keyword) {
                 case 'FROM':

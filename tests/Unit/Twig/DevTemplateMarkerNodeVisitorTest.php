@@ -88,7 +88,7 @@ final class DevTemplateMarkerNodeVisitorTest extends TestCase
     }
 
     /**
-     * @param array<string, string> $templates
+     * @param non-empty-array<string, string> $templates
      */
     private function render(array $templates, ?string $name = null): string
     {

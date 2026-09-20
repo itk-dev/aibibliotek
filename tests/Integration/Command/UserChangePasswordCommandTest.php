@@ -22,9 +22,7 @@ final class UserChangePasswordCommandTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-
-        $application = new Application(self::$kernel);
+        $application = new Application(self::bootKernel());
         $command = $application->find('app:user:change-password');
         $this->tester = new CommandTester($command);
     }

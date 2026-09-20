@@ -58,10 +58,18 @@ class User extends AbstractEntity implements UserInterface, PasswordAuthenticate
     /**
      * A visual identifier that represents this user.
      *
+     * Returns an empty string for a User that has never been given an
+     * e-mail address. `UserInterface` annotates this as `non-empty-string`,
+     * but callers here rely on the empty case: `DomainRegistrationNotifier`
+     * skips a user with no address rather than failing, and `UserTest`
+     * pins that behaviour. Throwing instead would turn a handled state
+     * into a fatal one, so the annotation is what gives way.
+     *
      * @see UserInterface
      */
     public function getUserIdentifier(): string
     {
+        // @phpstan-ignore return.type
         return (string) $this->email;
     }
 
@@ -132,7 +140,7 @@ class User extends AbstractEntity implements UserInterface, PasswordAuthenticate
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0".self::class."\0password"] = hash('crc32c', $this->password ?? '');
 
         return $data;
     }

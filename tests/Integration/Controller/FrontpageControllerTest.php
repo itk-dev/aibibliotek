@@ -26,7 +26,7 @@ final class FrontpageControllerTest extends WebTestCase
         // before each test so the page-render assertions below see
         // actual content rather than an unauthorised response.
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'alice@example.test']);
-        \assert(null !== $alice, 'UserFixtures must seed alice@example.test.');
+        self::assertNotNull($alice, 'UserFixtures must seed alice@example.test.');
         $this->client->loginUser($alice);
     }
 

@@ -80,7 +80,7 @@ final class AssistantOwnershipQueriesTest extends KernelTestCase
     private function organization(string $name): Organization
     {
         $organization = self::getContainer()->get(OrganizationRepository::class)->findOneBy(['name' => $name]);
-        \assert($organization instanceof Organization, 'OrganizationFixtures must seed '.$name.'.');
+        self::assertInstanceOf(Organization::class, $organization, 'OrganizationFixtures must seed '.$name.'.');
 
         return $organization;
     }

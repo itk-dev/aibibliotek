@@ -20,10 +20,10 @@ final class AccountStatusCheckerTest extends TestCase
             ->setName('Alice')
             ->setStatus(UserStatus::Approved);
 
-        new AccountStatusChecker()->checkPreAuth($user);
+        // No exception thrown is the assertion.
+        $this->expectNotToPerformAssertions();
 
-        // No exception thrown is the assertion; explicit to keep PHPUnit happy.
-        self::assertTrue(true);
+        new AccountStatusChecker()->checkPreAuth($user);
     }
 
     // Ensures an AwaitingEmailConfirmation user is rejected with the 'account.awaiting_email_confirmation' message key (issue #103).
@@ -70,9 +70,10 @@ final class AccountStatusCheckerTest extends TestCase
     {
         $foreignUser = $this->createStub(UserInterface::class);
 
-        new AccountStatusChecker()->checkPreAuth($foreignUser);
+        // Falling through without raising is the assertion.
+        $this->expectNotToPerformAssertions();
 
-        self::assertTrue(true);
+        new AccountStatusChecker()->checkPreAuth($foreignUser);
     }
 
     // Tests that checkPostAuth does nothing (required by the interface).
@@ -80,8 +81,9 @@ final class AccountStatusCheckerTest extends TestCase
     {
         $user = new User()->setStatus(UserStatus::Approved);
 
-        new AccountStatusChecker()->checkPostAuth($user);
+        // Doing nothing is the assertion.
+        $this->expectNotToPerformAssertions();
 
-        self::assertTrue(true);
+        new AccountStatusChecker()->checkPostAuth($user);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Tests\Unit\Form;
 
 use App\Form\FlowFactory;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -27,7 +28,7 @@ final class FlowFactoryTest extends TestCase
         $formFactory = $this->createMock(FormFactoryInterface::class);
         $formFactory->method('create')->willReturn($flow);
 
-        self::assertSame($flow, (new FlowFactory($formFactory))->create('SomeFlowType'));
+        self::assertSame($flow, (new FlowFactory($formFactory))->create(SomeFlowType::class));
     }
 
     // Ensures a form type that does not build a flow fails immediately, naming the type.
@@ -39,7 +40,7 @@ final class FlowFactoryTest extends TestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('SomeOrdinaryType must build a');
 
-        (new FlowFactory($formFactory))->create('SomeOrdinaryType');
+        (new FlowFactory($formFactory))->create(SomeOrdinaryType::class);
     }
 
     // Verifies data and options are handed to the form factory untouched.
@@ -50,9 +51,31 @@ final class FlowFactoryTest extends TestCase
         $formFactory = $this->createMock(FormFactoryInterface::class);
         $formFactory->expects(self::once())
             ->method('create')
-            ->with('SomeFlowType', $data, ['data_storage' => 'slot'])
+            ->with(SomeFlowType::class, $data, ['data_storage' => 'slot'])
             ->willReturn($this->createMock(FormFlowInterface::class));
 
-        (new FlowFactory($formFactory))->create('SomeFlowType', $data, ['data_storage' => 'slot']);
+        (new FlowFactory($formFactory))->create(SomeFlowType::class, $data, ['data_storage' => 'slot']);
     }
+}
+
+/**
+ * Stand-in for a form type that builds a flow.
+ *
+ * The form factory is mocked in every test here, so the type is never
+ * instantiated — it only has to be a real form type for the call to
+ * type-check.
+ *
+ * @extends AbstractType<mixed>
+ */
+final class SomeFlowType extends AbstractType
+{
+}
+
+/**
+ * Stand-in for a form type that builds an ordinary form.
+ *
+ * @extends AbstractType<mixed>
+ */
+final class SomeOrdinaryType extends AbstractType
+{
 }

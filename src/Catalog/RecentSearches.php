@@ -59,7 +59,7 @@ final readonly class RecentSearches
      *
      * Reads defensively: a session value that is not an array (e.g. a
      * tampered cookie or a schema change) yields an empty list rather than a
-     * type error.
+     * type error, and any non-string entry inside it is dropped.
      *
      * @return list<string> distinct search terms in most-recent-first order
      */
@@ -67,6 +67,6 @@ final readonly class RecentSearches
     {
         $stored = $this->requestStack->getSession()->get(self::SESSION_KEY, []);
 
-        return \is_array($stored) ? array_values($stored) : [];
+        return \is_array($stored) ? array_values(array_filter($stored, \is_string(...))) : [];
     }
 }

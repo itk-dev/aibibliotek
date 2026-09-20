@@ -112,7 +112,7 @@ final class UserMenuRenderTest extends WebTestCase
     private function loginAs(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'Test user must exist before login.');
+        self::assertNotNull($user, 'Test user must exist before login.');
         $this->client->loginUser($user);
     }
 }

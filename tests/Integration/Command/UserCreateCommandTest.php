@@ -22,9 +22,7 @@ final class UserCreateCommandTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
-
-        $application = new Application(self::$kernel);
+        $application = new Application(self::bootKernel());
         $command = $application->find('app:user:create');
         $this->tester = new CommandTester($command);
     }

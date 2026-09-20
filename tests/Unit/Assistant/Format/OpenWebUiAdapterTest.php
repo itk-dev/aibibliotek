@@ -188,6 +188,7 @@ final class OpenWebUiAdapterTest extends TestCase
         $rebuilt = $this->adapter()->canonicalToSource(new CanonicalModel(name: 'Name'));
 
         self::assertSame('', $rebuilt['base_model_id']);
+        self::assertIsArray($rebuilt['meta']);
         self::assertSame('', $rebuilt['meta']['description']);
         self::assertSame([], $rebuilt['meta']['tags']);
     }

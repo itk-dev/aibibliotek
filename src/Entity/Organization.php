@@ -22,7 +22,8 @@ class Organization extends AbstractEntity
     private array $emailDomains;
 
     /**
-     * @param list<string> $emailDomains
+     * @param array<array-key, string> $emailDomains keys are ignored; the values are
+     *                                               normalised and re-indexed as a list
      */
     public function __construct(
         #[ORM\Column(length: 255)]
@@ -57,7 +58,8 @@ class Organization extends AbstractEntity
     }
 
     /**
-     * @param list<string> $emailDomains
+     * @param array<array-key, string> $emailDomains keys are ignored; the values are
+     *                                               normalised and re-indexed as a list
      */
     public function setEmailDomains(array $emailDomains): static
     {

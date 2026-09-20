@@ -11,6 +11,7 @@ use App\Notification\DomainRegistrationNotifier;
 use App\Settings\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
+use Symfony\Component\Mime\Email;
 
 /**
  * End-to-end coverage of the domain registration notifier.
@@ -53,19 +54,18 @@ final class DomainNotifierTest extends KernelTestCase
         // Aarhus fixture: manager@aarhus.dk + manager2@aarhus.dk + admin@aarhus.dk.
         self::assertEmailCount(3);
 
-        $messages = self::getMailerMessages();
-        $recipients = array_map(
-            static fn (\Symfony\Component\Mime\RawMessage $m): ?string => $m->getTo()[0]->getAddress(),
-            $messages,
-        );
+        $recipients = [];
+        foreach (self::getMailerMessages() as $email) {
+            self::assertInstanceOf(Email::class, $email);
+            $recipients[] = $email->getTo()[0]->getAddress();
+            self::assertSame('Ny bruger: Newbie', $email->getSubject());
+            $text = $email->getTextBody();
+            self::assertIsString($text);
+            self::assertStringContainsString('newbie@aarhus.dk', $text);
+        }
         self::assertContains(UserFixtures::DOMAIN_MANAGER_EMAIL, $recipients);
         self::assertContains(UserFixtures::SECOND_DOMAIN_MANAGER_EMAIL, $recipients);
         self::assertContains(UserFixtures::ADMIN_EMAIL, $recipients);
-
-        foreach ($messages as $email) {
-            self::assertSame('Ny bruger: Newbie', $email->getSubject());
-            self::assertStringContainsString('newbie@aarhus.dk', $email->getTextBody() ?? '');
-        }
     }
 
     // Ensures the notifier is a no-op when the user's domain has no approver — the admin recipient still receives their own mail from AdminRegistrationNotifier, so no signal is lost.
@@ -82,10 +82,11 @@ final class DomainNotifierTest extends KernelTestCase
     {
         $this->notifier->notifyOfNewRegistration($this->newUserOnDomain('newbie@aarhus.dk', 'Newbie'));
 
-        $recipients = array_map(
-            static fn (\Symfony\Component\Mime\RawMessage $m): ?string => $m->getTo()[0]->getAddress(),
-            self::getMailerMessages(),
-        );
+        $recipients = [];
+        foreach (self::getMailerMessages() as $email) {
+            self::assertInstanceOf(Email::class, $email);
+            $recipients[] = $email->getTo()[0]->getAddress();
+        }
         self::assertNotContains(UserFixtures::COLLEAGUE_EMAIL, $recipients);
     }
 

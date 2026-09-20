@@ -12,6 +12,8 @@ use App\Security\UserManager;
 use App\Settings\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\RawMessage;
 
 /**
  * End-to-end coverage of {@see EmailConfirmation}: issue a token,
@@ -137,9 +139,14 @@ final class EmailConfirmationTest extends KernelTestCase
 
         self::assertEmailCount(2);
         $recipients = array_map(
-            static fn (\Symfony\Component\Mime\RawMessage $message): string => method_exists($message, 'getTo')
-                ? ($message->getTo()[0]?->getAddress() ?? '')
-                : '',
+            static function (RawMessage $message): string {
+                if (!$message instanceof Email) {
+                    return '';
+                }
+                $to = $message->getTo();
+
+                return [] === $to ? '' : $to[0]->getAddress();
+            },
             self::getMailerMessages(),
         );
         sort($recipients);
@@ -161,7 +168,7 @@ final class EmailConfirmationTest extends KernelTestCase
     private function awaitingFixtureUser(): \App\Entity\User
     {
         $user = $this->userRepository->findOneBy(['email' => UserFixtures::AWAITING_EMAIL]);
-        \assert(null !== $user, 'UserFixtures must seed the AwaitingEmailConfirmation baseline.');
+        self::assertNotNull($user, 'UserFixtures must seed the AwaitingEmailConfirmation baseline.');
         self::assertSame(UserStatus::AwaitingEmailConfirmation, $user->getStatus());
 
         return $user;

@@ -218,7 +218,7 @@ final class SettingsController extends AbstractController
 
         $tokens = [
             'name' => '' !== $actor->getName() ? $actor->getName() : self::PREVIEW_NAME_FALLBACK,
-            'email' => $actor->getEmail(),
+            'email' => $actor->getUserIdentifier(),
             'brand_name' => $this->settingsManager->getBrandName(),
             'approval_url' => $urlGenerator->generate(
                 'app_admin_users',

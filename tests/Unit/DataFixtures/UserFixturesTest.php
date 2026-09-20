@@ -45,7 +45,7 @@ final class UserFixturesTest extends TestCase
         $entityManager->expects(self::exactly(self::EXPECTED_USER_COUNT))
             ->method('persist')
             ->willReturnCallback(function (object $entity) use (&$persisted): void {
-                \assert($entity instanceof User);
+                self::assertInstanceOf(User::class, $entity);
                 $persisted[] = $entity;
             });
         $entityManager->expects(self::exactly(self::EXPECTED_USER_COUNT))->method('flush');

@@ -236,8 +236,14 @@ final readonly class CatalogCriteria
             return $query;
         }
 
+        // Every non-`q` key this method is called with is a facet, and
+        // toQueryArray() only emits a facet key when its list is non-empty,
+        // so the entry is always the facet's own list<string>.
+        /** @var list<string> $current */
+        $current = $query[$type];
+
         $remaining = array_values(array_filter(
-            $query[$type],
+            $current,
             static fn (string $v): bool => $v !== $value,
         ));
 

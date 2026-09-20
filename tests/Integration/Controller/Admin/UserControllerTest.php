@@ -364,7 +364,7 @@ final class UserControllerTest extends WebTestCase
     private function loginAsApproved(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'Test user must be seeded by UserFixtures before login.');
+        self::assertNotNull($user, 'Test user must be seeded by UserFixtures before login.');
         $this->client->loginUser($user);
     }
 }

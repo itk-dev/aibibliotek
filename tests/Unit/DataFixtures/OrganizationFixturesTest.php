@@ -75,7 +75,7 @@ final class OrganizationFixturesTest extends TestCase
         $captured = [];
         $manager = $this->createMock(ObjectManager::class);
         $manager->method('persist')->willReturnCallback(function (object $entity) use (&$captured): void {
-            \assert($entity instanceof Organization);
+            self::assertInstanceOf(Organization::class, $entity);
             $captured[] = $entity;
         });
         $manager->expects(self::once())->method('flush');
