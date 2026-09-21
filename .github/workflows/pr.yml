@@ -1,21 +1,21 @@
 on: pull_request
 
 env:
-  COMPOSE_USER: root
+    COMPOSE_USER: root
 
 name: PR Review
 jobs:
-  code-analysis:
-    name: PHP - Code analysis
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: arduino/setup-task@v2
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+    code-analysis:
+        name: PHP - Code analysis
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: arduino/setup-task@v2
+              with:
+                  repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: |
-          docker network create frontend
-          task compose -- up --detach
-          task composer -- install
-          task static-analysis:check
+            - run: |
+                  docker network create frontend
+                  task compose -- up --detach
+                  task composer -- install
+                  task static-analysis:check
