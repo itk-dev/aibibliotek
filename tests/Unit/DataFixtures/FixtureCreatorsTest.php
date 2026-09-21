@@ -83,7 +83,10 @@ final class FixtureCreatorsTest extends TestCase
         );
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->method('getRepository')->with(User::class)->willReturn($repository);
+        $manager->expects(self::once())
+            ->method('getRepository')
+            ->with(User::class)
+            ->willReturn($repository);
 
         return $manager;
     }
