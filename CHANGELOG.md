@@ -56,6 +56,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `UserRepository::collectEmails()`, the read-side lookup backing that
   completion.
+- [Rector](https://getrector.com/) as a dev dependency, with `rector.php`,
+  `task rector-check` / `task rector-apply`, and a section in `CLAUDE.md`.
+  The coding-standards family decides how code is laid out; Rector decides
+  what it says, which is the half that was missing — and the one that pays
+  off on the major upgrades currently queued.
+  The configuration covers `src/` and `tests/`. `withComposerBased()` enables
+  the Symfony, Doctrine, PHPUnit and Twig rules that match the installed
+  versions, so migrations follow `composer.lock` rather than a pinned version;
+  on top sit the PHP 8.4 migration and the dead-code, code-quality and
+  type-declaration sets. Sets that rewrite structure rather than expression —
+  naming, privatization, early return — are left off, since their output needs
+  judging line by line. `RemoveDeadInstanceOfAssertRector` is skipped
+  explicitly: `\assert($x instanceof Foo)` after `createForm()` looks redundant
+  to static analysis precisely because the assert is what narrows the type, so
+  removing it makes the declared return type stop matching — the rule converts
+  a non-issue into a real error that no test catches, since runtime behaviour
+  is unchanged. `task rector-check` therefore reports changes on the
+  current codebase, since the sets have never been applied; it is not wired
+  into CI, and applying them is a separate pull request so the rewrite is
+  reviewed on its own terms rather than riding along with a feature.
 
 ## [1.0.2] - 2026-09-18
 

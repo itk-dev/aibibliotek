@@ -160,6 +160,18 @@ tasks:
       - task: coding-standards-composer-apply
     silent: true
 
+  rector-check:
+    desc: 'Check for Rector refactorings (dry-run).'
+    cmds:
+      - task compose-exec -- phpfpm vendor/bin/rector process --dry-run
+    silent: true
+
+  rector-apply:
+    desc: 'Apply Rector refactorings.'
+    cmds:
+      - task compose-exec -- phpfpm vendor/bin/rector process
+    silent: true
+
   coding-standards-php-check:
     desc: 'Check PHP coding standards (php-cs-fixer, dry-run).'
     cmds:
