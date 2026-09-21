@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `symfonycasts/tailwind-bundle` upgraded from 0.14 to 1.0. The `when@prod`
+  `binary_platform` pin is still required
+  ([#243](https://github.com/itk-dev/ai-reolen/issues/243)).
 - PHPStan moves from level 8 with a 102-entry baseline to **level max with no
   baseline at all**, clearing 251 errors across `src/` and `tests/`. The
   baseline was deferred work rather than a list of accepted findings, and it
