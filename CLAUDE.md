@@ -81,7 +81,7 @@ task coding-standards:composer:apply
 task coding-standards:check
 
 # Static analysis
-task static-analysis:check          # PHPStan, level 8
+task static-analysis:check          # PHPStan, level max, no baseline
 
 # Automated refactoring (Rector)
 task rector:check                   # dry-run, shows what would change
