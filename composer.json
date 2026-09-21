@@ -40,6 +40,8 @@
         "doctrine/doctrine-fixtures-bundle": "^4.3",
         "ergebnis/composer-normalize": "^2.53",
         "friendsofphp/php-cs-fixer": "^3.95.25",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^11.5.56",
         "rector/rector": "^2.6",
         "rregeer/phpunit-coverage-check": "^0.3.1",

@@ -80,6 +80,9 @@ task coding-standards-composer-apply
 # Run every check at once
 task coding-standards-check
 
+# Static analysis
+task static-analysis-check          # PHPStan, level 8
+
 # Automated refactoring (Rector)
 task rector-check                   # dry-run, shows what would change
 task rector-apply                   # rewrites the files
@@ -95,6 +98,24 @@ Actions workflow on every pull request — see `.github/workflows/tests.yaml`.
 Run the matching check before committing changes in that area. For
 commands without a dedicated task, fall back to `task compose -- <args>`
 or `itkdev-docker-compose <args>`.
+
+## Static analysis
+
+`phpstan.dist.neon` configures PHPStan at **level 8** over `src/` and `tests/`,
+with the Symfony extension resolving services so container lookups are
+type-checked rather than assumed to return `object`.
+
+`phpstan-baseline.neon` holds the 102 errors that existed when the tool was
+introduced. The distinction that matters: **the baseline is not a list of
+things that are fine.** It is deferred work. Code you add is analysed at full
+level 8 and must pass; the baseline only excuses what was already there.
+
+So: never regenerate the baseline to make a new error go away. If
+`task static-analysis-check` fails on something you wrote, fix the code. If it
+fails on something you merely touched, that error was already deferred — fix it
+if the fix is small, and say so in the PR description either way. Regenerating
+the baseline silently converts a real finding into permanent debt, and the diff
+makes it look like a routine update.
 
 ## Automated refactoring
 
