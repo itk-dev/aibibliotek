@@ -56,6 +56,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `getFilters()` now build a Twig environment from the attributes and render
   through the filter, which checks that it works rather than that it is
   declared.
+- Taskfile task names follow the [official style guide](https://taskfile.dev/docs/styleguide#use-a-colon-to-separate-the-task-namespace-and-name)
+  and use a colon between namespace and name: `coding-standards:php:check`
+  rather than `coding-standards-php-check`, `test:coverage` rather than
+  `test-coverage`, and so on. `task --list` now groups by namespace instead of
+  presenting thirty flat kebab-case names. Single-word tasks — `compose`,
+  `composer`, `console`, `test` — have no namespace and are unchanged.
+  The tasks added further down the stack follow the same rule:
+  `static-analysis:check`, `rector:check` and `rector:apply`.
+  `README.md`, `CONTRIBUTING.md` and `CLAUDE.md` follow suit. Earlier
+  changelog entries keep the old names, since they record what was true when
+  written.
 
 ### Removed
 

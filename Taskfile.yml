@@ -24,32 +24,32 @@ tasks:
     cmds:
       - '{{.DOCKER_COMPOSE}} {{.CLI_ARGS}}'
 
-  compose-exec:
-    desc: 'Run `docker compose exec` command, handling content on stdin. Example: task compose-exec -- phpfpm php -v'
+  compose:exec:
+    desc: 'Run `docker compose exec` command, handling content on stdin. Example: task compose:exec -- phpfpm php -v'
     cmds:
       # Detect whether anything is piped into stdin so non-interactive use
-      # (e.g. `cat foo.sql | task compose-exec -- ...`) does not allocate a TTY.
+      # (e.g. `cat foo.sql | task compose:exec -- ...`) does not allocate a TTY.
       # https://unix.stackexchange.com/questions/762992/bash-check-if-the-standard-input-contains-anything
       - if [[ ! -t 0 ]]; then task compose -- exec --no-TTY {{.CLI_ARGS}}; else task compose -- exec {{.CLI_ARGS}}; fi
     silent: true
 
   # ---- Lifecycle --------------------------------------------------------
 
-  site-install:
+  site:install:
     desc: 'Pull images, start the stack, install Composer dependencies, and apply migrations. Pass `RESET=1` to drop and recreate the database first (wipes the local dev DB).'
     cmds:
       - task compose -- pull
       - task compose -- up --detach --remove-orphans --wait
-      - task composer-install
-      - task: db-reset
+      - task composer:install
+      - task: db:reset
         vars:
           RESET: '{{.RESET}}'
       - task console -- doctrine:migrations:migrate --no-interaction
-      - task: assets-build
+      - task: assets:build
     silent: true
 
-  db-reset:
-    desc: 'Drop and recreate the application database. Internal helper used by `site-install RESET=1`; no-op unless RESET is set.'
+  db:reset:
+    desc: 'Drop and recreate the application database. Internal helper used by `site:install RESET=1`; no-op unless RESET is set.'
     status:
       - test -z "{{.RESET}}"
     cmds:
@@ -62,10 +62,10 @@ tasks:
   composer:
     desc: 'Run a Composer command inside phpfpm. Example: task composer -- require foo/bar'
     cmds:
-      - task compose-exec -- phpfpm composer {{.CLI_ARGS}}
+      - task compose:exec -- phpfpm composer {{.CLI_ARGS}}
     silent: true
 
-  composer-install:
+  composer:install:
     desc: 'Run `composer install` inside phpfpm.'
     cmds:
       - task composer -- install {{.COMPOSER_INSTALL_ARGUMENTS}}
@@ -82,13 +82,13 @@ tasks:
         if [ -z "$({{.DOCKER_COMPOSE}} ps -q phpfpm)" ] || [ -z "$(docker ps -q --no-trunc | grep $({{.DOCKER_COMPOSE}} ps -q phpfpm))" ]; then
           task compose -- run --rm phpfpm bin/console {{.CLI_ARGS}}
         else
-          task compose-exec -- phpfpm bin/console {{.CLI_ARGS}}
+          task compose:exec -- phpfpm bin/console {{.CLI_ARGS}}
         fi
     silent: true
 
   # ---- Assets -----------------------------------------------------------
 
-  assets-build:
+  assets:build:
     desc: 'Compile the Tailwind CSS bundle. Pass `-- --watch` to rebuild on change or `-- --minify` for a minified build.'
     cmds:
       - task console -- tailwind:build {{.CLI_ARGS}}
@@ -96,7 +96,7 @@ tasks:
 
   # ---- Site -------------------------------------------------------------
 
-  site-url:
+  site:url:
     desc: 'Print the site URL.'
     cmds:
       - echo "{{.URL}}"
@@ -105,15 +105,15 @@ tasks:
         sh: if [ -n "{{.SITE_DOMAIN}}" ]; then echo "https://{{.SITE_DOMAIN}}"; else echo "http://$({{.DOCKER_COMPOSE}} port nginx 8080)"; fi
     silent: true
 
-  site-open:
+  site:open:
     desc: 'Open the site in the default browser.'
     cmds:
-      - open "$(task site-url)"
+      - open "$(task site:url)"
     silent: true
 
   # ---- Tests ------------------------------------------------------------
 
-  db-prepare-test:
+  db:prepare-test:
     desc: 'Ensure the test database exists (idempotent).'
     cmds:
       - task console -- --env=test doctrine:database:create --if-not-exists --no-interaction
@@ -122,142 +122,142 @@ tasks:
   test:
     desc: 'Run the PHPUnit test suite (no coverage).'
     cmds:
-      - task: db-prepare-test
-      - task compose-exec -- phpfpm vendor/bin/phpunit --bootstrap=tests/bootstrap_integration.php
+      - task: db:prepare-test
+      - task compose:exec -- phpfpm vendor/bin/phpunit --bootstrap=tests/bootstrap_integration.php
     silent: true
 
-  test-coverage:
+  test:coverage:
     desc: 'Run PHPUnit with coverage and enforce the 100% gate.'
     cmds:
-      - task: db-prepare-test
+      - task: db:prepare-test
       - task compose -- exec -e XDEBUG_MODE=coverage phpfpm vendor/bin/phpunit --bootstrap=tests/bootstrap_integration.php --coverage-clover=coverage/clover.xml
-      - task compose-exec -- phpfpm vendor/bin/coverage-check coverage/clover.xml 100
+      - task compose:exec -- phpfpm vendor/bin/coverage-check coverage/clover.xml 100
     silent: true
 
   # ---- Coding standards -------------------------------------------------
 
-  coding-standards-check:
+  coding-standards:check:
     desc: 'Run every coding-standards check.'
     cmds:
-      - task: coding-standards-php-check
-      - task: coding-standards-twig-check
-      - task: coding-standards-yaml-check
-      - task: coding-standards-js-check
-      - task: coding-standards-css-check
-      - task: coding-standards-markdown-check
-      - task: coding-standards-composer-check
+      - task: coding-standards:php:check
+      - task: coding-standards:twig:check
+      - task: coding-standards:yaml:check
+      - task: coding-standards:js:check
+      - task: coding-standards:css:check
+      - task: coding-standards:markdown:check
+      - task: coding-standards:composer:check
     silent: true
 
-  coding-standards-apply:
+  coding-standards:apply:
     desc: 'Auto-fix every category of coding standards.'
     cmds:
-      - task: coding-standards-php-apply
-      - task: coding-standards-twig-apply
-      - task: coding-standards-yaml-apply
-      - task: coding-standards-js-apply
-      - task: coding-standards-css-apply
-      - task: coding-standards-markdown-apply
-      - task: coding-standards-composer-apply
+      - task: coding-standards:php:apply
+      - task: coding-standards:twig:apply
+      - task: coding-standards:yaml:apply
+      - task: coding-standards:js:apply
+      - task: coding-standards:css:apply
+      - task: coding-standards:markdown:apply
+      - task: coding-standards:composer:apply
     silent: true
 
-  static-analysis-check:
+  static-analysis:check:
     desc: 'Run static analysis (PHPStan).'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/phpstan analyse --no-progress
+      - task compose:exec -- phpfpm vendor/bin/phpstan analyse --no-progress
     silent: true
 
-  rector-check:
+  rector:check:
     desc: 'Check for Rector refactorings (dry-run).'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/rector process --dry-run
+      - task compose:exec -- phpfpm vendor/bin/rector process --dry-run
     silent: true
 
-  rector-apply:
+  rector:apply:
     desc: 'Apply Rector refactorings.'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/rector process
+      - task compose:exec -- phpfpm vendor/bin/rector process
     silent: true
 
-  coding-standards-php-check:
+  coding-standards:php:check:
     desc: 'Check PHP coding standards (php-cs-fixer, dry-run).'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/php-cs-fixer fix --dry-run --diff
+      - task compose:exec -- phpfpm vendor/bin/php-cs-fixer fix --dry-run --diff
     silent: true
 
-  coding-standards-php-apply:
+  coding-standards:php:apply:
     desc: 'Apply PHP coding standards (php-cs-fixer).'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/php-cs-fixer fix
+      - task compose:exec -- phpfpm vendor/bin/php-cs-fixer fix
     silent: true
 
-  coding-standards-twig-check:
+  coding-standards:twig:check:
     desc: 'Check Twig coding standards (twig-cs-fixer).'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/twig-cs-fixer lint
+      - task compose:exec -- phpfpm vendor/bin/twig-cs-fixer lint
     silent: true
 
-  coding-standards-twig-apply:
+  coding-standards:twig:apply:
     desc: 'Apply Twig coding standards (twig-cs-fixer).'
     cmds:
-      - task compose-exec -- phpfpm vendor/bin/twig-cs-fixer fix
+      - task compose:exec -- phpfpm vendor/bin/twig-cs-fixer fix
     silent: true
 
-  coding-standards-yaml-check:
+  coding-standards:yaml:check:
     desc: 'Check YAML formatting (Prettier).'
     cmds:
       - task compose -- --profile dev run --rm prettier '**/*.{yml,yaml}' --check
     silent: true
 
-  coding-standards-yaml-apply:
+  coding-standards:yaml:apply:
     desc: 'Apply YAML formatting (Prettier).'
     cmds:
       - task compose -- --profile dev run --rm prettier '**/*.{yml,yaml}' --write
     silent: true
 
-  coding-standards-js-check:
+  coding-standards:js:check:
     desc: 'Check JavaScript formatting (Prettier). Mirrors the JavaScript CI workflow.'
     cmds:
       - task compose -- --profile dev run --rm prettier 'assets/**/*.js' --check
     silent: true
 
-  coding-standards-js-apply:
+  coding-standards:js:apply:
     desc: 'Apply JavaScript formatting (Prettier).'
     cmds:
       - task compose -- --profile dev run --rm prettier 'assets/**/*.js' --write
     silent: true
 
-  coding-standards-css-check:
+  coding-standards:css:check:
     desc: 'Check CSS/SCSS formatting (Prettier). Mirrors the Styles CI workflow.'
     cmds:
       - task compose -- --profile dev run --rm prettier 'assets/**/*.{css,scss}' --check
     silent: true
 
-  coding-standards-css-apply:
+  coding-standards:css:apply:
     desc: 'Apply CSS/SCSS formatting (Prettier).'
     cmds:
       - task compose -- --profile dev run --rm prettier 'assets/**/*.{css,scss}' --write
     silent: true
 
-  coding-standards-markdown-check:
+  coding-standards:markdown:check:
     desc: 'Check Markdown (markdownlint).'
     cmds:
       - task compose -- --profile dev run --rm markdownlint markdownlint '**/*.md'
     silent: true
 
-  coding-standards-markdown-apply:
+  coding-standards:markdown:apply:
     desc: 'Apply Markdown fixes (markdownlint).'
     cmds:
       - task compose -- --profile dev run --rm markdownlint markdownlint '**/*.md' --fix
     silent: true
 
-  coding-standards-composer-check:
+  coding-standards:composer:check:
     desc: 'Validate composer.json and check it is normalized.'
     cmds:
       - task composer -- validate --strict
       - task composer -- normalize --dry-run
     silent: true
 
-  coding-standards-composer-apply:
+  coding-standards:composer:apply:
     desc: 'Normalize composer.json.'
     cmds:
       - task composer -- normalize

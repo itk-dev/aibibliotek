@@ -45,7 +45,7 @@ Preferred order:
 
 1. `task <name>` — the project's `Taskfile.yml` is the entry point for
    everyday commands. Run `task --list` to see what's available.
-2. `task compose -- <args>` / `task compose-exec -- <args>` — pass-through
+2. `task compose -- <args>` / `task compose:exec -- <args>` — pass-through
    helpers when no dedicated target exists.
 3. `itkdev-docker-compose <command>` — for cross-project ITK Dev tooling
    not wrapped by the project Taskfile (e.g. `traefik:start`).
@@ -62,34 +62,34 @@ task down                           # tear the stack down
 
 # Composer / PHP / Symfony console
 task composer -- <command>          # e.g. task composer -- require foo/bar
-task compose-exec -- phpfpm php <command>
+task compose:exec -- phpfpm php <command>
 task console -- <command>           # e.g. task console -- cache:clear
 
 # Coding standards (check / apply pairs)
-task coding-standards-php-check
-task coding-standards-php-apply
-task coding-standards-twig-check
-task coding-standards-twig-apply
-task coding-standards-yaml-check
-task coding-standards-yaml-apply
-task coding-standards-markdown-check
-task coding-standards-markdown-apply
-task coding-standards-composer-check
-task coding-standards-composer-apply
+task coding-standards:php:check
+task coding-standards:php:apply
+task coding-standards:twig:check
+task coding-standards:twig:apply
+task coding-standards:yaml:check
+task coding-standards:yaml:apply
+task coding-standards:markdown:check
+task coding-standards:markdown:apply
+task coding-standards:composer:check
+task coding-standards:composer:apply
 
 # Run every check at once
-task coding-standards-check
+task coding-standards:check
 
 # Static analysis
-task static-analysis-check          # PHPStan, level 8
+task static-analysis:check          # PHPStan, level 8
 
 # Automated refactoring (Rector)
-task rector-check                   # dry-run, shows what would change
-task rector-apply                   # rewrites the files
+task rector:check                   # dry-run, shows what would change
+task rector:apply                   # rewrites the files
 
 # Tests
 task test                           # PHPUnit, no coverage
-task test-coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
+task test:coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
 ```
 
 The coverage gate is **100%** and is enforced by the `Tests` GitHub
@@ -111,7 +111,7 @@ things that are fine.** It is deferred work. Code you add is analysed at full
 level 8 and must pass; the baseline only excuses what was already there.
 
 So: never regenerate the baseline to make a new error go away. If
-`task static-analysis-check` fails on something you wrote, fix the code. If it
+`task static-analysis:check` fails on something you wrote, fix the code. If it
 fails on something you merely touched, that error was already deferred — fix it
 if the fix is small, and say so in the PR description either way. Regenerating
 the baseline silently converts a real finding into permanent debt, and the diff
@@ -128,13 +128,13 @@ a PHP or Symfony version migration, removing dead code, adopting a new idiom
 the whole codebase should follow. Don't reach for it for a change you can make
 in one file by hand.
 
-**Never run `task rector-apply` as part of an unrelated change.** Rector
+**Never run `task rector:apply` as part of an unrelated change.** Rector
 rewrites whatever its configured sets match, so an apply run inside a feature
 branch buries the feature in hundreds of lines of unrelated refactoring. An
 apply run is its own pull request, with the rule set that produced it named in
 the description, so a reviewer can judge the rewrite on its own terms.
 
-`task rector-check` is **expected to report changes** on the current codebase —
+`task rector:check` is **expected to report changes** on the current codebase —
 the configured sets have never been applied. That is tracked separately; it is
 not a signal that something is broken, and it is not wired into CI. Before
 using its output, check whether the files it wants to touch are files your
