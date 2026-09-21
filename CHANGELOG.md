@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-
+- Github actions now include static code analysis.
 - PHPStan moves from level 8 with a 102-entry baseline to **level max with no
   baseline at all**, clearing 251 errors across `src/` and `tests/`. The
   baseline was deferred work rather than a list of accepted findings, and it
