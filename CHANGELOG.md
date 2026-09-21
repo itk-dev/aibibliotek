@@ -29,6 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the note explains the bootstrap path via `app:user:create` and
   `/admin/organization`. The `@param` on `App\Security\Registration` no longer
   claims the allow-list is parsed from an env var.
+- `app:user:create` and `app:user:change-password` no longer accept the
+  password as an argument. It is prompted for with `askHidden()` every time.
+  A password on the command line survives in shell history, is readable in
+  the process list for as long as the command runs, and is echoed into
+  deployment logs — and there was no way to avoid it, since neither command
+  implemented `interact()`. The argument is removed outright rather than made
+  optional, so nothing can quietly keep passing one.
+- `app:user:create` takes the e-mail and display name as optional arguments
+  and prompts for whichever is missing; `app:user:change-password` does the
+  same for the e-mail, completing against the addresses already in the user
+  table, since rotating a password usually starts with finding the account.
+  Both fail with a clear message under `--no-interaction`, where the password
+  cannot be collected.
 
 ### Removed
 
@@ -38,6 +51,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and its comments described behaviour that no longer existed. Leaving it in
   place was worse than useless — a production signup was rejected for a domain
   the comment in `.env` claimed was allowed.
+
+### Added
+
+- `UserRepository::collectEmails()`, the read-side lookup backing that
+  completion.
 
 ## [1.0.2] - 2026-09-18
 

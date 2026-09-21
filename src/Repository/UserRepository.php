@@ -221,4 +221,31 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $result;
     }
+
+    /**
+     * List every user's e-mail address.
+     *
+     * Feeds the autocompletion offered by
+     * {@see \App\Command\UserChangePasswordCommand} when an operator
+     * runs it without naming a user. Addresses are returned exactly as
+     * stored, because that is what the caller has to type back, and
+     * sorted so the completion list is stable between runs.
+     *
+     * The whole table is loaded, which is appropriate for a console
+     * command on an install of this size; a deployment with a very
+     * large user table would want a prefix-filtered query instead.
+     *
+     * @return list<string> every stored e-mail address, ascending
+     */
+    public function collectEmails(): array
+    {
+        /** @var list<array{email: string}> $rows */
+        $rows = $this->createQueryBuilder('u')
+            ->select('u.email')
+            ->orderBy('u.email', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_map(static fn (array $row): string => $row['email'], $rows);
+    }
 }

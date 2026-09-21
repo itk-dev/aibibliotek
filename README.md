@@ -182,11 +182,14 @@ URL is printed by the start task).
 # Option A — load the local-dev fixtures (alice + bob, password `password`)
 task console -- doctrine:fixtures:load -n
 
-# Option B — create a single user explicitly
-task console -- app:user:create alice@example.test secret
+# Option B — create a single user explicitly. The password is always
+# prompted for, never passed as an argument; e-mail and name are
+# prompted for too when omitted.
+task console -- app:user:create alice@example.test Alice
 
-# Change an existing user's password
-task console -- app:user:change-password alice@example.test newsecret
+# Change an existing user's password. Run it bare to pick the account
+# from a completion list of the existing e-mails.
+task console -- app:user:change-password
 ```
 
 Then sign in at `/login`.
