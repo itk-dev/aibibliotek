@@ -45,7 +45,7 @@ final class OpenWebUiConfigSanitizer
      * empty placeholders are invented), so the output mirrors what
      * the export actually provided.
      *
-     * @param array<string, mixed> $model the normalised flat model
+     * @param array<array-key, mixed> $model the normalised flat model, keyed as `json_decode` left it
      *
      * @return array<string, mixed> the model with only allowlisted fields
      */
@@ -98,8 +98,8 @@ final class OpenWebUiConfigSanitizer
      * Copy the given keys from `$source` when present, preserving
      * their values (including null).
      *
-     * @param array<string, mixed> $source the array to copy from
-     * @param list<string>         $keys   the keys to keep, in output order
+     * @param array<array-key, mixed> $source the array to copy from, keyed as `json_decode` left it
+     * @param list<string>            $keys   the keys to keep, in output order
      *
      * @return array<string, mixed> the picked subset
      */

@@ -12,6 +12,9 @@ use App\Repository\UserRepository;
 use App\Security\Roles;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\FormField;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * End-to-end coverage of the three-step assistant-edit wizard.
@@ -107,11 +110,11 @@ final class AssistantEditControllerTest extends WebTestCase
         // with `createdAssistantId` set.
         $crawler = $this->client->request('GET', '/assistant/'.$assistant->getId().'/edit');
         $stepOne = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sourceField = $this->findFieldName($stepOne->all(), '[sourceConfig]');
+        $sourceField = $this->findFieldName($stepOne, '[sourceConfig]');
         $stepOne[$sourceField] = json_encode(['name' => 'Reset', 'base_model_id' => 'gpt-4o'], \JSON_THROW_ON_ERROR);
         $crawler = $this->client->submit($stepOne);
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sensitivityField = $this->findFieldName($stepTwo->all(), '[dataSensitivity]');
+        $sensitivityField = $this->findFieldName($stepTwo, '[dataSensitivity]');
         $stepTwo[$sensitivityField] = 'ordinary_personal';
         $this->client->submit($stepTwo);
 
@@ -134,7 +137,7 @@ final class AssistantEditControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/assistant/'.$assistant->getId().'/edit');
         $stepOne = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sourceField = $this->findFieldName($stepOne->all(), '[sourceConfig]');
+        $sourceField = $this->findFieldName($stepOne, '[sourceConfig]');
         $stepOne[$sourceField] = json_encode(['name' => 'Rejected', 'base_model_id' => 'gpt-4o'], \JSON_THROW_ON_ERROR);
         $crawler = $this->client->submit($stepOne);
 
@@ -145,8 +148,10 @@ final class AssistantEditControllerTest extends WebTestCase
         // the "no radio selected" state the constraint guards
         // against.
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sensitivityField = $this->findFieldName($stepTwo->all(), '[dataSensitivity]');
-        $stepTwo->get($sensitivityField)->disableValidation();
+        $sensitivityField = $this->findFieldName($stepTwo, '[dataSensitivity]');
+        $sensitivity = $stepTwo->get($sensitivityField);
+        self::assertInstanceOf(ChoiceFormField::class, $sensitivity);
+        $sensitivity->disableValidation();
         $stepTwo[$sensitivityField] = '';
         $this->client->submit($stepTwo);
 
@@ -167,8 +172,8 @@ final class AssistantEditControllerTest extends WebTestCase
         // stored sourceConfig — a pre-condition for the refresh check
         // below to be meaningful.
         $stepOne = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sourceField = $this->findFieldName($stepOne->all(), '[sourceConfig]');
-        self::assertNotSame('', trim($stepOne[$sourceField]->getValue()));
+        $sourceField = $this->findFieldName($stepOne, '[sourceConfig]');
+        self::assertNotSame('', trim($this->fieldValue($stepOne, $sourceField)));
 
         // Paste a different JSON and submit.
         $stepOne[$sourceField] = json_encode([
@@ -181,11 +186,11 @@ final class AssistantEditControllerTest extends WebTestCase
         // Step 2 now shows the new JSON's title / description —
         // NOT the entity's original values.
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $titleField = $this->findFieldName($stepTwo->all(), '[title]');
-        self::assertSame('Refreshed title', $stepTwo[$titleField]->getValue());
-        self::assertNotSame($originalTitle, $stepTwo[$titleField]->getValue());
-        $descriptionField = $this->findFieldName($stepTwo->all(), '[description]');
-        self::assertSame('Refreshed description', $stepTwo[$descriptionField]->getValue());
+        $titleField = $this->findFieldName($stepTwo, '[title]');
+        self::assertSame('Refreshed title', $this->fieldValue($stepTwo, $titleField));
+        self::assertNotSame($originalTitle, $this->fieldValue($stepTwo, $titleField));
+        $descriptionField = $this->findFieldName($stepTwo, '[description]');
+        self::assertSame('Refreshed description', $this->fieldValue($stepTwo, $descriptionField));
     }
 
     // Verifies the step-2 "(Ændret)" badge surfaces on the edit wizard when a derived field no longer matches the persisted entity, whether via manual step-2 edit or a step-1 re-upload.
@@ -216,7 +221,7 @@ final class AssistantEditControllerTest extends WebTestCase
         $stepTwoBack = $crawler->selectButton('assistant_create_flow[navigator][previous]')->form();
         $crawler = $this->client->submit($stepTwoBack);
         $stepOneAgain = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sourceField = $this->findFieldName($stepOneAgain->all(), '[sourceConfig]');
+        $sourceField = $this->findFieldName($stepOneAgain, '[sourceConfig]');
         $stepOneAgain[$sourceField] = json_encode([
             'name' => 'Refreshed via wizard',
             'base_model_id' => $assistant->getLanguageModel(),
@@ -242,7 +247,7 @@ final class AssistantEditControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/assistant/'.$assistant->getId().'/edit');
         $stepOne = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sourceField = $this->findFieldName($stepOne->all(), '[sourceConfig]');
+        $sourceField = $this->findFieldName($stepOne, '[sourceConfig]');
         // JSON without the `meta.tags` array.
         $stepOne[$sourceField] = json_encode([
             'name' => 'Tagless upload',
@@ -252,8 +257,8 @@ final class AssistantEditControllerTest extends WebTestCase
         $crawler = $this->client->submit($stepOne);
 
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $tagsField = $this->findFieldName($stepTwo->all(), '[tags]');
-        self::assertSame('', $stepTwo[$tagsField]->getValue(), 'tags field clears when the new JSON carries no tags');
+        $tagsField = $this->findFieldName($stepTwo, '[tags]');
+        self::assertSame('', $this->fieldValue($stepTwo, $tagsField), 'tags field clears when the new JSON carries no tags');
     }
 
     // Verifies stepping through step 1 without changing the JSON leaves the entity-hydrated metadata intact.
@@ -275,8 +280,8 @@ final class AssistantEditControllerTest extends WebTestCase
         $crawler = $this->client->submit($stepOne);
 
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $titleField = $this->findFieldName($stepTwo->all(), '[title]');
-        self::assertSame($assistant->getTitle(), $stepTwo[$titleField]->getValue());
+        $titleField = $this->findFieldName($stepTwo, '[title]');
+        self::assertSame($assistant->getTitle(), $this->fieldValue($stepTwo, $titleField));
     }
 
     // Verifies POST /assistant/{id}/delete via the rendered trash-icon form removes the row and redirects to the personal inventory.
@@ -340,7 +345,7 @@ final class AssistantEditControllerTest extends WebTestCase
         // Step 1: submit with a fresh valid payload so the source
         // config is replaced along with the metadata below.
         $stepOne = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $sourceField = $this->findFieldName($stepOne->all(), '[sourceConfig]');
+        $sourceField = $this->findFieldName($stepOne, '[sourceConfig]');
         $stepOne[$sourceField] = json_encode([
             'name' => 'Edited via wizard',
             'base_model_id' => 'gpt-4o',
@@ -356,14 +361,14 @@ final class AssistantEditControllerTest extends WebTestCase
         // are still what the persisted row carries — they just
         // aren't the current draft any more.
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $titleField = $this->findFieldName($stepTwo->all(), '[title]');
-        self::assertSame('Edited via wizard', $stepTwo[$titleField]->getValue());
+        $titleField = $this->findFieldName($stepTwo, '[title]');
+        self::assertSame('Edited via wizard', $this->fieldValue($stepTwo, $titleField));
 
         // Rewrite a couple of fields.
         $stepTwo[$titleField] = 'Rewritten title';
-        $descriptionField = $this->findFieldName($stepTwo->all(), '[description]');
+        $descriptionField = $this->findFieldName($stepTwo, '[description]');
         $stepTwo[$descriptionField] = 'Rewritten description';
-        $sensitivityField = $this->findFieldName($stepTwo->all(), '[dataSensitivity]');
+        $sensitivityField = $this->findFieldName($stepTwo, '[dataSensitivity]');
         $stepTwo[$sensitivityField] = 'ordinary_personal';
 
         $crawler = $this->client->submit($stepTwo);
@@ -402,7 +407,7 @@ final class AssistantEditControllerTest extends WebTestCase
     private function userByEmail(string $email): User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert($user instanceof User, sprintf('UserFixtures must seed %s.', $email));
+        self::assertInstanceOf(User::class, $user, sprintf('UserFixtures must seed %s.', $email));
 
         return $user;
     }
@@ -420,17 +425,35 @@ final class AssistantEditControllerTest extends WebTestCase
      *
      * Symfony's flow types nest field names under long
      * bracketed paths — this helper hides that from the assertions.
-     *
-     * @param array<string, \Symfony\Component\DomCrawler\Field\FormField> $fields
      */
-    private function findFieldName(array $fields, string $suffix): string
+    private function findFieldName(Form $form, string $suffix): string
     {
-        foreach (array_keys($fields) as $name) {
+        $names = array_map(strval(...), array_keys($form->all()));
+
+        foreach ($names as $name) {
             if (str_ends_with($name, $suffix)) {
                 return $name;
             }
         }
 
-        self::fail(sprintf('Form field ending with "%s" not found. Available: %s', $suffix, implode(', ', array_keys($fields))));
+        self::fail(sprintf('Form field ending with "%s" not found. Available: %s', $suffix, implode(', ', $names)));
+    }
+
+    /**
+     * Read a single form field's value as a string.
+     *
+     * `Form::get()` widens to `FormField|FormField[]|FormField[][]`
+     * and `FormField::getValue()` to `string|array|null`; the fields
+     * these tests read are all scalar, so both are asserted here
+     * rather than at every call site.
+     */
+    private function fieldValue(Form $form, string $name): string
+    {
+        $field = $form->get($name);
+        self::assertInstanceOf(FormField::class, $field);
+        $value = $field->getValue();
+        self::assertIsString($value);
+
+        return $value;
     }
 }

@@ -90,7 +90,7 @@ final class UserAssistantControllerTest extends WebTestCase
     private function fixtureUser(string $email): User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert($user instanceof User, 'UserFixtures must seed '.$email);
+        self::assertInstanceOf(User::class, $user, 'UserFixtures must seed '.$email);
 
         return $user;
     }

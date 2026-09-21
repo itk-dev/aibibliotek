@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * length of 8 characters, with no composition rules (mixed case,
  * digits, symbols) and no HIBP look-up. The value is
  * `mapped: false`; the controller reads it and hashes on the fly.
+ *
+ * @extends AbstractType<array<string, mixed>>
  */
 final class ChangePasswordFormType extends AbstractType
 {

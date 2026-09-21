@@ -166,6 +166,8 @@ final readonly class AssistantEditor
      *
      * @param Assistant    $assistant the entity whose tag collection is being reconciled
      * @param list<string> $names     submitted tag names, already trimmed and non-empty
+     *
+     * @return list<Tag> the desired tags, re-indexed for the caller
      */
     private function syncTags(Assistant $assistant, array $names): array
     {

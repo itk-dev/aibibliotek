@@ -83,7 +83,7 @@ final class UserCreateCommand extends Command
             $input->setArgument('name', $io->ask('Display name'));
         }
 
-        $this->password = $io->askHidden('Password (input hidden)');
+        $this->password = self::text($io->askHidden('Password (input hidden)'));
     }
 
     /**
@@ -98,9 +98,9 @@ final class UserCreateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $email = (string) $input->getArgument('email');
-        $name = (string) $input->getArgument('name');
-        $password = (string) $this->password;
+        $email = self::text($input->getArgument('email'));
+        $name = self::text($input->getArgument('name'));
+        $password = $this->password ?? '';
 
         if (in_array('', [$email, $name, $password], true)) {
             $io->error('E-mail, name and password are all required. The password is only ever collected interactively, so this command cannot run with --no-interaction.');
@@ -119,5 +119,24 @@ final class UserCreateCommand extends Command
         $io->success(\sprintf('Created user "%s" (id=%s).', $user->getUserIdentifier(), $user->getId()));
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Read a console value as a string.
+     *
+     * `InputInterface::getArgument()` and `getOption()` are typed to
+     * `mixed`, so every use needs narrowing. A blanket `(string)` cast
+     * hides the case the type system is pointing at — an array option
+     * would raise a conversion error rather than a usable message — so
+     * anything that is not a string becomes an empty string, which the
+     * caller already treats as "not supplied".
+     *
+     * @param mixed $value the raw console value
+     *
+     * @return string the value when it is a string, otherwise an empty string
+     */
+    private static function text(mixed $value): string
+    {
+        return \is_string($value) ? $value : '';
     }
 }

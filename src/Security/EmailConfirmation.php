@@ -127,7 +127,9 @@ final readonly class EmailConfirmation
             return null;
         }
 
-        $userId = (string) $item->get();
+        // issue() stores the ULID as a string; anything else in the slot
+        // is a foreign cache write, which `find()` then misses.
+        $userId = \is_string($stored = $item->get()) ? $stored : '';
         $this->tokens->deleteItem($this->cacheKey($token));
 
         $user = $this->userRepository->find($userId);

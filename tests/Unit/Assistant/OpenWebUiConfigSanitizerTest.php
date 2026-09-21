@@ -89,12 +89,14 @@ final class OpenWebUiConfigSanitizerTest extends TestCase
             'name' => 'Demo',
             'meta' => ['profile_image_url' => 'https://cdn.example/av.png'],
         ]);
+        self::assertIsArray($https['meta']);
         self::assertSame('https://cdn.example/av.png', $https['meta']['profile_image_url']);
 
         $data = new OpenWebUiConfigSanitizer()->sanitize([
             'name' => 'Demo',
             'meta' => ['profile_image_url' => 'data:image/png;base64,AAAA'],
         ]);
+        self::assertIsArray($data['meta']);
         self::assertSame('data:image/png;base64,AAAA', $data['meta']['profile_image_url']);
     }
 

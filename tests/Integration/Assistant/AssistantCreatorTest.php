@@ -44,7 +44,6 @@ final class AssistantCreatorTest extends KernelTestCase
             '{"name":"demo","base_model_id":"gpt-4o"}',
         );
 
-        self::assertNotNull($assistant->getId());
         self::assertSame('Service Test Assistant', $assistant->getTitle());
         self::assertSame(
             ['alpha', 'beta'],

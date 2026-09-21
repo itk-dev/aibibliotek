@@ -28,6 +28,10 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    // Doctrine writes the generated identity back through reflection on
+    // flush, which analysis cannot trace, so the int side of the type
+    // looks unassigned.
+    // @phpstan-ignore property.unusedType
     private ?int $id = null;
 
     public function __construct(#[ORM\ManyToOne]

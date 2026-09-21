@@ -96,6 +96,9 @@ final class AssistantRepositoryTest extends KernelTestCase
 
         self::assertCount(10, $firstIds);
         self::assertCount(10, $secondIds);
+        if ([] === $firstIds || [] === $secondIds) {
+            self::fail('both pages must return rows before they can be compared');
+        }
         self::assertSame([], array_intersect($firstIds, $secondIds), 'pages must not overlap');
         self::assertGreaterThan(max($firstIds), min($secondIds), 'page 2 starts after page 1 by id-ASC order');
     }
@@ -277,8 +280,11 @@ final class AssistantRepositoryTest extends KernelTestCase
         $asc = $this->titlesOf(new CatalogCriteria(sort: CatalogSort::NameAsc));
         $desc = $this->titlesOf(new CatalogCriteria(sort: CatalogSort::NameDesc));
 
+        $lastKey = array_key_last($asc);
+        self::assertNotNull($lastKey, 'the catalogue query must return rows');
+
         self::assertStringStartsWith('Borgerhenvendelse-svarudkast', $asc[0], 'A→Å lists the lowest title first');
-        self::assertSame('Uden kategorier', $asc[array_key_last($asc)], 'A→Å lists the highest title last');
+        self::assertSame('Uden kategorier', $asc[$lastKey], 'A→Å lists the highest title last');
         self::assertSame(array_reverse($asc), $desc, 'name-descending is the exact reverse of name-ascending');
     }
 
@@ -313,7 +319,7 @@ final class AssistantRepositoryTest extends KernelTestCase
     {
         $paginator = $this->repository->findPaginated($criteria, page: 1, perPage: 100);
 
-        return array_map(static fn (Assistant $a): string => $a->getTitle(), iterator_to_array($paginator->getIterator()));
+        return array_values(array_map(static fn (Assistant $a): string => $a->getTitle(), iterator_to_array($paginator->getIterator())));
     }
 
     /**
@@ -327,6 +333,6 @@ final class AssistantRepositoryTest extends KernelTestCase
     {
         $paginator = $this->repository->findPaginated($criteria, page: 1, perPage: 100);
 
-        return array_map(static fn (Assistant $a): string => (string) $a->getId(), iterator_to_array($paginator->getIterator()));
+        return array_values(array_map(static fn (Assistant $a): string => (string) $a->getId(), iterator_to_array($paginator->getIterator())));
     }
 }

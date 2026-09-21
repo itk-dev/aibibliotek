@@ -125,7 +125,7 @@ final class RegistrationTest extends TestCase
         $em->expects(self::once())
             ->method('persist')
             ->willReturnCallback(function (object $entity) use (&$captured): void {
-                \assert($entity instanceof User);
+                self::assertInstanceOf(User::class, $entity);
                 $captured = $entity;
             });
         $em->expects(self::once())->method('flush');

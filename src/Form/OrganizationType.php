@@ -28,6 +28,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  *
  * `emailDomains` is presented as a textarea with one domain per line
  * and transformed to / from the entity's `list<string>` shape.
+ *
+ * @extends AbstractType<\App\Entity\Organization>
  */
 final class OrganizationType extends AbstractType
 {
@@ -80,7 +82,7 @@ final class OrganizationType extends AbstractType
                 'row_attr' => ['class' => self::ROW_CLASS],
             ])
             ->get('emailDomains')->addModelTransformer(new CallbackTransformer(
-                static fn (?array $domains): string => null === $domains ? '' : implode("\n", $domains),
+                self::joinLines(...),
                 static fn (?string $text): array => self::splitLines((string) $text),
             ))
         ;
@@ -91,11 +93,58 @@ final class OrganizationType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Organization::class,
             'empty_data' => static fn (FormInterface $form): Organization => new Organization(
-                (string) $form->get('name')->getData(),
-                (array) $form->get('emailDomains')->getData(),
-                (string) $form->get('defaultFramework')->getData(),
+                self::text($form->get('name')->getData()),
+                self::domains($form->get('emailDomains')->getData()),
+                self::text($form->get('defaultFramework')->getData()),
             ),
         ]);
+    }
+
+    /**
+     * Render the stored domains back into textarea content.
+     *
+     * The model side of the `emailDomains` transformer; one domain per
+     * line, matching what {@see self::splitLines()} reads back.
+     *
+     * @param list<string>|null $domains the entity's domains, null before the entity exists
+     *
+     * @return string one domain per line, empty when there are none
+     */
+    private static function joinLines(?array $domains): string
+    {
+        return null === $domains ? '' : implode("\n", $domains);
+    }
+
+    /**
+     * Narrow the transformed `emailDomains` value to a list of strings.
+     *
+     * The field's model transformer returns {@see self::splitLines()}'s
+     * output, so the value is already a `list<string>`; the filter states
+     * that for the analyser without widening what the entity accepts.
+     *
+     * @param mixed $value the transformed value read off the `emailDomains` child
+     *
+     * @return list<string> the string entries, re-indexed
+     */
+    private static function domains(mixed $value): array
+    {
+        return \is_array($value) ? array_values(array_filter($value, \is_string(...))) : [];
+    }
+
+    /**
+     * Narrow a form value that the type system only knows as mixed.
+     *
+     * Every field this is used on declares `empty_data` as a string, so
+     * the fallback stands in for a shape the form cannot produce rather
+     * than for a value the caller should handle.
+     *
+     * @param mixed $value the raw value read off a form child
+     *
+     * @return string the value when it is a string, otherwise an empty string
+     */
+    private static function text(mixed $value): string
+    {
+        return \is_string($value) ? $value : '';
     }
 
     /**

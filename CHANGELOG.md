@@ -9,6 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- PHPStan moves from level 8 with a 102-entry baseline to **level max with no
+  baseline at all**, clearing 251 errors across `src/` and `tests/`. The
+  baseline was deferred work rather than a list of accepted findings, and it
+  hid real ones: `User::getUserIdentifier()` was annotated `non-empty-string`
+  while `DomainRegistrationNotifier` depends on the empty case to skip a user
+  without an address. Fixes narrow rather than cast — a blanket `(string)`
+  silences the analyser by hiding exactly the case it points at. `src/Kernel.php`
+  is excluded as generated framework code, and two `@phpstan-ignore` lines
+  remain, each naming its reason inline.
+- Every `\assert()` is gone. Both container images set `zend.assertions=-1`,
+  so none of them ever executed — in development, under test, or in production.
+  `src/` enforces its invariants with guards that throw; `tests/` uses the
+  PHPUnit assertion, which both runs and preserves the static narrowing through
+  `@phpstan-assert`. The test suite gained roughly 450 assertions as a result,
+  all of them previously dead. Three `assertNotNull()` calls on a non-nullable
+  `Ulid` were removed instead of converted: they asserted a guarantee the type
+  system already makes.
 - `actions/checkout` moves from v6 to v7 across every workflow, matching the
   version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
   Action the project uses. Upstream also reindented the mirrored files from

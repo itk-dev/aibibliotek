@@ -193,7 +193,7 @@ final class AssistantDraftPrefillerTest extends TestCase
             defaultFramework: 'openwebui',
         );
 
-        $organizations = $this->createStub(OrganizationRepository::class);
+        $organizations = $this->createMock(OrganizationRepository::class);
         $organizations->method('findOneByEmailDomain')->with('aarhus.dk')->willReturn($organization);
 
         $prefiller = new AssistantDraftPrefiller(

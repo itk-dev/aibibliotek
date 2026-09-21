@@ -162,15 +162,19 @@ final readonly class OllamaModelfileAdapter implements FormatAdapter
      */
     public function serialize(array $source): string
     {
-        $lines = [\sprintf('FROM %s', (string) ($source['from'] ?? ''))];
+        $from = $source['from'] ?? '';
+        $lines = [\sprintf('FROM %s', \is_scalar($from) ? (string) $from : '')];
 
         if (\is_string($source['system'] ?? null) && '' !== $source['system']) {
             $lines[] = \sprintf('SYSTEM """%s"""', $source['system']);
         }
 
         foreach ((array) ($source['parameters'] ?? []) as $parameter) {
-            if (\is_array($parameter) && 2 === \count($parameter)) {
-                $lines[] = \sprintf('PARAMETER %s %s', $parameter[0], $parameter[1]);
+            // A parameter is a [name, value] pair; anything else in the
+            // payload is not something this format can express.
+            if (\is_array($parameter) && 2 === \count($parameter)
+                && \is_scalar($parameter[0] ?? null) && \is_scalar($parameter[1] ?? null)) {
+                $lines[] = \sprintf('PARAMETER %s %s', (string) $parameter[0], (string) $parameter[1]);
             }
         }
 
@@ -209,9 +213,14 @@ final readonly class OllamaModelfileAdapter implements FormatAdapter
                 continue;
             }
 
+            // The pattern always matches a non-empty, non-comment line, so
+            // the groups are always present — but preg_match reports that
+            // through its return value, not the shape of $matches. Defaulting
+            // the offsets states the same thing without a branch no input can
+            // take, which the coverage gate would then refuse.
             preg_match('/^(\S+)\s*(.*)$/', $line, $matches);
-            $keyword = strtoupper($matches[1]);
-            $rest = $matches[2];
+            $keyword = strtoupper($matches[1] ?? '');
+            $rest = $matches[2] ?? '';
 
             switch ($keyword) {
                 case 'FROM':

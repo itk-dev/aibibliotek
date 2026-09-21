@@ -32,6 +32,40 @@ final readonly class UserManager
     }
 
     /**
+     * Create a new user from an `UserCreateType` form submission.
+     *
+     * Thin shim that unpacks the form's associative array shape
+     * and forwards to {@see createUser()} so the admin create-form
+     * controller stays free of array-key plumbing. The form is
+     * unmapped, so its payload is only known as `mixed` per key;
+     * each value is narrowed here and a value of the wrong shape
+     * falls back to the same default as a missing key.
+     *
+     * @param array<string, mixed> $input form submission payload
+     *
+     * @return User the persisted user with an assigned id
+     *
+     * @throws \DomainException          when a user with the same e-mail already exists
+     * @throws \InvalidArgumentException when the password is empty
+     */
+    public function createFromInput(array $input): User
+    {
+        $email = $input['email'] ?? null;
+        $name = $input['name'] ?? null;
+        $password = $input['password'] ?? null;
+        $roles = $input['roles'] ?? null;
+        $status = $input['status'] ?? null;
+
+        return $this->createUser(
+            \is_string($email) ? $email : '',
+            \is_string($name) ? $name : '',
+            \is_string($password) ? $password : '',
+            \is_array($roles) ? array_values(array_filter($roles, \is_string(...))) : [],
+            $status instanceof UserStatus ? $status : UserStatus::Pending,
+        );
+    }
+
+    /**
      * Create a new persisted user with a hashed password.
      *
      * Defaults to `UserStatus::Pending` so accidentally omitting
@@ -50,43 +84,17 @@ final readonly class UserManager
      * still an error — it usually signals a form submission that
      * missed the required-field guard.
      *
+     * @param string       $email         e-mail address, also the login identifier
+     * @param string       $name          display name
+     * @param string|null  $plainPassword clear-text password, or null to mint a random one
+     * @param list<string> $roles         roles on top of the implicit `ROLE_USER` floor
+     * @param UserStatus   $status        lifecycle status the account starts in
+     *
      * @return User the persisted user with an assigned id
      *
      * @throws \DomainException          when a user with the same e-mail already exists
      * @throws \InvalidArgumentException when `$plainPassword` is the empty string
      */
-    /**
-     * Create a new user from an `UserCreateType` form submission.
-     *
-     * Thin shim that unpacks the form's associative array shape
-     * and forwards to {@see createUser()} so the admin create-form
-     * controller stays free of array-key plumbing. Missing keys
-     * fall back to the same defaults as the underlying call.
-     *
-     * @param array{
-     *     email?: string,
-     *     name?: string,
-     *     password?: string,
-     *     roles?: list<string>,
-     *     status?: UserStatus
-     * } $input form submission payload
-     *
-     * @return User the persisted user with an assigned id
-     *
-     * @throws \DomainException          when a user with the same e-mail already exists
-     * @throws \InvalidArgumentException when the password is empty
-     */
-    public function createFromInput(array $input): User
-    {
-        return $this->createUser(
-            $input['email'] ?? '',
-            $input['name'] ?? '',
-            $input['password'] ?? '',
-            $input['roles'] ?? [],
-            $input['status'] ?? UserStatus::Pending,
-        );
-    }
-
     public function createUser(
         string $email,
         string $name,

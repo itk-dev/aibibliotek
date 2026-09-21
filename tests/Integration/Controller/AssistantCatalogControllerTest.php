@@ -29,7 +29,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
         // before each test so the page-render assertions below see
         // actual content rather than an unauthorised response.
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'alice@example.test']);
-        \assert(null !== $alice, 'UserFixtures must seed alice@example.test.');
+        self::assertNotNull($alice, 'UserFixtures must seed alice@example.test.');
         $this->client->loginUser($alice);
     }
 
@@ -109,7 +109,9 @@ final class AssistantCatalogControllerTest extends WebTestCase
         self::assertCount(1, $chip, 'a removal chip for gpt-4o must be rendered');
 
         $params = [];
-        parse_str(parse_url((string) $chip->attr('href'), \PHP_URL_QUERY) ?? '', $params);
+        $query = parse_url((string) $chip->attr('href'), \PHP_URL_QUERY);
+        self::assertIsString($query, 'the chip href must carry a query string');
+        parse_str($query, $params);
 
         self::assertArrayNotHasKey('language_model', $params, 'chip removes the language_model filter');
         self::assertSame(['openwebui'], $params['framework'] ?? null, 'chip preserves the framework filter');
@@ -169,7 +171,9 @@ final class AssistantCatalogControllerTest extends WebTestCase
         self::assertCount(1, $chip, 'a removal chip for the jura tag must be rendered');
 
         $params = [];
-        parse_str(parse_url((string) $chip->attr('href'), \PHP_URL_QUERY) ?? '', $params);
+        $query = parse_url((string) $chip->attr('href'), \PHP_URL_QUERY);
+        self::assertIsString($query, 'the chip href must carry a query string');
+        parse_str($query, $params);
 
         self::assertArrayNotHasKey('tag', $params, 'chip removes the tag filter');
         self::assertSame('borgerservice', $params['q'] ?? null, 'chip preserves the search query');

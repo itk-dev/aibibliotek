@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Enum\UserStatus;
 use App\Form\UserCreateType;
 use App\Repository\UserRepository;
+use App\Security\CurrentUser;
 use App\Security\LastAdminException;
 use App\Security\Roles;
 use App\Security\UserApproval;
@@ -32,6 +33,7 @@ final class UserController extends AbstractController
         private readonly UserManager $userManager,
         private readonly UserRoles $userRoles,
         private readonly TranslatorInterface $translator,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
@@ -75,7 +77,7 @@ final class UserController extends AbstractController
         $domainError = null;
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->userManager->createFromInput($form->getData());
+                $this->userManager->createFromInput((array) $form->getData());
 
                 $this->addFlash('success', 'admin.users.flash.created');
 
@@ -141,12 +143,13 @@ final class UserController extends AbstractController
             $payload = [];
         }
 
-        if (!$this->isCsrfTokenValid('admin-user-action', (string) ($payload['_token'] ?? ''))) {
+        $token = $payload['_token'] ?? null;
+        if (!\is_string($token) || !$this->isCsrfTokenValid('admin-user-action', $token)) {
             return $this->jsonError('csrf', 'admin.users.role.flash.error_csrf', Response::HTTP_FORBIDDEN);
         }
 
-        $roleKey = (string) ($payload['role'] ?? '');
-        $transition = self::ROLE_TRANSITIONS[$roleKey] ?? null;
+        $roleKey = $payload['role'] ?? null;
+        $transition = \is_string($roleKey) ? self::ROLE_TRANSITIONS[$roleKey] ?? null : null;
         if (null === $transition) {
             return $this->jsonError('invalid_role', 'admin.users.role.flash.error_invalid', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -189,8 +192,7 @@ final class UserController extends AbstractController
 
     private function currentUser(): User
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
+        $user = $this->currentUser->get();
 
         return $user;
     }

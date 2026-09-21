@@ -33,7 +33,7 @@ final class AssistantControllerTest extends WebTestCase
         // before each test so the assertions below see actual content
         // rather than an unauthorised response.
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'alice@example.test']);
-        \assert(null !== $alice, 'UserFixtures must seed alice@example.test.');
+        self::assertNotNull($alice, 'UserFixtures must seed alice@example.test.');
         $this->client->loginUser($alice);
     }
 
@@ -55,7 +55,9 @@ final class AssistantControllerTest extends WebTestCase
         // stored tagline.
         $article = $crawler->filter('article')->text();
         self::assertStringContainsString('Aarhus Kommune', $article, 'header + breadcrumb render the real organisation name');
-        self::assertStringContainsString($assistant->getTagline(), $article, 'tagline paragraph renders');
+        $tagline = $assistant->getTagline();
+        self::assertNotNull($tagline, 'fixture row must carry a tagline');
+        self::assertStringContainsString($tagline, $article, 'tagline paragraph renders');
 
         // The header's framework and data-sensitivity chips were removed:
         // the meta aside (asserted below) already carries both, so the
@@ -197,9 +199,12 @@ final class AssistantControllerTest extends WebTestCase
         $payload = json_decode((string) $this->client->getResponse()->getContent(), associative: true);
         self::assertIsArray($payload);
         self::assertCount(1, $payload);
-        self::assertSame('Borgerservice-vejviser', $payload[0]['name']);
-        self::assertSame($assistant->getLanguageModel(), $payload[0]['base_model_id']);
-        self::assertSame($assistant->getDescription(), $payload[0]['meta']['description']);
+        $entry = $payload[0];
+        self::assertIsArray($entry);
+        self::assertSame('Borgerservice-vejviser', $entry['name']);
+        self::assertSame($assistant->getLanguageModel(), $entry['base_model_id']);
+        self::assertIsArray($entry['meta']);
+        self::assertSame($assistant->getDescription(), $entry['meta']['description']);
     }
 
     // Verifies a non-existent assistant id returns 404 for the export route as well.

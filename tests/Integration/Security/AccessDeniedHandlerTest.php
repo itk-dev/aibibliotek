@@ -49,7 +49,7 @@ final class AccessDeniedHandlerTest extends WebTestCase
     private function loginAs(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, \sprintf('Seeded user %s must exist.', $email));
+        self::assertNotNull($user, \sprintf('Seeded user %s must exist.', $email));
         $this->client->loginUser($user);
     }
 }

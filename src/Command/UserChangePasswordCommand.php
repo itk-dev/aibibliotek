@@ -86,7 +86,7 @@ final class UserChangePasswordCommand extends Command
             $input->setArgument('email', $io->askQuestion($question));
         }
 
-        $this->password = $io->askHidden('New password (input hidden)');
+        $this->password = self::text($io->askHidden('New password (input hidden)'));
     }
 
     /**
@@ -101,8 +101,8 @@ final class UserChangePasswordCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $email = (string) $input->getArgument('email');
-        $password = (string) $this->password;
+        $email = self::text($input->getArgument('email'));
+        $password = $this->password ?? '';
 
         if ('' === $email || '' === $password) {
             $io->error('E-mail and password are both required. The password is only ever collected interactively, so this command cannot run with --no-interaction.');
@@ -121,5 +121,24 @@ final class UserChangePasswordCommand extends Command
         $io->success(\sprintf('Updated password for user "%s".', $user->getUserIdentifier()));
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * Read a console value as a string.
+     *
+     * `InputInterface::getArgument()` and `getOption()` are typed to
+     * `mixed`, so every use needs narrowing. A blanket `(string)` cast
+     * hides the case the type system is pointing at — an array option
+     * would raise a conversion error rather than a usable message — so
+     * anything that is not a string becomes an empty string, which the
+     * caller already treats as "not supplied".
+     *
+     * @param mixed $value the raw console value
+     *
+     * @return string the value when it is a string, otherwise an empty string
+     */
+    private static function text(mixed $value): string
+    {
+        return \is_string($value) ? $value : '';
     }
 }

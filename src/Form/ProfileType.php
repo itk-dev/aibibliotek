@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * carries only the `name` field: e-mail is the identifier and
  * stays read-only, role / status are admin-only changes, and
  * the password flow lives outside this surface.
+ *
+ * @extends AbstractType<array<string, mixed>>
  */
 final class ProfileType extends AbstractType
 {

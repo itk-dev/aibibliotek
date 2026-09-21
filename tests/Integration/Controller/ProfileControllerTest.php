@@ -109,14 +109,14 @@ final class ProfileControllerTest extends WebTestCase
     private function loginAs(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, \sprintf('Seeded user %s must exist.', $email));
+        self::assertNotNull($user, \sprintf('Seeded user %s must exist.', $email));
         $this->client->loginUser($user);
     }
 
     private function assertUserNameIs(string $email, string $expected, string $message = ''): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, \sprintf('Seeded user %s must exist.', $email));
+        self::assertNotNull($user, \sprintf('Seeded user %s must exist.', $email));
         self::assertSame($expected, $user->getName(), $message);
     }
 }

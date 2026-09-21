@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\ProfileType;
+use App\Security\CurrentUser;
 use App\Security\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,14 +30,14 @@ final class ProfileController extends AbstractController
 {
     public function __construct(
         private readonly UserManager $userManager,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
     #[Route(path: '/profile/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request): Response
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
+        $user = $this->currentUser->get();
 
         $form = $this->createForm(ProfileType::class, ['name' => $user->getName()]);
         $form->handleRequest($request);

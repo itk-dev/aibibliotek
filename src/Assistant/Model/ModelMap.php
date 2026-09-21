@@ -116,10 +116,8 @@ final class ModelMap
      */
     public function choices(): array
     {
-        $this->load();
-
         $choices = [];
-        foreach ($this->models as $id => $definition) {
+        foreach ($this->load() as $id => $definition) {
             $choices[$definition['label']] = $id;
         }
 
@@ -135,9 +133,7 @@ final class ModelMap
      */
     public function label(string $canonicalId): ?string
     {
-        $this->load();
-
-        return $this->models[$canonicalId]['label'] ?? null;
+        return $this->load()[$canonicalId]['label'] ?? null;
     }
 
     /**
@@ -155,9 +151,7 @@ final class ModelMap
      */
     public function aliasesFor(string $canonicalId): array
     {
-        $this->load();
-
-        return $this->models[$canonicalId]['aliases'] ?? [];
+        return $this->load()[$canonicalId]['aliases'] ?? [];
     }
 
     /**
@@ -170,13 +164,19 @@ final class ModelMap
      * canonical id; a later duplicate silently wins (the integrity test
      * forbids duplicates in the shipped file).
      *
+     * Returns the definitions rather than only memoising them, so callers
+     * work with a value the type system can follow instead of re-reading a
+     * property that is nullable until the first load.
+     *
+     * @return array<string, array{label: string, targets: array<string, string|null>, aliases: list<string>}> the parsed definitions, keyed by canonical id
+     *
      * @throws \RuntimeException when the map is missing, unparseable, or
      *                           structurally unusable
      */
-    private function load(): void
+    private function load(): array
     {
         if (null !== $this->models) {
-            return;
+            return $this->models;
         }
 
         $parsed = Yaml::parseFile($this->mapPath);
@@ -214,6 +214,8 @@ final class ModelMap
 
         $this->models = $definitions;
         $this->aliasIndex = $index;
+
+        return $definitions;
     }
 
     /**

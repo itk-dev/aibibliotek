@@ -81,7 +81,7 @@ task coding-standards:composer:apply
 task coding-standards:check
 
 # Static analysis
-task static-analysis:check          # PHPStan, level 8
+task static-analysis:check          # PHPStan, level max, no baseline
 
 # Automated refactoring (Rector)
 task rector:check                   # dry-run, shows what would change
@@ -101,21 +101,52 @@ or `itkdev-docker-compose <args>`.
 
 ## Static analysis
 
-`phpstan.dist.neon` configures PHPStan at **level 8** over `src/` and `tests/`,
-with the Symfony extension resolving services so container lookups are
-type-checked rather than assumed to return `object`.
+`phpstan.dist.neon` configures PHPStan at **level max** over `src/` and
+`tests/`, with the Symfony extension resolving services so container lookups
+are type-checked rather than assumed to return `object`.
 
-`phpstan-baseline.neon` holds the 102 errors that existed when the tool was
-introduced. The distinction that matters: **the baseline is not a list of
-things that are fine.** It is deferred work. Code you add is analysed at full
-level 8 and must pass; the baseline only excuses what was already there.
+**There is no baseline, and there must not be one.** The analysis is clean, so
+`task static-analysis:check` reporting anything at all means your change
+introduced it. Fix the code. Do not create `phpstan-baseline.neon` to get past
+a red run — a baseline turns a real finding into permanent debt while the diff
+looks like routine tooling churn.
 
-So: never regenerate the baseline to make a new error go away. If
-`task static-analysis:check` fails on something you wrote, fix the code. If it
-fails on something you merely touched, that error was already deferred — fix it
-if the fix is small, and say so in the PR description either way. Regenerating
-the baseline silently converts a real finding into permanent debt, and the diff
-makes it look like a routine update.
+Two deliberate exceptions exist, both narrow and both commented at the point
+of use:
+
+- `src/Kernel.php` is excluded in `phpstan.dist.neon`. It is skeleton output
+  owned by the framework, and its `getAllowedEnvs()` is called from the kernel
+  trait in a way analysis cannot trace. A generated file should not carry
+  project-specific annotations to work around that.
+- Two `@phpstan-ignore` lines, on `User::getUserIdentifier()` and
+  `ResetPasswordRequest::$id`. Each names its reason inline. Adding a third
+  needs the same standard: the error is not fixable without changing behaviour
+  the project wants, and the comment says which behaviour and why.
+
+Prefer narrowing (`is_string`, `instanceof`, an early guard) over casting.
+A blanket `(string)` or `(array)` cast silences the analyser by hiding exactly
+the case it was pointing at.
+
+When a docblock and the code disagree, work out which one is lying before
+changing either. An annotation promising `list<string>` for something that is
+not a list is a bug in the annotation; "fixing" the code to match it removes a
+re-indexing step the callers depend on.
+
+### Asserts
+
+`\assert()` does nothing in this project. Both container images set
+`zend.assertions=-1`, so every assert is stripped at compile time — in
+development, in the test run, and in production alike. It documents an
+invariant while enforcing none.
+
+So there are none left, and new ones should not appear:
+
+- In `src/`, enforce the invariant with a real guard that throws, or push the
+  narrowing into a service that can be tested (`CurrentUser`, `FlowFactory`).
+- In `tests/`, use the PHPUnit assertion — `self::assertInstanceOf(...)`,
+  `self::assertNotNull(...)`. These execute, and they carry `@phpstan-assert`
+  annotations, so the static narrowing is preserved too.
+- In `tests/bootstrap*.php` there is no `self::assert*`, so throw instead.
 
 ## Automated refactoring
 
