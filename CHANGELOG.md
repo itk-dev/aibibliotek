@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `actions/checkout` moves from v6 to v7 across every workflow, matching the
+  version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
+  Action the project uses. Upstream also reindented the mirrored files from
+  four spaces to two; that is deliberately not copied, since it would bury a
+  one-line change per file in a reformat and `.github/` is outside the
+  project's Prettier glob either way.
 - Updated every dependency that moves within its existing constraint. The
   Symfony stack goes from 8.1.0 to 8.1.7 across the board — seven patch
   releases of fixes that had accumulated in `framework-bundle`,
@@ -18,6 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `"bump-after-update": true`, so the constraints move to the installed
   versions with the lock. No advisories were outstanding, but the same gap is
   how the `league/commonmark` advisories reached a release branch.
+- README states that self-signup stays closed until an organisation exists.
+  A fresh install rejects every registration, by design, and nothing said so;
+  the note explains the bootstrap path via `app:user:create` and
+  `/admin/organization`. The `@param` on `App\Security\Registration` no longer
+  claims the allow-list is parsed from an env var.
+
+### Removed
+
+- `REGISTRATION_ALLOWED_EMAIL_DOMAINS` from `.env` and `.env.test`. Nothing
+  read it: the signup allow-list is collected from `Organization.emailDomains`
+  via `OrganizationRepository::collectAllowedEmailDomains()`, so the variable
+  and its comments described behaviour that no longer existed. Leaving it in
+  place was worse than useless — a production signup was rejected for a domain
+  the comment in `.env` claimed was allowed.
 
 ## [1.0.2] - 2026-09-18
 
