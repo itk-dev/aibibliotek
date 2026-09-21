@@ -42,6 +42,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   table, since rotating a password usually starts with finding the account.
   Both fail with a clear message under `--no-interaction`, where the password
   cannot be collected.
+- Applied the configured Rector sets across `src/` and `tests/` — 104 files,
+  a net deletion of 78 lines. The bulk is mechanical: 28 classes become
+  `readonly`, `new Foo()->bar()` loses its parentheses under PHP 8.4, dead
+  assignments and redundant casts go, arrow functions gain return types, and
+  PHPUnit mocks become stubs where nothing is asserted on them. No Doctrine
+  entity was made `readonly`, which would have broken hydration.
+- `App\Twig\TextExtension` and `App\Twig\FrameworkExtension` no longer extend
+  `AbstractExtension`; their filters are declared with Twig's `#[AsTwigFilter]`
+  attribute instead. This is the one behavioural change in the pass —
+  registration moves from a `getFilters()` method to container
+  autoconfiguration — and the two tests that asserted registration by calling
+  `getFilters()` now build a Twig environment from the attributes and render
+  through the filter, which checks that it works rather than that it is
+  declared.
 
 ### Removed
 

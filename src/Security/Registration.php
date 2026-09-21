@@ -44,7 +44,7 @@ use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
  * the same response and no information leaks about whether the
  * address is already registered.
  */
-final class Registration
+final readonly class Registration
 {
     /**
      * @param UserManager                 $userManager            owns the persistence + password-hashing step
@@ -55,14 +55,14 @@ final class Registration
      * @param RateLimiterFactoryInterface $registrationSystemWide system-wide rate limiter (100/day by default)
      */
     public function __construct(
-        private readonly UserManager $userManager,
-        private readonly AllowedEmailDomains $allowedEmailDomains,
-        private readonly EmailConfirmationNotifier $emailLinkNotifier,
-        private readonly LoggerInterface $logger,
+        private UserManager $userManager,
+        private AllowedEmailDomains $allowedEmailDomains,
+        private EmailConfirmationNotifier $emailLinkNotifier,
+        private LoggerInterface $logger,
         #[Autowire(service: 'limiter.registration_per_ip')]
-        private readonly RateLimiterFactoryInterface $registrationPerIp,
+        private RateLimiterFactoryInterface $registrationPerIp,
         #[Autowire(service: 'limiter.registration_system_wide')]
-        private readonly RateLimiterFactoryInterface $registrationSystemWide,
+        private RateLimiterFactoryInterface $registrationSystemWide,
     ) {
     }
 

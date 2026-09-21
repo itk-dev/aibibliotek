@@ -23,15 +23,15 @@ use App\Entity\Assistant;
  * notes — chiefly a base model that has no equivalent in the target —
  * are surfaced as warnings rather than failing the export.
  */
-final class AssistantExporter
+final readonly class AssistantExporter
 {
     /**
      * @param FormatAdapterRegistry $formats  resolves the source and target format adapters
      * @param ModelMap              $modelMap detects when a base model has no equivalent in a target
      */
     public function __construct(
-        private readonly FormatAdapterRegistry $formats,
-        private readonly ModelMap $modelMap,
+        private FormatAdapterRegistry $formats,
+        private ModelMap $modelMap,
     ) {
     }
 

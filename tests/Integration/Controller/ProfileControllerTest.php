@@ -57,8 +57,8 @@ final class ProfileControllerTest extends WebTestCase
         $this->client->submit($form);
 
         self::assertResponseRedirects('/profile/edit');
-        self::assertUserNameIs(UserFixtures::ALICE_EMAIL, 'Alice Alpha');
-        self::assertUserNameIs(UserFixtures::BOB_EMAIL, 'Bob', 'Bob must not be touched by Alice editing her own profile.');
+        $this->assertUserNameIs(UserFixtures::ALICE_EMAIL, 'Alice Alpha');
+        $this->assertUserNameIs(UserFixtures::BOB_EMAIL, 'Bob', 'Bob must not be touched by Alice editing her own profile.');
     }
 
     // Verifies the same flow works for a site admin — no admin-side path involved, no role escalation.
@@ -73,7 +73,7 @@ final class ProfileControllerTest extends WebTestCase
         $this->client->submit($form);
 
         self::assertResponseRedirects('/profile/edit');
-        self::assertUserNameIs(UserFixtures::ADMIN_EMAIL, 'Admin Adminson');
+        $this->assertUserNameIs(UserFixtures::ADMIN_EMAIL, 'Admin Adminson');
     }
 
     // Verifies the same flow works for a domain manager.
@@ -88,7 +88,7 @@ final class ProfileControllerTest extends WebTestCase
         $this->client->submit($form);
 
         self::assertResponseRedirects('/profile/edit');
-        self::assertUserNameIs(UserFixtures::DOMAIN_MANAGER_EMAIL, 'Manager Manchester');
+        $this->assertUserNameIs(UserFixtures::DOMAIN_MANAGER_EMAIL, 'Manager Manchester');
     }
 
     // Verifies submitting an empty name is rejected with 422 and the row is untouched.
@@ -103,7 +103,7 @@ final class ProfileControllerTest extends WebTestCase
         $this->client->submit($form);
 
         self::assertResponseStatusCodeSame(422);
-        self::assertUserNameIs(UserFixtures::ALICE_EMAIL, 'Alice');
+        $this->assertUserNameIs(UserFixtures::ALICE_EMAIL, 'Alice');
     }
 
     private function loginAs(string $email): void
@@ -113,7 +113,7 @@ final class ProfileControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    private static function assertUserNameIs(string $email, string $expected, string $message = ''): void
+    private function assertUserNameIs(string $email, string $expected, string $message = ''): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
         \assert(null !== $user, \sprintf('Seeded user %s must exist.', $email));

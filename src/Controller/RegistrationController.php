@@ -21,7 +21,7 @@ final class RegistrationController extends AbstractController
     #[Route(path: '/register', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(Request $request): Response
     {
-        if ($this->getUser()) {
+        if ($this->getUser() instanceof \Symfony\Component\Security\Core\User\UserInterface) {
             return $this->redirectToRoute('app_frontpage');
         }
 
@@ -73,7 +73,7 @@ final class RegistrationController extends AbstractController
     #[Route(path: '/register/pending', name: 'app_register_pending', methods: ['GET'])]
     public function pending(): Response
     {
-        if ($this->getUser()) {
+        if ($this->getUser() instanceof \Symfony\Component\Security\Core\User\UserInterface) {
             return $this->redirectToRoute('app_frontpage');
         }
 

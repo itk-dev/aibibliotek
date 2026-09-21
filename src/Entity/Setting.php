@@ -28,17 +28,11 @@ use ITKDev\EntityBundle\Audit\Attribute\Auditable;
 #[Auditable]
 class Setting extends AbstractEntity
 {
-    #[ORM\Column(length: 64)]
-    private string $name;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $value;
-
-    public function __construct(string $name, ?string $value = null)
+    public function __construct(#[ORM\Column(length: 64)]
+        private string $name, #[ORM\Column(type: Types::TEXT, nullable: true)]
+        private ?string $value = null)
     {
         parent::__construct();
-        $this->name = $name;
-        $this->value = $value;
     }
 
     public function getName(): string

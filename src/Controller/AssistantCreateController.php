@@ -128,7 +128,7 @@ final class AssistantCreateController extends AbstractController
         // doesn't define (e.g. `schema` for the text-based Ollama Modelfile)
         // counts as passed, so the client's progress steps still complete.
         $adapter = $this->formats->detect($json);
-        if (null === $adapter) {
+        if (!$adapter instanceof \App\Assistant\Format\FormatAdapter) {
             return new JsonResponse([
                 'valid' => false,
                 'errors' => [$this->translator->trans('assistant.new.step_json.unrecognised_format')],

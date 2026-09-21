@@ -23,7 +23,7 @@ use Symfony\Component\Uid\Ulid;
  * it parses the request, calls one method here, and renders the
  * response.
  */
-final class AssistantCreator
+final readonly class AssistantCreator
 {
     /**
      * @param FormatAdapterRegistry  $formats       resolves the adapter that validates and parses the upload
@@ -33,11 +33,11 @@ final class AssistantCreator
      * @param OrganizationRepository $organizations resolves the organization the assistant is being shared on behalf of
      */
     public function __construct(
-        private readonly FormatAdapterRegistry $formats,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly TagRepository $tags,
-        private readonly ModelMap $modelMap,
-        private readonly OrganizationRepository $organizations,
+        private FormatAdapterRegistry $formats,
+        private EntityManagerInterface $entityManager,
+        private TagRepository $tags,
+        private ModelMap $modelMap,
+        private OrganizationRepository $organizations,
     ) {
     }
 
@@ -137,7 +137,7 @@ final class AssistantCreator
             return null;
         }
 
-        if (!Ulid::isValid($organizationId)) {
+        if (!Ulid::isValid($organizationId, Ulid::FORMAT_BASE_32)) {
             return null;
         }
 

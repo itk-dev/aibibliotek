@@ -17,7 +17,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  * (controllers, console commands, fixtures) so they work with plain
  * strings and get a persisted {@see User} back.
  */
-final class UserManager
+final readonly class UserManager
 {
     /**
      * @param EntityManagerInterface      $entityManager  Doctrine entity manager
@@ -25,9 +25,9 @@ final class UserManager
      * @param UserPasswordHasherInterface $passwordHasher Symfony Security hasher
      */
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly UserRepository $userRepository,
-        private readonly UserPasswordHasherInterface $passwordHasher,
+        private EntityManagerInterface $entityManager,
+        private UserRepository $userRepository,
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -102,7 +102,7 @@ final class UserManager
             throw new \DomainException(\sprintf('A user with the e-mail "%s" already exists.', $email));
         }
 
-        $user = (new User())
+        $user = new User()
             ->setEmail($email)
             ->setName($name)
             ->setRoles($roles)
@@ -163,7 +163,7 @@ final class UserManager
         if (null !== $roles) {
             $user->setRoles($roles);
         }
-        if (null !== $status) {
+        if ($status instanceof UserStatus) {
             $user->setStatus($status);
         }
 

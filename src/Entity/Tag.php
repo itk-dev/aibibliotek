@@ -14,13 +14,10 @@ use ITKDev\EntityBundle\Audit\Attribute\Auditable;
 #[Auditable]
 class Tag extends AbstractEntity implements \Stringable
 {
-    #[ORM\Column(length: 255)]
-    private string $name;
-
-    public function __construct(string $name)
+    public function __construct(#[ORM\Column(length: 255)]
+        private string $name)
     {
         parent::__construct();
-        $this->name = $name;
     }
 
     public function getName(): string

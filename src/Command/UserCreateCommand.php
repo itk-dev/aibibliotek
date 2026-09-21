@@ -102,7 +102,7 @@ final class UserCreateCommand extends Command
         $name = (string) $input->getArgument('name');
         $password = (string) $this->password;
 
-        if ('' === $email || '' === $name || '' === $password) {
+        if (in_array('', [$email, $name, $password], true)) {
             $io->error('E-mail, name and password are all required. The password is only ever collected interactively, so this command cannot run with --no-interaction.');
 
             return Command::FAILURE;

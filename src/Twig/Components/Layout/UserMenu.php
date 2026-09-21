@@ -26,15 +26,15 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
  * safe.
  */
 #[AsTwigComponent]
-final class UserMenu
+final readonly class UserMenu
 {
     /**
      * @param Security        $security used for role checks on individual items
      * @param RouterInterface $router   used to resolve route names — `RouteNotFoundException` makes the item invisible
      */
     public function __construct(
-        private readonly Security $security,
-        private readonly RouterInterface $router,
+        private Security $security,
+        private RouterInterface $router,
     ) {
     }
 

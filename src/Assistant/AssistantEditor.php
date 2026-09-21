@@ -27,7 +27,7 @@ use Symfony\Component\Uid\Ulid;
  * 500. The controller stays thin: parse the request, call
  * {@see self::update()}, render the receipt.
  */
-final class AssistantEditor
+final readonly class AssistantEditor
 {
     /**
      * @param FormatAdapterRegistry  $formats       resolves the adapter that validates and parses the (possibly-replaced) config
@@ -37,11 +37,11 @@ final class AssistantEditor
      * @param OrganizationRepository $organizations resolves the organization the assistant is being shared on behalf of
      */
     public function __construct(
-        private readonly FormatAdapterRegistry $formats,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly TagRepository $tags,
-        private readonly ModelMap $modelMap,
-        private readonly OrganizationRepository $organizations,
+        private FormatAdapterRegistry $formats,
+        private EntityManagerInterface $entityManager,
+        private TagRepository $tags,
+        private ModelMap $modelMap,
+        private OrganizationRepository $organizations,
     ) {
     }
 
@@ -131,7 +131,7 @@ final class AssistantEditor
             return null;
         }
 
-        if (!Ulid::isValid($organizationId)) {
+        if (!Ulid::isValid($organizationId, Ulid::FORMAT_BASE_32)) {
             return null;
         }
 

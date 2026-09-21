@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * sits just below the native envelope in detection priority.
  */
 #[AsTaggedItem(priority: 40)]
-final class OpenAiAssistantAdapter implements FormatAdapter
+final readonly class OpenAiAssistantAdapter implements FormatAdapter
 {
     private const string ID = 'openai';
     private const string LABEL = 'OpenAI Assistants';
@@ -39,8 +39,8 @@ final class OpenAiAssistantAdapter implements FormatAdapter
     ];
 
     public function __construct(
-        private readonly OpenAiConfigValidator $validator,
-        private readonly ModelMap $modelMap,
+        private OpenAiConfigValidator $validator,
+        private ModelMap $modelMap,
     ) {
     }
 

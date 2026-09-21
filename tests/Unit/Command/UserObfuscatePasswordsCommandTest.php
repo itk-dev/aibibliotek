@@ -76,9 +76,9 @@ final class UserObfuscatePasswordsCommandTest extends TestCase
         string $environment = 'test',
     ): CommandTester {
         $userManager = new UserManager(
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $userRepository,
-            $this->createMock(UserPasswordHasherInterface::class),
+            $this->createStub(UserPasswordHasherInterface::class),
         );
         $command = new UserObfuscatePasswordsCommand($userManager, $userRepository, $environment);
 

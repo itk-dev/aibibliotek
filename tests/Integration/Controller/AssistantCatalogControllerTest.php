@@ -105,9 +105,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static function ($node) {
-            return str_contains((string) $node->attr('aria-label'), 'gpt-4o');
-        });
+        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node): bool => str_contains((string) $node->attr('aria-label'), 'gpt-4o'));
         self::assertCount(1, $chip, 'a removal chip for gpt-4o must be rendered');
 
         $params = [];
@@ -167,9 +165,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static function ($node) {
-            return str_contains((string) $node->attr('aria-label'), 'jura');
-        });
+        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node): bool => str_contains((string) $node->attr('aria-label'), 'jura'));
         self::assertCount(1, $chip, 'a removal chip for the jura tag must be rendered');
 
         $params = [];
@@ -267,7 +263,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
     // Ensures the "Aktive filtre" sidebar box shows its empty state when no filter is applied.
     public function testActiveFiltersBoxShowsEmptyStateWhenNoFilters(): void
     {
-        $crawler = $this->client->request('GET', '/search');
+        $this->client->request('GET', '/search');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('aside[aria-label="Aktive filtre"]', 'Ingen filtre aktive');
@@ -276,7 +272,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
     // Ensures the "Seneste søgninger" box shows its empty state before any search is run.
     public function testRecentSearchesBoxStartsEmpty(): void
     {
-        $crawler = $this->client->request('GET', '/search');
+        $this->client->request('GET', '/search');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('aside[aria-label="Seneste søgninger"]', 'Ingen søgninger endnu');
@@ -299,7 +295,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
         $total = self::getContainer()->get(AssistantRepository::class)->frameworkFacetCounts()['openwebui'] ?? 0;
         self::assertGreaterThan(0, $total, 'fixture baseline must seed assistants');
 
-        $crawler = $this->client->request('GET', '/search');
+        $this->client->request('GET', '/search');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(

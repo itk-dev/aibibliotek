@@ -53,7 +53,7 @@ final class UserFixturesTest extends TestCase
         $userManager = new UserManager($entityManager, $userRepository, $passwordHasher);
         $fixture = new UserFixtures($userManager);
 
-        $fixture->load($this->createMock(ObjectManager::class));
+        $fixture->load($this->createStub(ObjectManager::class));
 
         $byEmail = [];
         foreach ($persisted as $user) {

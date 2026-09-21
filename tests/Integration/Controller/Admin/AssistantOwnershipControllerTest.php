@@ -137,7 +137,7 @@ final class AssistantOwnershipControllerTest extends WebTestCase
         self::assertResponseRedirects('/admin/assistants?organization='.$aarhus->getId());
         foreach ($assistants as $assistant) {
             $reloaded = $this->reload($assistant);
-            self::assertSame($colleague->getId()?->toRfc4122(), $reloaded->getCreatedBy()?->getId()?->toRfc4122());
+            self::assertSame($colleague->getId()->toRfc4122(), $reloaded->getCreatedBy()?->getId()?->toRfc4122());
         }
     }
 

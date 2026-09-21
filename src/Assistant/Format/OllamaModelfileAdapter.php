@@ -23,14 +23,14 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * lowest detection priority.
  */
 #[AsTaggedItem(priority: 10)]
-final class OllamaModelfileAdapter implements FormatAdapter
+final readonly class OllamaModelfileAdapter implements FormatAdapter
 {
     private const string ID = 'ollama';
     private const string LABEL = 'Ollama Modelfile';
     private const string SYNTAX_CHECK = 'syntax';
 
     public function __construct(
-        private readonly ModelMap $modelMap,
+        private ModelMap $modelMap,
     ) {
     }
 

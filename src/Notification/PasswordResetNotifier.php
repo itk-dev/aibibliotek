@@ -146,7 +146,7 @@ class PasswordResetNotifier
             ],
         );
 
-        $email = (new TemplatedEmail())
+        $email = new TemplatedEmail()
             ->from(Address::create($sender))
             ->to(Address::create((string) $user->getEmail()))
             ->subject($rendered->subject)

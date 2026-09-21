@@ -206,7 +206,7 @@ final class AssistantEditController extends AbstractController
         $draft->framework = $assistant->getFramework();
         $draft->languageModel = $assistant->getLanguageModel();
         $draft->tags = $tagNames;
-        $draft->organizationId = null !== $assistant->getOrganization()
+        $draft->organizationId = $assistant->getOrganization() instanceof \App\Entity\Organization
             ? (string) $assistant->getOrganization()->getId()
             : null;
         $draft->tagline = $assistant->getTagline() ?? '';
