@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `vincentlanglet/twig-cs-fixer` upgraded from 3.14 to 4.1; no template or
+  `.twig-cs-fixer.dist.php` change was needed
+  ([#244](https://github.com/itk-dev/ai-reolen/issues/244)).
 - PHPStan moves from level 8 with a 102-entry baseline to **level max with no
   baseline at all**, clearing 251 errors across `src/` and `tests/`. The
   baseline was deferred work rather than a list of accepted findings, and it
