@@ -130,6 +130,26 @@ final class UserControllerTest extends WebTestCase
         self::assertSame(UserStatus::Approved, $reloaded->getStatus());
     }
 
+    // Ensures the Approve button does not render for a user still awaiting email confirmation — approving them before they've verified their address serves no purpose.
+    public function testApproveButtonHiddenForAwaitingEmailConfirmationUser(): void
+    {
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $target = $userRepository->findOneBy(['email' => UserFixtures::AWAITING_EMAIL]);
+        self::assertNotNull($target);
+        self::assertSame(UserStatus::AwaitingEmailConfirmation, $target->getStatus());
+
+        $this->loginAsApproved(UserFixtures::ADMIN_EMAIL);
+
+        $crawler = $this->client->request('GET', '/admin/users');
+
+        self::assertResponseIsSuccessful();
+        self::assertCount(
+            0,
+            $crawler->filter('form[action$="/'.$target->getId().'/approve"]'),
+            'Approve form must not render for a user awaiting email confirmation.',
+        );
+    }
+
     public function testBlockActionFlipsStatusToBlocked(): void
     {
         $userRepository = self::getContainer()->get(UserRepository::class);

@@ -6,8 +6,11 @@ namespace App\Security;
 
 use App\Entity\User;
 use App\Enum\UserStatus;
+use App\Notification\RegistrationConfirmationNotifier;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 
 /**
  * Owns the `Pending → Approved` / `Approved → Blocked` / `Blocked →
@@ -22,6 +25,13 @@ use Doctrine\ORM\EntityManagerInterface;
  * there is one place to add audit logging or change notification
  * if those land later.
  *
+ * {@see self::approve()} also fires the user-facing "you're
+ * approved" mail. It belongs here rather than in
+ * {@see EmailConfirmation} because confirming an
+ * email address only proves the user owns it — it says nothing
+ * about whether a moderator has actually let them in, so the mail
+ * must wait for this transition, not that one.
+ *
  * The block path is gated by a last-active-admin guard: blocking
  * an admin whose status is currently `Approved` while no other
  * admin is `Approved` would lock the site, so the service throws
@@ -32,27 +42,47 @@ use Doctrine\ORM\EntityManagerInterface;
 final readonly class UserApproval
 {
     /**
-     * @param EntityManagerInterface $entityManager  Doctrine entity manager used to flush the status change
-     * @param UserRepository         $userRepository read-side lookup used to count active admins for the last-admin guard
+     * @param EntityManagerInterface           $entityManager        Doctrine entity manager used to flush the status change
+     * @param UserRepository                   $userRepository       read-side lookup used to count active admins for the last-admin guard
+     * @param RegistrationConfirmationNotifier $confirmationNotifier fires the user-facing "you're approved" mail on a real transition into `Approved`
+     * @param LoggerInterface                  $logger               receives a warning on a transient mailer failure
      */
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UserRepository $userRepository,
+        private RegistrationConfirmationNotifier $confirmationNotifier,
+        private LoggerInterface $logger,
     ) {
     }
 
     /**
-     * Mark the user as approved so they may sign in.
+     * Mark the user as approved so they may sign in, and notify them.
      *
      * Safe to call when the user is already `Approved` — the flush
-     * becomes a no-op.
+     * becomes a no-op and, since no transition actually happened,
+     * the notification mail is not re-sent.
      *
      * @param User $user the user to approve
      */
     public function approve(User $user): void
     {
+        $isNewlyApproved = UserStatus::Approved !== $user->getStatus();
+
         $user->setStatus(UserStatus::Approved);
         $this->entityManager->flush();
+
+        if (!$isNewlyApproved) {
+            return;
+        }
+
+        try {
+            $this->confirmationNotifier->confirmRegistration($user);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->warning('Failed to deliver approval confirmation mail.', [
+                'user_email' => $user->getUserIdentifier(),
+                'exception' => $e,
+            ]);
+        }
     }
 
     /**

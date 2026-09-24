@@ -81,15 +81,12 @@ final class SettingFixtures extends Fixture implements FixtureGroupInterface
             [%approval_url%](%approval_url%).
             MD);
 
-        $this->settingsManager->setRegistrationConfirmationSubject('Velkommen til %brand_name%');
+        $this->settingsManager->setRegistrationConfirmationSubject('Din konto er godkendt – %brand_name%');
         $this->settingsManager->setRegistrationConfirmationBody(<<<'MD'
             Hej %name%,
 
-            Tak for din oprettelse på %brand_name%. Vi har modtaget din
-            forespørgsel og en administrator vil godkende kontoen,
-            før du kan logge ind.
-
-            Du modtager besked, så snart kontoen er klar.
+            Din konto på %brand_name% er nu godkendt af en administrator.
+            Du kan logge ind med det samme.
             MD);
     }
 }

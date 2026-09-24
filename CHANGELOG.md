@@ -129,6 +129,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   baseline is deferred work, not an allow-list; clearing it is tracked
   separately.
 
+### Fixed
+
+- The "you're approved" email now fires from the admin approve action
+  (`UserApproval::approve()`) instead of from the email-confirmation link
+  click. Confirming an email address only proves the user owns it, not that
+  a moderator has let them in, so sending it earlier told the user they were
+  approved before that was true.
+- The admin user list no longer shows an Approve button for a user still
+  awaiting email confirmation — approving them before they've confirmed
+  their address served no purpose, since login stays gated on the status
+  below `Approved` regardless.
+
 ## [1.0.2] - 2026-09-18
 
 ### Added

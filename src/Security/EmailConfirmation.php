@@ -8,7 +8,6 @@ use App\Entity\User;
 use App\Enum\UserStatus;
 use App\Notification\AdminRegistrationNotifier;
 use App\Notification\DomainRegistrationNotifier;
-use App\Notification\RegistrationConfirmationNotifier;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -25,9 +24,14 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
  * lives in the dedicated `cache.email_confirmation` pool with a
  * fixed 24-hour TTL. {@see consume()} reads the row, transitions
  * the user's status to `Pending`, deletes the row, and dispatches
- * the two follow-up notifications (moderator inbox + user
- * welcome). The deletion is what makes the token single-use, the
+ * the moderator-inbox notifications (site admin + same-domain
+ * approvers). The deletion is what makes the token single-use, the
  * TTL caps the lifetime if it never gets clicked.
+ *
+ * The user-facing "you're approved" mail is deliberately NOT sent
+ * here — it fires from {@see UserApproval::approve()} once a
+ * moderator actually approves the account, not merely once the
+ * address is confirmed.
  *
  * Follow-up mails only fire when the transition actually happens —
  * an already-consumed or unknown token returns `null` and sends
@@ -51,13 +55,12 @@ final readonly class EmailConfirmation
     public const int TOKEN_TTL_SECONDS = 86400;
 
     /**
-     * @param CacheItemPoolInterface           $tokens               dedicated cache pool storing the token → user-id mapping
-     * @param EntityManagerInterface           $entityManager        Doctrine entity manager used to flush the status transition
-     * @param UserRepository                   $userRepository       read-side lookup of the user the token belongs to
-     * @param AdminRegistrationNotifier        $adminNotifier        fires the site-wide admin-recipient notification once the email is confirmed
-     * @param DomainRegistrationNotifier       $domainNotifier       fires the same notification to every approver (manager or admin) on the user's own domain
-     * @param RegistrationConfirmationNotifier $confirmationNotifier fires the user-facing welcome mail once the email is confirmed
-     * @param LoggerInterface                  $logger               receives a warning on transient mailer failures for any follow-up
+     * @param CacheItemPoolInterface     $tokens         dedicated cache pool storing the token → user-id mapping
+     * @param EntityManagerInterface     $entityManager  Doctrine entity manager used to flush the status transition
+     * @param UserRepository             $userRepository read-side lookup of the user the token belongs to
+     * @param AdminRegistrationNotifier  $adminNotifier  fires the site-wide admin-recipient notification once the email is confirmed
+     * @param DomainRegistrationNotifier $domainNotifier fires the same notification to every approver (manager or admin) on the user's own domain
+     * @param LoggerInterface            $logger         receives a warning on transient mailer failures for either follow-up
      */
     public function __construct(
         #[Autowire(service: 'cache.email_confirmation')]
@@ -66,7 +69,6 @@ final readonly class EmailConfirmation
         private UserRepository $userRepository,
         private AdminRegistrationNotifier $adminNotifier,
         private DomainRegistrationNotifier $domainNotifier,
-        private RegistrationConfirmationNotifier $confirmationNotifier,
         private LoggerInterface $logger,
     ) {
     }
@@ -155,7 +157,7 @@ final readonly class EmailConfirmation
     }
 
     /**
-     * Fire the two mails that follow a confirmed email address.
+     * Fire the moderator-inbox mails that follow a confirmed email address.
      *
      * Each send is wrapped in its own try/catch around the mailer
      * transport — a transient delivery failure must not undo the
@@ -186,15 +188,6 @@ final readonly class EmailConfirmation
             $this->domainNotifier->notifyOfNewRegistration($user);
         } catch (TransportExceptionInterface $e) {
             $this->logger->warning('Failed to deliver domain registration notification.', [
-                'user_email' => $user->getUserIdentifier(),
-                'exception' => $e,
-            ]);
-        }
-
-        try {
-            $this->confirmationNotifier->confirmRegistration($user);
-        } catch (TransportExceptionInterface $e) {
-            $this->logger->warning('Failed to deliver registration confirmation mail.', [
                 'user_email' => $user->getUserIdentifier(),
                 'exception' => $e,
             ]);
