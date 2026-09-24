@@ -128,7 +128,7 @@ final class EmailConfirmationTest extends KernelTestCase
         self::assertSame(UserStatus::Approved, $reloaded->getStatus(), 'Status must not be downgraded by a stale token.');
     }
 
-    // Verifies consume() dispatches the moderator notification + user welcome mail after the status flip — the two mails deferred out of the signup path.
+    // Verifies consume() dispatches only the moderator notification after the status flip — the user-facing mail waits for admin approval.
     public function testConsumeDispatchesFollowUpMails(): void
     {
         self::getContainer()->get(SettingsManager::class)->setAdminRecipient('ops@example.test');
@@ -137,7 +137,7 @@ final class EmailConfirmationTest extends KernelTestCase
 
         $this->emailConfirmation->consume($token);
 
-        self::assertEmailCount(2);
+        self::assertEmailCount(1);
         $recipients = array_map(
             static function (RawMessage $message): string {
                 if (!$message instanceof Email) {
@@ -150,10 +150,10 @@ final class EmailConfirmationTest extends KernelTestCase
             self::getMailerMessages(),
         );
         sort($recipients);
-        self::assertSame(['awaiting@aalborg.dk', 'ops@example.test'], $recipients);
+        self::assertSame(['ops@example.test'], $recipients);
     }
 
-    // Ensures a second consume() of the same token sends nothing — no re-fire of the moderator or welcome mail.
+    // Ensures a second consume() of the same token sends nothing — no re-fire of the moderator notification.
     public function testConsumeSecondClickSendsNoFollowUpMails(): void
     {
         $token = $this->emailConfirmation->issueToken($this->awaitingFixtureUser());
@@ -161,8 +161,8 @@ final class EmailConfirmationTest extends KernelTestCase
 
         $this->emailConfirmation->consume($token);
 
-        // First consume dispatched two, second consume must add none.
-        self::assertEmailCount(2);
+        // First consume dispatched one, second consume must add none.
+        self::assertEmailCount(1);
     }
 
     private function awaitingFixtureUser(): \App\Entity\User

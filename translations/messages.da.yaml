@@ -360,15 +360,12 @@ settings:
             Brugeren afventer godkendelse. Gennemse køen på
             [%approval_url%](%approval_url%).
     registration:
-        confirmation_subject: "Velkommen til %brand_name%"
+        confirmation_subject: "Din konto er godkendt – %brand_name%"
         confirmation_body: |
             Hej %name%,
 
-            Tak for din oprettelse på %brand_name%. Vi har modtaget din
-            forespørgsel og en administrator vil godkende kontoen,
-            før du kan logge ind.
-
-            Du modtager besked, så snart kontoen er klar.
+            Din konto på %brand_name% er nu godkendt af en administrator.
+            Du kan logge ind med det samme.
     email_confirmation:
         subject: "Bekræft din e-mail – %brand_name%"
         body: |

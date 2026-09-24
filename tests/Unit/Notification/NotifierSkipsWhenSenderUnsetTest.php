@@ -120,7 +120,6 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
                 $this->createStub(UserRepository::class),
                 $this->createStub(AdminRegistrationNotifier::class),
                 $this->createStub(DomainRegistrationNotifier::class),
-                $this->createStub(RegistrationConfirmationNotifier::class),
                 new NullLogger(),
             ),
             $this->createStub(UrlGeneratorInterface::class),

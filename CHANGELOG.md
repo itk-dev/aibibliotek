@@ -52,6 +52,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `app:user:change-password`
   ([#236](https://github.com/itk-dev/ai-reolen/issues/236)).
 
+### Fixed
+
+- `UserApproval::approve()`, not email confirmation, now triggers the
+  "you're approved" mail
+  ([#267](https://github.com/itk-dev/ai-reolen/issues/267)).
+- The admin user list no longer offers Approve for a user awaiting email
+  confirmation ([#267](https://github.com/itk-dev/ai-reolen/issues/267)).
+
 ## [1.0.2] - 2026-09-18
 
 ### Added
