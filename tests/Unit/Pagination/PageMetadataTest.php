@@ -13,7 +13,7 @@ final class PageMetadataTest extends TestCase
     // Tests that page count is computed as ceil(total / perPage).
     public function testFromPaginatorComputesTotalAndPageCount(): void
     {
-        $paginator = $this->createMock(Paginator::class);
+        $paginator = $this->createStub(Paginator::class);
         $paginator->method('count')->willReturn(25);
 
         $metadata = PageMetadata::fromPaginator($paginator, page: 2, perPage: 10);
@@ -27,7 +27,7 @@ final class PageMetadataTest extends TestCase
     // Ensures an empty result set still reports at least one page.
     public function testFromPaginatorFloorsPageCountToOneOnEmpty(): void
     {
-        $paginator = $this->createMock(Paginator::class);
+        $paginator = $this->createStub(Paginator::class);
         $paginator->method('count')->willReturn(0);
 
         $metadata = PageMetadata::fromPaginator($paginator, page: 1, perPage: 10);

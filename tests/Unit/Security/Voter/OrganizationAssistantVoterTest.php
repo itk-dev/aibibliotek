@@ -141,7 +141,7 @@ final class OrganizationAssistantVoterTest extends TestCase
      */
     private function voter(array $tokenRoles, bool $covers): OrganizationAssistantVoter
     {
-        $adm = $this->createMock(AccessDecisionManagerInterface::class);
+        $adm = $this->createStub(AccessDecisionManagerInterface::class);
         $adm->method('decide')->willReturnCallback(
             static fn (TokenInterface $token, array $attributes): bool => \in_array($attributes[0] ?? null, $tokenRoles, true),
         );
@@ -149,7 +149,7 @@ final class OrganizationAssistantVoterTest extends TestCase
         // UserOrganization is final, so drive the real service through a
         // stubbed repository: the actor's domain resolves either to the
         // assistant's own organisation or to a different one.
-        $organizations = $this->createMock(OrganizationRepository::class);
+        $organizations = $this->createStub(OrganizationRepository::class);
         $organizations->method('findOneByEmailDomain')
             ->willReturn($covers ? $this->aarhus : new Organization('Aalborg Kommune', ['aalborg.dk'], 'openwebui'));
 
@@ -166,7 +166,7 @@ final class OrganizationAssistantVoterTest extends TestCase
 
     private function token(?User $user): TokenInterface
     {
-        $token = $this->createMock(TokenInterface::class);
+        $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
         return $token;

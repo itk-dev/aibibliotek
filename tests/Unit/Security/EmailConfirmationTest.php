@@ -35,7 +35,7 @@ final class EmailConfirmationTest extends TestCase
     {
         $user = $this->makeAwaitingUser();
 
-        $adminNotifier = $this->createMock(AdminRegistrationNotifier::class);
+        $adminNotifier = $this->createStub(AdminRegistrationNotifier::class);
         $adminNotifier->method('notifyOfNewRegistration')
             ->willThrowException(new TransportException('SMTP down'));
 
@@ -71,7 +71,7 @@ final class EmailConfirmationTest extends TestCase
         $adminNotifier = $this->createMock(AdminRegistrationNotifier::class);
         $adminNotifier->expects(self::once())->method('notifyOfNewRegistration');
 
-        $domainNotifier = $this->createMock(DomainRegistrationNotifier::class);
+        $domainNotifier = $this->createStub(DomainRegistrationNotifier::class);
         $domainNotifier->method('notifyOfNewRegistration')
             ->willThrowException(new TransportException('SMTP down'));
 
@@ -107,7 +107,7 @@ final class EmailConfirmationTest extends TestCase
         $adminNotifier = $this->createMock(AdminRegistrationNotifier::class);
         $adminNotifier->expects(self::once())->method('notifyOfNewRegistration');
 
-        $confirmationNotifier = $this->createMock(RegistrationConfirmationNotifier::class);
+        $confirmationNotifier = $this->createStub(RegistrationConfirmationNotifier::class);
         $confirmationNotifier->method('confirmRegistration')
             ->willThrowException(new TransportException('SMTP down'));
 
@@ -152,11 +152,11 @@ final class EmailConfirmationTest extends TestCase
      */
     private function makeCacheHitting(User $user): CacheItemPoolInterface
     {
-        $item = $this->createMock(CacheItemInterface::class);
+        $item = $this->createStub(CacheItemInterface::class);
         $item->method('isHit')->willReturn(true);
         $item->method('get')->willReturn((string) $user->getId());
 
-        $pool = $this->createMock(CacheItemPoolInterface::class);
+        $pool = $this->createStub(CacheItemPoolInterface::class);
         $pool->method('getItem')->willReturn($item);
         $pool->method('deleteItem')->willReturn(true);
 
@@ -169,7 +169,7 @@ final class EmailConfirmationTest extends TestCase
      */
     private function makeRepositoryReturning(User $user): UserRepository
     {
-        $repository = $this->createMock(UserRepository::class);
+        $repository = $this->createStub(UserRepository::class);
         $repository->method('find')->willReturn($user);
 
         return $repository;

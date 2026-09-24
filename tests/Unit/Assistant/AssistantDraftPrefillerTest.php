@@ -194,7 +194,10 @@ final class AssistantDraftPrefillerTest extends TestCase
         );
 
         $organizations = $this->createMock(OrganizationRepository::class);
-        $organizations->method('findOneByEmailDomain')->with('aarhus.dk')->willReturn($organization);
+        $organizations->expects(self::once())
+            ->method('findOneByEmailDomain')
+            ->with('aarhus.dk')
+            ->willReturn($organization);
 
         $prefiller = new AssistantDraftPrefiller(
             new FormatAdapterRegistry([

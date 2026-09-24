@@ -23,9 +23,9 @@ final class FlowFactoryTest extends TestCase
     // Tests that a form type building a flow is returned as one.
     public function testReturnsTheFlow(): void
     {
-        $flow = $this->createMock(FormFlowInterface::class);
+        $flow = $this->createStub(FormFlowInterface::class);
 
-        $formFactory = $this->createMock(FormFactoryInterface::class);
+        $formFactory = $this->createStub(FormFactoryInterface::class);
         $formFactory->method('create')->willReturn($flow);
 
         self::assertSame($flow, (new FlowFactory($formFactory))->create(SomeFlowType::class));
@@ -34,8 +34,8 @@ final class FlowFactoryTest extends TestCase
     // Ensures a form type that does not build a flow fails immediately, naming the type.
     public function testThrowsWhenTheTypeDoesNotBuildAFlow(): void
     {
-        $formFactory = $this->createMock(FormFactoryInterface::class);
-        $formFactory->method('create')->willReturn($this->createMock(FormInterface::class));
+        $formFactory = $this->createStub(FormFactoryInterface::class);
+        $formFactory->method('create')->willReturn($this->createStub(FormInterface::class));
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('SomeOrdinaryType must build a');
@@ -52,7 +52,7 @@ final class FlowFactoryTest extends TestCase
         $formFactory->expects(self::once())
             ->method('create')
             ->with(SomeFlowType::class, $data, ['data_storage' => 'slot'])
-            ->willReturn($this->createMock(FormFlowInterface::class));
+            ->willReturn($this->createStub(FormFlowInterface::class));
 
         (new FlowFactory($formFactory))->create(SomeFlowType::class, $data, ['data_storage' => 'slot']);
     }
