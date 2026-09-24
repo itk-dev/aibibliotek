@@ -35,8 +35,8 @@ final class UserFixturesTest extends TestCase
     public function testLoadPersistsEveryRoleAndStatusCombination(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $userRepository = $this->createStub(UserRepository::class);
+        $passwordHasher = $this->createStub(UserPasswordHasherInterface::class);
 
         $userRepository->method('findOneBy')->willReturn(null);
         $passwordHasher->method('hashPassword')->willReturn('hashed');

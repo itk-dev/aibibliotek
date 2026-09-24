@@ -91,7 +91,7 @@ final class UserOrganizationTest extends TestCase
      */
     private function serviceReturning(array $byDomain): UserOrganization
     {
-        $repository = $this->createMock(OrganizationRepository::class);
+        $repository = $this->createStub(OrganizationRepository::class);
         $repository->method('findOneByEmailDomain')
             ->willReturnCallback(static fn (string $domain): ?Organization => $byDomain[$domain] ?? null);
 
