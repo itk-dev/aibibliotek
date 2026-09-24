@@ -1,7 +1,5 @@
 schemaVersion: "1"
 
-name: ${{ env.args.COMPOSE_PROJECT_NAME }}
-
 agent: claude
 kits:
     - source: "git+https://github.com/itk-dev/itk-sbx#dir=kits/base-tools"
@@ -46,21 +44,3 @@ bindings:
                 - uploads.github.com
                 - raw.githubusercontent.com
                 - codeload.github.com
-
-# Declare what arguments we accept
-args:
-    COMPOSE_PROJECT_NAME:
-        default: stable
-        description: The docker compose project name
-    GIT_IDENTITY_NAME:
-        default: stable
-        description: The git identity name
-    GIT_IDENTITY_EMAIL:
-        default: stable
-        description: The git identity email
-
-# Env variables to be injected into the sandbox.
-env:
-    COMPOSE_PROJECT_NAME: ${{ env.args.COMPOSE_PROJECT_NAME }}
-    GIT_IDENTITY_NAME: ${{ env.args.GIT_IDENTITY_NAME }}
-    GIT_IDENTITY_EMAIL: ${{ env.args.GIT_IDENTITY_EMAIL }}
