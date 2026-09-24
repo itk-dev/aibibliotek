@@ -399,18 +399,46 @@ Keep subject lines under ~70 characters. Use the body for the *why*.
 `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Add an entry to `## [Unreleased]` under the right section (`Added`, `Changed`,
 `Fixed`, `Removed`, `Deprecated`, `Security`) for every meaningful change.
+The project has tagged releases (1.0.0 onward), so every section is in play —
+pick the one that describes the change relative to the last release.
 
-**Pre-release rule:** while the project has no tagged releases yet,
-*everything* is `Added` — there is no prior released version for a
-change to be `Changed`, `Fixed`, `Removed`, `Deprecated`, or `Security`
-relative to. Keep those sections empty (or omit them) and fold the
-entry into `Added`, even when the work edits or replaces material that
-already exists in `[Unreleased]`. Before adding to any non-`Added`
-section, check `git tag` (or the GitHub releases page) and confirm at
-least one release exists; if none does, use `Added`. Once the first
-release is cut, the standard Keep a Changelog sections apply normally
-from the next `[Unreleased]` onward. See PR #57 for the prior
-consolidation that established this convention.
+### Entry style
+
+Entries are short. Somebody scanning the file wants to know **what** changed,
+not why it was done, how it works, or which files it touched.
+
+- **Three lines maximum, one or two preferred.** An entry that needs more is
+  more than one change — split it, or cut it back to the headline.
+- **No rationale.** Drop the "because", the trade-offs, the alternative that
+  was rejected, the bug it prevents, and the mechanism it uses. That material
+  belongs in the PR description, the commit body, or the code.
+- **Reference the issue** when there is one, as a trailing link:
+  `([#123](https://github.com/itk-dev/ai-reolen/issues/123))`. Separate several
+  with a comma. Omit it when the change has no issue — don't invent one.
+- **Name at most one or two identifiers** — the route, command, class, setting,
+  or env var the change is about — and only where naming it is the shortest way
+  to say what changed. Not a file list.
+- **One entry per change.** Don't fold an unrelated fix into a feature entry,
+  and don't restate the same change in two sections.
+- **Don't restate the release.** If the change is reverted or superseded before
+  the release is cut, edit or delete the entry rather than adding a second one.
+
+Good:
+
+```markdown
+- `actions/checkout` bumped from v6 to v7 in every workflow
+  ([#245](https://github.com/itk-dev/ai-reolen/issues/245)).
+```
+
+Bad — rationale, mechanism, and upstream history in one entry:
+
+```markdown
+- `actions/checkout` moves from v6 to v7 across every workflow, matching the
+  version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
+  Action the project uses. Upstream also reindented the mirrored files from
+  four spaces to two; that is deliberately not copied, since it would bury a
+  one-line change per file in a reformat.
+```
 
 ## GitHub issue types and labels
 
