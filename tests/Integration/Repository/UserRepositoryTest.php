@@ -76,7 +76,7 @@ final class UserRepositoryTest extends KernelTestCase
     {
         $em = self::getContainer()->get(EntityManagerInterface::class);
 
-        $user = (new User())
+        $user = new User()
             ->setEmail('eve@example.test')
             ->setName('Eve')
             ->setPassword('hash')
@@ -136,7 +136,7 @@ final class UserRepositoryTest extends KernelTestCase
 
         // Defensive: a domain manager with no email also gets an empty
         // result rather than running a query against an unresolved domain.
-        $headless = (new User())->setRoles([Roles::DOMAIN_MANAGER]);
+        $headless = new User()->setRoles([Roles::DOMAIN_MANAGER]);
         self::assertSame([], $this->repository->findVisibleTo($headless));
     }
 
@@ -200,8 +200,8 @@ final class UserRepositoryTest extends KernelTestCase
         $upper = $this->repository->findApproversForDomain('AARHUS.DK');
 
         self::assertSame(
-            array_map(static fn (User $u): ?string => (string) $u->getId(), $lower),
-            array_map(static fn (User $u): ?string => (string) $u->getId(), $upper),
+            array_map(static fn (User $u): string => (string) $u->getId(), $lower),
+            array_map(static fn (User $u): string => (string) $u->getId(), $upper),
         );
     }
 

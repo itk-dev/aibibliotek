@@ -31,7 +31,7 @@ final class AssistantMetadataStepTypeTest extends TestCase
      */
     private function type(array $persistedModels = []): AssistantMetadataStepType
     {
-        $repository = $this->createMock(AssistantRepository::class);
+        $repository = $this->createStub(AssistantRepository::class);
         $repository->method('persistedLanguageModels')->willReturn($persistedModels);
         $organizations = $this->createStub(OrganizationRepository::class);
         $organizations->method('findAll')->willReturn([]);
@@ -52,10 +52,17 @@ final class AssistantMetadataStepTypeTest extends TestCase
         $this->type()->finishView($view, $this->createStub(FormInterface::class), []);
 
         $vars = $view->children['languageModel']->vars;
-        self::assertNotEmpty($vars['model_choices']);
-        self::assertContains('gpt-4o', $vars['model_choices'], 'canonical ids appear as choice values');
-        self::assertArrayHasKey('gpt-4o', $vars['model_aliases']);
-        self::assertContains('openai/gpt-4o', $vars['model_aliases']['gpt-4o']);
+
+        $choices = $vars['model_choices'];
+        self::assertIsArray($choices);
+        self::assertNotEmpty($choices);
+        self::assertContains('gpt-4o', $choices, 'canonical ids appear as choice values');
+
+        $aliases = $vars['model_aliases'];
+        self::assertIsArray($aliases);
+        self::assertArrayHasKey('gpt-4o', $aliases);
+        self::assertIsArray($aliases['gpt-4o']);
+        self::assertContains('openai/gpt-4o', $aliases['gpt-4o']);
     }
 
     // Ensures persisted values absent from the canonical map are appended so legacy rows stay pickable.
@@ -70,7 +77,9 @@ final class AssistantMetadataStepTypeTest extends TestCase
             [],
         );
 
-        self::assertContains('custom-local-llm', $view->children['languageModel']->vars['model_choices']);
+        $choices = $view->children['languageModel']->vars['model_choices'];
+        self::assertIsArray($choices);
+        self::assertContains('custom-local-llm', $choices);
     }
 
     // Verifies a persisted value colliding with a canonical id (case-insensitively) does not duplicate the choice — canonical spelling wins.
@@ -86,9 +95,10 @@ final class AssistantMetadataStepTypeTest extends TestCase
         );
 
         $choices = $view->children['languageModel']->vars['model_choices'];
+        self::assertIsArray($choices);
         $matches = array_filter(
             $choices,
-            static fn (string $id): bool => 'gpt-4o' === strtolower($id),
+            static fn (mixed $id): bool => is_string($id) && 'gpt-4o' === strtolower($id),
         );
         self::assertCount(1, $matches, 'gpt-4o must appear once');
         self::assertContains('gpt-4o', $matches, 'canonical spelling wins the tie');

@@ -26,16 +26,16 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
  * adapter, so {@see FormatAdapterRegistry::detect()} stays deterministic.
  */
 #[AsTaggedItem(priority: 20)]
-final class OpenWebUiAdapter implements FormatAdapter
+final readonly class OpenWebUiAdapter implements FormatAdapter
 {
     private const string ID = 'openwebui';
     private const string LABEL = 'Open WebUI';
 
     public function __construct(
-        private readonly OpenWebUiConfigValidator $validator,
-        private readonly OpenWebUiModelNormalizer $normalizer,
-        private readonly OpenWebUiConfigSanitizer $sanitizer,
-        private readonly ModelMap $modelMap,
+        private OpenWebUiConfigValidator $validator,
+        private OpenWebUiModelNormalizer $normalizer,
+        private OpenWebUiConfigSanitizer $sanitizer,
+        private ModelMap $modelMap,
     ) {
     }
 
@@ -113,9 +113,12 @@ final class OpenWebUiAdapter implements FormatAdapter
         }
 
         $decoded = json_decode($raw, associative: true, flags: \JSON_THROW_ON_ERROR);
-        // Validation guarantees an accepted shape, so normalise() returns a model.
-        $model = $this->normalizer->normalise($decoded);
-        \assert(null !== $model);
+        // normalise() returns null only for a list that is not exactly one
+        // element, or a non-array — and validate() above rejects every one of
+        // those, so this cannot fire unless the validator and the normalizer
+        // stop agreeing. `?? throw` keeps the narrowing without inventing a
+        // branch that no input can reach.
+        $model = $this->normalizer->normalise($decoded) ?? throw new \LogicException('Normalisation produced no model.');
 
         return $this->sanitizer->sanitize($model);
     }
@@ -137,13 +140,19 @@ final class OpenWebUiAdapter implements FormatAdapter
     {
         $name = $source['name'] ?? null;
 
+        // `$source` is an arbitrary decoded payload, so the nested containers
+        // are mixed until proven otherwise. Narrowing them once here keeps the
+        // field list below readable and avoids indexing into mixed.
+        $meta = \is_array($source['meta'] ?? null) ? $source['meta'] : [];
+        $params = \is_array($source['params'] ?? null) ? $source['params'] : [];
+
         return new CanonicalModel(
             name: \is_string($name) ? $name : '',
-            description: $this->firstNonEmptyString($source['meta']['description'] ?? null),
-            systemPrompt: $this->firstNonEmptyString($source['params']['system'] ?? null),
+            description: $this->firstNonEmptyString($meta['description'] ?? null),
+            systemPrompt: $this->firstNonEmptyString($params['system'] ?? null),
             baseModel: $this->firstNonEmptyString($source['base_model_id'] ?? null, $source['model'] ?? null),
-            tags: $this->normaliseTags($source['meta']['tags'] ?? null),
-            conversationStarters: $this->extractStarters($source['meta']['suggestion_prompts'] ?? null),
+            tags: $this->normaliseTags($meta['tags'] ?? null),
+            conversationStarters: $this->extractStarters($meta['suggestion_prompts'] ?? null),
             sourceExtras: [self::ID => $source],
         );
     }

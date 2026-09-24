@@ -45,7 +45,7 @@ Preferred order:
 
 1. `task <name>` — the project's `Taskfile.yml` is the entry point for
    everyday commands. Run `task --list` to see what's available.
-2. `task compose -- <args>` / `task compose-exec -- <args>` — pass-through
+2. `task compose -- <args>` / `task compose:exec -- <args>` — pass-through
    helpers when no dedicated target exists.
 3. `itkdev-docker-compose <command>` — for cross-project ITK Dev tooling
    not wrapped by the project Taskfile (e.g. `traefik:start`).
@@ -62,27 +62,34 @@ task down                           # tear the stack down
 
 # Composer / PHP / Symfony console
 task composer -- <command>          # e.g. task composer -- require foo/bar
-task compose-exec -- phpfpm php <command>
+task compose:exec -- phpfpm php <command>
 task console -- <command>           # e.g. task console -- cache:clear
 
 # Coding standards (check / apply pairs)
-task coding-standards-php-check
-task coding-standards-php-apply
-task coding-standards-twig-check
-task coding-standards-twig-apply
-task coding-standards-yaml-check
-task coding-standards-yaml-apply
-task coding-standards-markdown-check
-task coding-standards-markdown-apply
-task coding-standards-composer-check
-task coding-standards-composer-apply
+task coding-standards:php:check
+task coding-standards:php:apply
+task coding-standards:twig:check
+task coding-standards:twig:apply
+task coding-standards:yaml:check
+task coding-standards:yaml:apply
+task coding-standards:markdown:check
+task coding-standards:markdown:apply
+task coding-standards:composer:check
+task coding-standards:composer:apply
 
 # Run every check at once
-task coding-standards-check
+task coding-standards:check
+
+# Static analysis
+task static-analysis:check          # PHPStan, level max, no baseline
+
+# Automated refactoring (Rector)
+task rector:check                   # dry-run, shows what would change
+task rector:apply                   # rewrites the files
 
 # Tests
 task test                           # PHPUnit, no coverage
-task test-coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
+task test:coverage                  # PHPUnit + Xdebug coverage, enforces 100% gate
 ```
 
 The coverage gate is **100%** and is enforced by the `Tests` GitHub
@@ -91,6 +98,91 @@ Actions workflow on every pull request — see `.github/workflows/tests.yaml`.
 Run the matching check before committing changes in that area. For
 commands without a dedicated task, fall back to `task compose -- <args>`
 or `itkdev-docker-compose <args>`.
+
+## Static analysis
+
+`phpstan.dist.neon` configures PHPStan at **level max** over `src/` and
+`tests/`, with the Symfony extension resolving services so container lookups
+are type-checked rather than assumed to return `object`.
+
+**There is no baseline, and there must not be one.** The analysis is clean, so
+`task static-analysis:check` reporting anything at all means your change
+introduced it. Fix the code. Do not create `phpstan-baseline.neon` to get past
+a red run — a baseline turns a real finding into permanent debt while the diff
+looks like routine tooling churn.
+
+Two deliberate exceptions exist, both narrow and both commented at the point
+of use:
+
+- `src/Kernel.php` is excluded in `phpstan.dist.neon`. It is skeleton output
+  owned by the framework, and its `getAllowedEnvs()` is called from the kernel
+  trait in a way analysis cannot trace. A generated file should not carry
+  project-specific annotations to work around that.
+- Two `@phpstan-ignore` lines, on `User::getUserIdentifier()` and
+  `ResetPasswordRequest::$id`. Each names its reason inline. Adding a third
+  needs the same standard: the error is not fixable without changing behaviour
+  the project wants, and the comment says which behaviour and why.
+
+Prefer narrowing (`is_string`, `instanceof`, an early guard) over casting.
+A blanket `(string)` or `(array)` cast silences the analyser by hiding exactly
+the case it was pointing at.
+
+When a docblock and the code disagree, work out which one is lying before
+changing either. An annotation promising `list<string>` for something that is
+not a list is a bug in the annotation; "fixing" the code to match it removes a
+re-indexing step the callers depend on.
+
+### Asserts
+
+`\assert()` does nothing in this project. Both container images set
+`zend.assertions=-1`, so every assert is stripped at compile time — in
+development, in the test run, and in production alike. It documents an
+invariant while enforcing none.
+
+So there are none left, and new ones should not appear:
+
+- In `src/`, enforce the invariant with a real guard that throws, or push the
+  narrowing into a service that can be tested (`CurrentUser`, `FlowFactory`).
+- In `tests/`, use the PHPUnit assertion — `self::assertInstanceOf(...)`,
+  `self::assertNotNull(...)`. These execute, and they carry `@phpstan-assert`
+  annotations, so the static narrowing is preserved too.
+- In `tests/bootstrap*.php` there is no `self::assert*`, so throw instead.
+
+## Automated refactoring
+
+`rector.php` configures [Rector](https://getrector.com/), which rewrites code
+rather than reformatting it. It is a separate tool from the coding-standards
+family: PHP CS Fixer decides how code is laid out, Rector decides what it says.
+
+Reach for it when the task is a mechanical transformation across many files —
+a PHP or Symfony version migration, removing dead code, adopting a new idiom
+the whole codebase should follow. Don't reach for it for a change you can make
+in one file by hand.
+
+**Never run `task rector:apply` as part of an unrelated change.** Rector
+rewrites whatever its configured sets match, so an apply run inside a feature
+branch buries the feature in hundreds of lines of unrelated refactoring. An
+apply run is its own pull request, with the rule set that produced it named in
+the description, so a reviewer can judge the rewrite on its own terms.
+
+`task rector:check` is **expected to report changes** on the current codebase —
+the configured sets have never been applied. That is tracked separately; it is
+not a signal that something is broken, and it is not wired into CI. Before
+using its output, check whether the files it wants to touch are files your
+change touches.
+
+The configuration covers `src/` and `tests/`. `withComposerBased()` reads
+`composer.lock` and enables only the Symfony, Doctrine, PHPUnit and Twig rules
+matching the installed versions, so the migrations follow the dependencies
+instead of being pinned to a version someone has to remember to bump. On top
+of that sit the PHP 8.4 migration and three prepared sets: dead code, code
+quality, type declarations.
+
+Sets that rewrite structure rather than expression — naming, privatization,
+early return — are deliberately off. They produce diffs that need judging line
+by line, which is the opposite of what a bulk automated pass is good at. If you
+want one, enable it in its own pull request so the output can be reviewed as
+the subject rather than as noise around something else.
 
 ## Coding standards
 
@@ -307,18 +399,46 @@ Keep subject lines under ~70 characters. Use the body for the *why*.
 `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Add an entry to `## [Unreleased]` under the right section (`Added`, `Changed`,
 `Fixed`, `Removed`, `Deprecated`, `Security`) for every meaningful change.
+The project has tagged releases (1.0.0 onward), so every section is in play —
+pick the one that describes the change relative to the last release.
 
-**Pre-release rule:** while the project has no tagged releases yet,
-*everything* is `Added` — there is no prior released version for a
-change to be `Changed`, `Fixed`, `Removed`, `Deprecated`, or `Security`
-relative to. Keep those sections empty (or omit them) and fold the
-entry into `Added`, even when the work edits or replaces material that
-already exists in `[Unreleased]`. Before adding to any non-`Added`
-section, check `git tag` (or the GitHub releases page) and confirm at
-least one release exists; if none does, use `Added`. Once the first
-release is cut, the standard Keep a Changelog sections apply normally
-from the next `[Unreleased]` onward. See PR #57 for the prior
-consolidation that established this convention.
+### Entry style
+
+Entries are short. Somebody scanning the file wants to know **what** changed,
+not why it was done, how it works, or which files it touched.
+
+- **Three lines maximum, one or two preferred.** An entry that needs more is
+  more than one change — split it, or cut it back to the headline.
+- **No rationale.** Drop the "because", the trade-offs, the alternative that
+  was rejected, the bug it prevents, and the mechanism it uses. That material
+  belongs in the PR description, the commit body, or the code.
+- **Reference the issue** when there is one, as a trailing link:
+  `([#123](https://github.com/itk-dev/ai-reolen/issues/123))`. Separate several
+  with a comma. Omit it when the change has no issue — don't invent one.
+- **Name at most one or two identifiers** — the route, command, class, setting,
+  or env var the change is about — and only where naming it is the shortest way
+  to say what changed. Not a file list.
+- **One entry per change.** Don't fold an unrelated fix into a feature entry,
+  and don't restate the same change in two sections.
+- **Don't restate the release.** If the change is reverted or superseded before
+  the release is cut, edit or delete the entry rather than adding a second one.
+
+Good:
+
+```markdown
+- `actions/checkout` bumped from v6 to v7 in every workflow
+  ([#245](https://github.com/itk-dev/ai-reolen/issues/245)).
+```
+
+Bad — rationale, mechanism, and upstream history in one entry:
+
+```markdown
+- `actions/checkout` moves from v6 to v7 across every workflow, matching the
+  version upstream `devops_itkdev-docker` now mirrors. It is the only GitHub
+  Action the project uses. Upstream also reindented the mirrored files from
+  four spaces to two; that is deliberately not copied, since it would bury a
+  one-line change per file in a reformat.
+```
 
 ## GitHub issue types and labels
 

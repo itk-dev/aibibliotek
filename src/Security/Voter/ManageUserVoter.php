@@ -46,6 +46,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * (signed-in or not) is handled by the `UserCheckerInterface`.
  * Authorisation only answers "what may this signed-in actor do to
  * that target?".
+ *
+ * @extends Voter<string, \App\Entity\User>
  */
 final class ManageUserVoter extends Voter
 {

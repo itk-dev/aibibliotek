@@ -10,6 +10,7 @@ use App\Assistant\Format\FormatAdapterRegistry;
 use App\Entity\Assistant;
 use App\Entity\Tag;
 use App\Form\AssistantCreateFlowType;
+use App\Form\FlowFactory;
 use App\Security\Voter\EditAssistantVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -47,6 +48,7 @@ final class AssistantEditController extends AbstractController
         private readonly AssistantEditor $editor,
         private readonly RequestStack $requestStack,
         private readonly EntityManagerInterface $entityManager,
+        private readonly FlowFactory $flowFactory,
     ) {
     }
 
@@ -88,7 +90,6 @@ final class AssistantEditController extends AbstractController
 
         $flow->handleRequest($request);
         $stepForm = $flow->getStepForm();
-        \assert($stepForm instanceof FormFlowInterface);
 
         $draft = $stepForm->getData();
         if ($draft instanceof AssistantDraft
@@ -163,12 +164,11 @@ final class AssistantEditController extends AbstractController
      */
     private function buildFlow(Assistant $assistant, SessionDataStorage $dataStorage): FormFlowInterface
     {
-        $flow = $this->createForm(
+        $flow = $this->flowFactory->create(
             AssistantCreateFlowType::class,
             $this->hydrateDraft($assistant),
             ['data_storage' => $dataStorage],
         );
-        \assert($flow instanceof FormFlowInterface);
 
         return $flow;
     }
@@ -194,10 +194,10 @@ final class AssistantEditController extends AbstractController
      */
     private function hydrateDraft(Assistant $assistant): AssistantDraft
     {
-        $tagNames = array_map(
+        $tagNames = array_values(array_map(
             static fn (Tag $tag): string => $tag->getName(),
             $assistant->getTags()->toArray(),
-        );
+        ));
 
         $draft = new AssistantDraft();
         $draft->editingAssistantId = (string) $assistant->getId();
@@ -206,7 +206,7 @@ final class AssistantEditController extends AbstractController
         $draft->framework = $assistant->getFramework();
         $draft->languageModel = $assistant->getLanguageModel();
         $draft->tags = $tagNames;
-        $draft->organizationId = null !== $assistant->getOrganization()
+        $draft->organizationId = $assistant->getOrganization() instanceof \App\Entity\Organization
             ? (string) $assistant->getOrganization()->getId()
             : null;
         $draft->tagline = $assistant->getTagline() ?? '';

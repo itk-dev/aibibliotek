@@ -34,7 +34,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getAdminRecipient')->willReturn('ops@example.test');
         $settings->method('getSenderAddress')->willReturn(null);
 
@@ -42,7 +42,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
             $mailer,
             $settings,
             new EmailTemplateRenderer(new \League\CommonMark\CommonMarkConverter()),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             new NullLogger(),
         );
 
@@ -55,7 +55,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn(null);
 
         // The repository is never queried when the sender check
@@ -67,7 +67,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
             $mailer,
             $settings,
             new EmailTemplateRenderer(new \League\CommonMark\CommonMarkConverter()),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             $userRepository,
             new NullLogger(),
         );
@@ -81,7 +81,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn(null);
 
         $notifier = new RegistrationConfirmationNotifier(
@@ -100,7 +100,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn(null);
 
         // EmailConfirmation is final, so we wire a real one with mock
@@ -116,14 +116,13 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
             new EmailTemplateRenderer(new \League\CommonMark\CommonMarkConverter()),
             new EmailConfirmation(
                 $cache,
-                $this->createMock(EntityManagerInterface::class),
-                $this->createMock(UserRepository::class),
-                $this->createMock(AdminRegistrationNotifier::class),
-                $this->createMock(DomainRegistrationNotifier::class),
-                $this->createMock(RegistrationConfirmationNotifier::class),
+                $this->createStub(EntityManagerInterface::class),
+                $this->createStub(UserRepository::class),
+                $this->createStub(AdminRegistrationNotifier::class),
+                $this->createStub(DomainRegistrationNotifier::class),
                 new NullLogger(),
             ),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             new NullLogger(),
         );
 
@@ -132,7 +131,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
 
     private function makeUser(): User
     {
-        return (new User())
+        return new User()
             ->setEmail('carol@example.test')
             ->setName('Carol')
             ->setStatus(UserStatus::AwaitingEmailConfirmation);

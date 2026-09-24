@@ -130,6 +130,26 @@ final class UserControllerTest extends WebTestCase
         self::assertSame(UserStatus::Approved, $reloaded->getStatus());
     }
 
+    // Ensures the Approve button does not render for a user still awaiting email confirmation — approving them before they've verified their address serves no purpose.
+    public function testApproveButtonHiddenForAwaitingEmailConfirmationUser(): void
+    {
+        $userRepository = self::getContainer()->get(UserRepository::class);
+        $target = $userRepository->findOneBy(['email' => UserFixtures::AWAITING_EMAIL]);
+        self::assertNotNull($target);
+        self::assertSame(UserStatus::AwaitingEmailConfirmation, $target->getStatus());
+
+        $this->loginAsApproved(UserFixtures::ADMIN_EMAIL);
+
+        $crawler = $this->client->request('GET', '/admin/users');
+
+        self::assertResponseIsSuccessful();
+        self::assertCount(
+            0,
+            $crawler->filter('form[action$="/'.$target->getId().'/approve"]'),
+            'Approve form must not render for a user awaiting email confirmation.',
+        );
+    }
+
     public function testBlockActionFlipsStatusToBlocked(): void
     {
         $userRepository = self::getContainer()->get(UserRepository::class);
@@ -242,7 +262,7 @@ final class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/users');
 
         self::assertResponseIsSuccessful();
-        $headers = $crawler->filter('thead th')->each(fn ($th) => trim($th->text()));
+        $headers = $crawler->filter('thead th')->each(fn ($th): string => trim($th->text()));
         self::assertContains('Rolle', $headers, 'Role column header must render.');
         // The fixture manager renders with the "Domæne-ansvarlig" label.
         $bodyText = $crawler->filter('tbody')->text();
@@ -257,7 +277,7 @@ final class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/users');
 
         self::assertResponseIsSuccessful();
-        $optionLabels = $crawler->filter('select option')->each(fn ($o) => trim($o->text()));
+        $optionLabels = $crawler->filter('select option')->each(fn ($o): string => trim($o->text()));
         self::assertContains('Forfrem til administrator', $optionLabels);
     }
 
@@ -269,7 +289,7 @@ final class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/users');
 
         self::assertResponseIsSuccessful();
-        $optionLabels = $crawler->filter('select option')->each(fn ($o) => trim($o->text()));
+        $optionLabels = $crawler->filter('select option')->each(fn ($o): string => trim($o->text()));
         // A dropdown must exist (proving the manager has at least one
         // actionable target) and it must not include the admin option.
         self::assertNotEmpty($optionLabels, 'Manager must have at least one dropdown to make this assertion meaningful.');
@@ -364,7 +384,7 @@ final class UserControllerTest extends WebTestCase
     private function loginAsApproved(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'Test user must be seeded by UserFixtures before login.');
+        self::assertNotNull($user, 'Test user must be seeded by UserFixtures before login.');
         $this->client->loginUser($user);
     }
 }

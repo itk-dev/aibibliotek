@@ -44,11 +44,10 @@ final class AssistantCreatorTest extends KernelTestCase
             '{"name":"demo","base_model_id":"gpt-4o"}',
         );
 
-        self::assertNotNull($assistant->getId());
         self::assertSame('Service Test Assistant', $assistant->getTitle());
         self::assertSame(
             ['alpha', 'beta'],
-            array_map(static fn (Tag $t) => $t->getName(), $assistant->getTags()->toArray()),
+            array_map(static fn (Tag $t): string => $t->getName(), $assistant->getTags()->toArray()),
         );
         self::assertSame(['name' => 'demo', 'base_model_id' => 'gpt-4o'], $assistant->getSourceConfig());
     }
@@ -63,10 +62,8 @@ final class AssistantCreatorTest extends KernelTestCase
             'openwebui',
             [],
             '{"name":"demo","base_model_id":"gpt-4o"}',
-            organizationId: null,
             tagline: '   ',
             knowledgeDescription: '',
-            dataSensitivity: null,
         );
 
         self::assertNull($assistant->getOrganization());

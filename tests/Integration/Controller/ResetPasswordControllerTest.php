@@ -9,6 +9,8 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\FormField;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
@@ -32,7 +34,7 @@ final class ResetPasswordControllerTest extends WebTestCase
     // Verifies GET /reset-password renders the request form with the e-mail input.
     public function testRequestFormRenders(): void
     {
-        $crawler = $this->client->request('GET', '/reset-password');
+        $this->client->request('GET', '/reset-password');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Nulstil dit password');
@@ -108,7 +110,7 @@ final class ResetPasswordControllerTest extends WebTestCase
         $this->client->request('GET', '/reset-password/reset');
 
         self::assertResponseRedirects('/reset-password');
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         self::assertResponseIsSuccessful();
     }
 
@@ -162,9 +164,11 @@ final class ResetPasswordControllerTest extends WebTestCase
         // MIME parts may be quoted-printable-encoded; join html + text
         // + raw dump to be resilient to whichever variant the mailer
         // picks in the test env.
-        $htmlBody = (string) $messages[0]->getHtmlBody();
-        $textBody = (string) $messages[0]->getTextBody();
-        $body = $htmlBody.' '.$textBody.' '.$messages[0]->toString();
+        $message = $messages[0];
+        self::assertInstanceOf(Email::class, $message);
+        $htmlBody = $message->getHtmlBody();
+        $textBody = $message->getTextBody();
+        $body = (is_string($htmlBody) ? $htmlBody : '').' '.(is_string($textBody) ? $textBody : '').' '.$message->toString();
         $matched = preg_match('#(/reset-password/reset/[a-zA-Z0-9_.-]+)#', $body, $matches);
         self::assertSame(1, $matched, 'reset URL must appear in the sent message');
         $resetPath = $matches[1];
@@ -196,18 +200,18 @@ final class ResetPasswordControllerTest extends WebTestCase
     private function userByEmail(string $email): User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert($user instanceof User, 'UserFixtures must seed '.$email);
+        self::assertInstanceOf(User::class, $user, 'UserFixtures must seed '.$email);
 
         return $user;
     }
 
     /**
-     * @param array<string, \Symfony\Component\DomCrawler\Field\FormField> $fields
+     * @param array<array-key, FormField> $fields
      */
     private function findFieldName(array $fields, string $suffix): string
     {
         foreach (array_keys($fields) as $name) {
-            if (str_ends_with($name, $suffix)) {
+            if (is_string($name) && str_ends_with($name, $suffix)) {
                 return $name;
             }
         }

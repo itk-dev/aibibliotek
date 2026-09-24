@@ -43,6 +43,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * does (description) → what it draws on (knowledge, language model
  * paired with organisation) → how it's classified (tags, data
  * sensitivity).
+ *
+ * @extends AbstractType<\App\Assistant\AssistantDraft>
  */
 final class AssistantMetadataStepType extends AbstractType
 {
@@ -187,13 +189,10 @@ final class AssistantMetadataStepType extends AbstractType
                 'row_attr' => ['class' => self::ROW_CLASS],
             ])
             ->get('tags')->addModelTransformer(new CallbackTransformer(
-                /**
-                 * @param list<string>|null $tags
-                 */
-                static fn (?array $tags): string => null === $tags ? '' : implode(', ', $tags),
+                self::joinTags(...),
                 /** @return list<string> */
                 static fn (?string $raw): array => array_values(array_filter(
-                    array_map(static fn (string $t): string => trim($t), explode(',', (string) $raw)),
+                    array_map(trim(...), explode(',', (string) $raw)),
                     static fn (string $t): bool => '' !== $t,
                 )),
             ))
@@ -258,6 +257,21 @@ final class AssistantMetadataStepType extends AbstractType
             'inherit_data' => true,
             'validation_groups' => ['Default', 'metadata'],
         ]);
+    }
+
+    /**
+     * Render the draft's tag names back into the comma-separated field.
+     *
+     * The model side of the `tags` transformer; the view side splits the
+     * same separator back out into a list.
+     *
+     * @param list<string>|null $tags the draft's tag names, null before the draft is populated
+     *
+     * @return string the names joined by `, `, empty when there are none
+     */
+    private static function joinTags(?array $tags): string
+    {
+        return null === $tags ? '' : implode(', ', $tags);
     }
 
     /**

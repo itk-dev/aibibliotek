@@ -16,6 +16,7 @@ use App\Security\Roles;
 use App\Security\UserManager;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * Integration coverage of the admin assistant-ownership screen.
@@ -67,7 +68,7 @@ final class AssistantOwnershipControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', '/admin/assistants');
 
-        $options = $crawler->filter('select[name="owner"] option')->extract(['_text']);
+        $options = $crawler->filter('select[name="owner"] option')->each(static fn (Crawler $option): string => $option->text());
         $rendered = implode("\n", $options);
         self::assertStringContainsString(UserFixtures::COLLEAGUE_EMAIL, $rendered, 'An approved aarhus.dk user must be offered.');
         self::assertStringNotContainsString(UserFixtures::PENDING_EMAIL, $rendered, 'A pending user on another domain must not be offered.');
@@ -82,7 +83,7 @@ final class AssistantOwnershipControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/admin/assistants');
 
         self::assertResponseIsSuccessful();
-        $options = implode("\n", $crawler->filter('select[name="organization"] option')->extract(['_text']));
+        $options = implode("\n", $crawler->filter('select[name="organization"] option')->each(static fn (Crawler $option): string => $option->text()));
         self::assertStringContainsString('Aarhus Kommune', $options);
         self::assertStringContainsString('Aalborg Kommune', $options);
         self::assertStringContainsString('Odense Kommune', $options);
@@ -136,8 +137,9 @@ final class AssistantOwnershipControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/admin/assistants?organization='.$aarhus->getId());
         foreach ($assistants as $assistant) {
-            $reloaded = $this->reload($assistant);
-            self::assertSame($colleague->getId()?->toRfc4122(), $reloaded->getCreatedBy()?->getId()?->toRfc4122());
+            $owner = $this->reload($assistant)->getCreatedBy();
+            self::assertInstanceOf(User::class, $owner, 'A reassigned assistant must be owned by a user.');
+            self::assertSame($colleague->getId()->toRfc4122(), $owner->getId()->toRfc4122());
         }
     }
 
@@ -195,12 +197,12 @@ final class AssistantOwnershipControllerTest extends WebTestCase
         $aarhus = $this->organization('Aarhus Kommune');
         $odense = $this->organization('Odense Kommune');
         $foreign = self::getContainer()->get(AssistantRepository::class)->findByOrganization($odense);
-        $ownerBefore = (string) $foreign[0]->getCreatedBy()?->getId();
+        $ownerBefore = $this->ownerId($foreign[0]);
 
         $this->submitReassignment($aarhus, $this->user(UserFixtures::COLLEAGUE_EMAIL), [$foreign[0]]);
 
         self::assertResponseStatusCodeSame(403);
-        self::assertSame($ownerBefore, (string) $this->reload($foreign[0])->getCreatedBy()?->getId());
+        self::assertSame($ownerBefore, $this->ownerId($this->reload($foreign[0])));
     }
 
     // Ensures a malformed owner id is treated as an unknown user rather than raising a conversion error.
@@ -297,13 +299,13 @@ final class AssistantOwnershipControllerTest extends WebTestCase
         $aarhus = $this->organization('Aarhus Kommune');
         $orphan = self::getContainer()->get(AssistantRepository::class)->findOneBy(['organization' => null]);
         self::assertInstanceOf(Assistant::class, $orphan, 'Fixtures must seed an assistant with no organisation.');
-        $ownerBefore = (string) $orphan->getCreatedBy()?->getId();
+        $ownerBefore = $this->ownerId($orphan);
 
         $this->submitReassignment($aarhus, $this->user(UserFixtures::COLLEAGUE_EMAIL), [$orphan]);
 
         $this->client->followRedirect();
         self::assertSelectorTextContains('[role="alert"]', 'hører ikke til denne organisation');
-        self::assertSame($ownerBefore, (string) $this->reload($orphan)->getCreatedBy()?->getId());
+        self::assertSame($ownerBefore, $this->ownerId($this->reload($orphan)));
     }
 
     /**
@@ -345,7 +347,7 @@ final class AssistantOwnershipControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/admin/assistants');
         $token = $crawler->filter('input[name="_token"]')->first()->attr('value');
-        \assert(null !== $token);
+        self::assertNotNull($token, 'The reassignment form must render a CSRF token.');
 
         return $token;
     }
@@ -354,22 +356,37 @@ final class AssistantOwnershipControllerTest extends WebTestCase
      * Map each of the organisation's assistants to its current owner id,
      * so a test can assert nothing moved.
      *
-     * @return array<string, string|null> assistant id → owner id
+     * @return array<string, string> assistant id → owner id, empty string when unowned
      */
     private function ownerIds(Organization $organization): array
     {
         $owners = [];
         foreach (self::getContainer()->get(AssistantRepository::class)->findByOrganization($organization) as $assistant) {
-            $owners[(string) $assistant->getId()] = (string) $assistant->getCreatedBy()?->getId();
+            $owners[(string) $assistant->getId()] = $this->ownerId($assistant);
         }
 
         return $owners;
     }
 
+    /**
+     * Read an assistant's current owner as a comparable string.
+     *
+     * The blameable trait types `createdBy` as the framework's
+     * `UserInterface`, which carries no identity of its own, so narrow to
+     * the application user before reading the ULID. An unowned assistant
+     * maps to the empty string.
+     */
+    private function ownerId(Assistant $assistant): string
+    {
+        $owner = $assistant->getCreatedBy();
+
+        return $owner instanceof User ? (string) $owner->getId() : '';
+    }
+
     private function reload(Assistant $assistant): Assistant
     {
         $reloaded = self::getContainer()->get(AssistantRepository::class)->find($assistant->getId());
-        \assert($reloaded instanceof Assistant);
+        self::assertInstanceOf(Assistant::class, $reloaded);
 
         return $reloaded;
     }
@@ -377,7 +394,7 @@ final class AssistantOwnershipControllerTest extends WebTestCase
     private function organization(string $name): Organization
     {
         $organization = self::getContainer()->get(OrganizationRepository::class)->findOneBy(['name' => $name]);
-        \assert($organization instanceof Organization, 'OrganizationFixtures must seed '.$name.'.');
+        self::assertInstanceOf(Organization::class, $organization, 'OrganizationFixtures must seed '.$name.'.');
 
         return $organization;
     }
@@ -385,7 +402,7 @@ final class AssistantOwnershipControllerTest extends WebTestCase
     private function user(string $email): User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert($user instanceof User, 'UserFixtures must seed '.$email.'.');
+        self::assertInstanceOf(User::class, $user, 'UserFixtures must seed '.$email.'.');
 
         return $user;
     }

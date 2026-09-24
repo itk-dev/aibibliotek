@@ -35,7 +35,7 @@ final class UserOrganizationTest extends TestCase
         $repository = $this->createMock(OrganizationRepository::class);
         $repository->expects(self::never())->method('findOneByEmailDomain');
 
-        self::assertNull((new UserOrganization($repository))->of(new User()));
+        self::assertNull(new UserOrganization($repository)->of(new User()));
     }
 
     // Verifies covers() grants when the user's derived organisation is the one asked about.
@@ -91,7 +91,7 @@ final class UserOrganizationTest extends TestCase
      */
     private function serviceReturning(array $byDomain): UserOrganization
     {
-        $repository = $this->createMock(OrganizationRepository::class);
+        $repository = $this->createStub(OrganizationRepository::class);
         $repository->method('findOneByEmailDomain')
             ->willReturnCallback(static fn (string $domain): ?Organization => $byDomain[$domain] ?? null);
 

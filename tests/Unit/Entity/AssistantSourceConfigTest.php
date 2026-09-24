@@ -35,7 +35,7 @@ final class AssistantSourceConfigTest extends TestCase
     // Ensures setSourceConfig(null) clears a previously stored value.
     public function testSetSourceConfigClearsWithNull(): void
     {
-        $assistant = (new Assistant('t', 'd', 'lm', 'fw'))->setSourceConfig(['x' => 1]);
+        $assistant = new Assistant('t', 'd', 'lm', 'fw')->setSourceConfig(['x' => 1]);
 
         $assistant->setSourceConfig(null);
 

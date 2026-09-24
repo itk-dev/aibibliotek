@@ -219,7 +219,7 @@ final class UserControllerRoleTest extends WebTestCase
         // load the list to scrape one.
         $this->client->request(
             'POST',
-            '/admin/users/'.((string) $target->getId()).'/role',
+            '/admin/users/'.$target->getId().'/role',
             content: json_encode(['role' => 'manager', '_token' => 'irrelevant'], JSON_THROW_ON_ERROR),
         );
 
@@ -241,20 +241,20 @@ final class UserControllerRoleTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/admin/users/'.((string) $userId).'/role',
-            content: json_encode(['role' => $role, '_token' => $token], JSON_THROW_ON_ERROR),
+            '/admin/users/'.$userId.'/role',
             server: ['CONTENT_TYPE' => 'application/json'],
+            content: json_encode(['role' => $role, '_token' => $token], JSON_THROW_ON_ERROR),
         );
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<array-key, mixed>
      */
     private function jsonResponse(): array
     {
         $content = (string) $this->client->getResponse()->getContent();
         $decoded = json_decode($content, true);
-        \assert(\is_array($decoded));
+        self::assertIsArray($decoded);
 
         return $decoded;
     }
@@ -262,7 +262,7 @@ final class UserControllerRoleTest extends WebTestCase
     private function fixtureUser(string $email): \App\Entity\User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'UserFixtures must seed '.$email);
+        self::assertNotNull($user, 'UserFixtures must seed '.$email);
 
         return $user;
     }

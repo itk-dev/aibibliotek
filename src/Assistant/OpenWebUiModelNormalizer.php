@@ -40,7 +40,9 @@ final class OpenWebUiModelNormalizer
      *
      * @param mixed $parsed the JSON-decoded export (associative arrays)
      *
-     * @return array<string, mixed>|null the flat model, or null when unrecognisable
+     * @return array<array-key, mixed>|null the flat model, or null when unrecognisable.
+     *                                      Keys come straight from `json_decode`, which maps a
+     *                                      numeric JSON key to an int, so they are not all strings
      */
     public function normalise(mixed $parsed): ?array
     {

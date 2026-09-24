@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig\Components\Layout;
 
+use App\Security\CurrentUser;
 use App\Security\Roles;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -26,15 +27,17 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
  * safe.
  */
 #[AsTwigComponent]
-final class UserMenu
+final readonly class UserMenu
 {
     /**
-     * @param Security        $security used for role checks on individual items
-     * @param RouterInterface $router   used to resolve route names — `RouteNotFoundException` makes the item invisible
+     * @param Security        $security    used for role checks on individual items
+     * @param RouterInterface $router      used to resolve route names — `RouteNotFoundException` makes the item invisible
+     * @param CurrentUser     $currentUser reads the authenticated user for the display name
      */
     public function __construct(
-        private readonly Security $security,
-        private readonly RouterInterface $router,
+        private Security $security,
+        private RouterInterface $router,
+        private CurrentUser $currentUser,
     ) {
     }
 
@@ -49,10 +52,7 @@ final class UserMenu
      */
     public function getDisplayName(): string
     {
-        $user = $this->security->getUser();
-        \assert($user instanceof \App\Entity\User);
-
-        return $user->getName();
+        return $this->currentUser->get()->getName();
     }
 
     /**

@@ -93,7 +93,7 @@ itkdev-docker-compose composer validate --strict
 ```
 
 If a `Taskfile.yml` is present, prefer the equivalent `task` targets
-(`task coding-standards-php-apply`, etc.).
+(`task coding-standards:php:apply`, etc.).
 
 ## Changelog
 

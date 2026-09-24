@@ -23,6 +23,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
  * history stays unambiguous and matches the wording of the
  * "Rediger" and "Slet" affordances on the detail / "Mine
  * assistenter" surfaces.
+ *
+ * @extends Voter<string, \App\Entity\Assistant>
  */
 final class EditAssistantVoter extends Voter
 {
@@ -80,6 +82,6 @@ final class EditAssistantVoter extends Voter
 
         $author = $subject->getCreatedBy();
 
-        return $author instanceof User && $author->getId()?->equals($actor->getId());
+        return $author instanceof User && $author->getId()->equals($actor->getId());
     }
 }

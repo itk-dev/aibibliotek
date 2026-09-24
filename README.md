@@ -46,28 +46,28 @@ task composer -- <command>
 task console -- <command>
 
 # Apply PHP coding standards
-task coding-standards-php-apply
+task coding-standards:php:apply
 
 # Lint Twig templates
-task coding-standards-twig-check
+task coding-standards:twig:check
 
 # Format YAML
-task coding-standards-yaml-apply
+task coding-standards:yaml:apply
 
 # Lint Markdown
-task coding-standards-markdown-check
+task coding-standards:markdown:check
 
 # Normalize composer.json
-task coding-standards-composer-apply
+task coding-standards:composer:apply
 
 # Run every coding-standards check
-task coding-standards-check
+task coding-standards:check
 
 # Run the PHPUnit test suite
 task test
 
 # Run PHPUnit with coverage and enforce the 100% gate
-task test-coverage
+task test:coverage
 ```
 
 ## Frontend assets
@@ -167,7 +167,7 @@ cd ai-reolen
 task
 
 # Install site
-task site-install
+task site:install
 
 # Open the site
 task open
@@ -182,14 +182,25 @@ URL is printed by the start task).
 # Option A — load the local-dev fixtures (alice + bob, password `password`)
 task console -- doctrine:fixtures:load -n
 
-# Option B — create a single user explicitly
-task console -- app:user:create alice@example.test secret
+# Option B — create a single user explicitly. The password is always
+# prompted for, never passed as an argument; e-mail and name are
+# prompted for too when omitted.
+task console -- app:user:create alice@example.test Alice
 
-# Change an existing user's password
-task console -- app:user:change-password alice@example.test newsecret
+# Change an existing user's password. Run it bare to pick the account
+# from a completion list of the existing e-mails.
+task console -- app:user:change-password
 ```
 
 Then sign in at `/login`.
+
+Self-signup stays closed until at least one organisation exists: the allow-list
+of e-mail domains is collected from the organisations, not from configuration.
+A fresh install therefore rejects every registration with "the e-mail domain is
+not approved" until an administrator adds an organisation at
+`/admin/organization` with the domain on it. The local-dev fixtures seed one;
+on a new server, create the first user with `app:user:create` (which does not
+go through signup) and add the organisation from the admin UI.
 
 ## Testing
 
@@ -203,10 +214,10 @@ below that threshold fail the `Tests` workflow.
 task test
 
 # Run the suite under Xdebug coverage and enforce the 100% gate
-task test-coverage
+task test:coverage
 ```
 
-`task test-coverage` runs PHPUnit with `XDEBUG_MODE=coverage`, writes a
+`task test:coverage` runs PHPUnit with `XDEBUG_MODE=coverage`, writes a
 Clover report to `coverage/clover.xml`, and then runs
 [`rregeer/phpunit-coverage-check`](https://github.com/richardregeer/phpunit-coverage-check)
 against the report. The same two steps run in the `Tests` GitHub Actions

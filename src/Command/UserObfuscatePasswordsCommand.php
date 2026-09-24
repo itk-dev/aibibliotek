@@ -57,7 +57,7 @@ final class UserObfuscatePasswordsCommand extends Command
     public function __construct(
         private readonly UserManager $userManager,
         private readonly UserRepository $userRepository,
-        #[Autowire('%kernel.environment%')]
+        #[Autowire(param: 'kernel.environment')]
         private readonly string $environment,
     ) {
         parent::__construct();
@@ -125,8 +125,8 @@ final class UserObfuscatePasswordsCommand extends Command
 
         foreach ($users as $user) {
             $plain = null === $sharedPassword
-                ? self::randomPassword()
-                : (string) $sharedPassword;
+                ? $this->randomPassword()
+                : self::text($sharedPassword);
             $this->userManager->changePassword($user->getUserIdentifier(), $plain);
         }
 
@@ -145,8 +145,27 @@ final class UserObfuscatePasswordsCommand extends Command
      *
      * @return string a fresh URL-safe random password
      */
-    private static function randomPassword(): string
+    private function randomPassword(): string
     {
         return rtrim(strtr(base64_encode(random_bytes(self::RANDOM_BYTES)), '+/', '-_'), '=');
+    }
+
+    /**
+     * Read a console value as a string.
+     *
+     * `InputInterface::getArgument()` and `getOption()` are typed to
+     * `mixed`, so every use needs narrowing. A blanket `(string)` cast
+     * hides the case the type system is pointing at — an array option
+     * would raise a conversion error rather than a usable message — so
+     * anything that is not a string becomes an empty string, which the
+     * caller already treats as "not supplied".
+     *
+     * @param mixed $value the raw console value
+     *
+     * @return string the value when it is a string, otherwise an empty string
+     */
+    private static function text(mixed $value): string
+    {
+        return \is_string($value) ? $value : '';
     }
 }

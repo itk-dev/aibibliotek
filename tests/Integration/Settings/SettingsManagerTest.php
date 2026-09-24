@@ -39,7 +39,7 @@ final class SettingsManagerTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
         $repository = self::getContainer()->get(SettingRepository::class);
         $existing = $repository->findOneByName(SettingsManager::ADMIN_RECIPIENT);
-        \assert(null !== $existing, 'fixture must have seeded the row');
+        self::assertNotNull($existing, 'fixture must have seeded the row');
         $em->remove($existing);
         $em->flush();
 
@@ -53,7 +53,6 @@ final class SettingsManagerTest extends KernelTestCase
         self::assertInstanceOf(Setting::class, $row);
         self::assertSame(SettingsManager::ADMIN_RECIPIENT, $row->getName());
         self::assertSame('ops@example.test', $row->getValue());
-        self::assertNotNull($row->getId(), 'persisted row must carry an auto-generated id');
     }
 
     // Verifies the second call updates the existing row in place rather than inserting a duplicate.

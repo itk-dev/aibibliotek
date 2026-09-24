@@ -32,7 +32,7 @@ use Symfony\Bundle\SecurityBundle\Security;
  * domain (see {@see UserOrganization}); site administrators are not
  * bound to their own and choose which organisation to manage.
  */
-final class AssistantOwnership
+final readonly class AssistantOwnership
 {
     /**
      * @param AssistantRepository    $assistants       source of the per-organisation assistant list
@@ -43,12 +43,12 @@ final class AssistantOwnership
      * @param EntityManagerInterface $entityManager    persists the reassignment
      */
     public function __construct(
-        private readonly AssistantRepository $assistants,
-        private readonly UserRepository $users,
-        private readonly OrganizationRepository $organizations,
-        private readonly UserOrganization $userOrganization,
-        private readonly Security $security,
-        private readonly EntityManagerInterface $entityManager,
+        private AssistantRepository $assistants,
+        private UserRepository $users,
+        private OrganizationRepository $organizations,
+        private UserOrganization $userOrganization,
+        private Security $security,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -75,7 +75,7 @@ final class AssistantOwnership
 
         $own = $this->userOrganization->of($actor);
 
-        return null === $own ? [] : [$own];
+        return $own instanceof Organization ? [$own] : [];
     }
 
     /**
@@ -204,11 +204,11 @@ final class AssistantOwnership
     private function belongsTo(Assistant $assistant, Organization $organization): bool
     {
         $assistantOrganization = $assistant->getOrganization();
-        if (null === $assistantOrganization) {
+        if (!$assistantOrganization instanceof Organization) {
             return false;
         }
 
-        return (bool) $assistantOrganization->getId()?->equals($organization->getId());
+        return $assistantOrganization->getId()->equals($organization->getId());
     }
 
     /**
@@ -225,12 +225,6 @@ final class AssistantOwnership
      */
     private function isMember(User $user, Organization $organization): bool
     {
-        foreach ($this->candidateOwners($organization) as $candidate) {
-            if ((bool) $candidate->getId()?->equals($user->getId())) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->candidateOwners($organization), fn (User $candidate): bool => $candidate->getId()->equals($user->getId()));
     }
 }

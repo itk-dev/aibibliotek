@@ -185,20 +185,30 @@ final class ModelMapTest extends TestCase
     public function testShippedMapIntegrity(): void
     {
         $parsed = Yaml::parseFile($this->shippedMapPath());
-        self::assertIsArray($parsed['models'] ?? null);
+        self::assertIsArray($parsed);
+        $models = $parsed['models'] ?? null;
+        self::assertIsArray($models);
 
         $seen = [];
-        foreach ($parsed['models'] as $id => $definition) {
+        foreach ($models as $id => $definition) {
+            self::assertIsArray($definition);
             self::assertIsString($definition['label'] ?? null, \sprintf('Model "%s" needs a label.', $id));
             self::assertNotSame('', $definition['label']);
 
-            foreach ([$id, ...($definition['aliases'] ?? [])] as $spelling) {
-                $key = strtolower(trim((string) $spelling));
+            $aliases = $definition['aliases'] ?? [];
+            self::assertIsArray($aliases);
+
+            foreach ([$id, ...$aliases] as $spelling) {
+                self::assertIsString($spelling);
+                $key = strtolower(trim($spelling));
                 self::assertArrayNotHasKey($key, $seen, \sprintf('Duplicate alias/id "%s".', $spelling));
                 $seen[$key] = true;
             }
 
-            foreach ($definition['targets'] ?? [] as $targetId) {
+            $targets = $definition['targets'] ?? [];
+            self::assertIsArray($targets);
+
+            foreach ($targets as $targetId) {
                 self::assertTrue(null === $targetId || \is_string($targetId));
             }
         }

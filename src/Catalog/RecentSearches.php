@@ -6,7 +6,7 @@ namespace App\Catalog;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class RecentSearches
+final readonly class RecentSearches
 {
     /**
      * Per-session history of the user's most recent catalogue searches.
@@ -16,15 +16,15 @@ final class RecentSearches
      * links that re-run the search. State lives in the session so it is
      * per-user and survives navigation without touching the database.
      */
-    private const SESSION_KEY = 'catalog.recent_searches';
+    private const string SESSION_KEY = 'catalog.recent_searches';
 
     /**
      * How many queries to keep. Oldest entries fall off the end once the
      * list grows past this length.
      */
-    private const MAX = 5;
+    private const int MAX = 5;
 
-    public function __construct(private readonly RequestStack $requestStack)
+    public function __construct(private RequestStack $requestStack)
     {
     }
 
@@ -59,7 +59,7 @@ final class RecentSearches
      *
      * Reads defensively: a session value that is not an array (e.g. a
      * tampered cookie or a schema change) yields an empty list rather than a
-     * type error.
+     * type error, and any non-string entry inside it is dropped.
      *
      * @return list<string> distinct search terms in most-recent-first order
      */
@@ -67,6 +67,6 @@ final class RecentSearches
     {
         $stored = $this->requestStack->getSession()->get(self::SESSION_KEY, []);
 
-        return \is_array($stored) ? array_values($stored) : [];
+        return \is_array($stored) ? array_values(array_filter($stored, \is_string(...))) : [];
     }
 }

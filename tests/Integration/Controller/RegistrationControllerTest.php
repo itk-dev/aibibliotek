@@ -12,6 +12,8 @@ use App\Tests\Support\ClosedLimiterFactory;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\RawMessage;
 
 /**
  * End-to-end self-signup flow against the real `form_login` firewall
@@ -84,9 +86,15 @@ final class RegistrationControllerTest extends WebTestCase
         self::assertEmailCount(1);
 
         $recipients = array_map(
-            static fn (\Symfony\Component\Mime\RawMessage $message): string => method_exists($message, 'getTo')
-                ? ($message->getTo()[0]?->getAddress() ?? '')
-                : '',
+            static function (RawMessage $message): string {
+                if (!$message instanceof Email) {
+                    return '';
+                }
+
+                $to = $message->getTo();
+
+                return [] === $to ? '' : $to[0]->getAddress();
+            },
             self::getMailerMessages(),
         );
         // The single mail goes to the signing-up user — the

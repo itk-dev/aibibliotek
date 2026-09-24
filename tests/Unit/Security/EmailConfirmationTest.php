@@ -8,7 +8,6 @@ use App\Entity\User;
 use App\Enum\UserStatus;
 use App\Notification\AdminRegistrationNotifier;
 use App\Notification\DomainRegistrationNotifier;
-use App\Notification\RegistrationConfirmationNotifier;
 use App\Repository\UserRepository;
 use App\Security\EmailConfirmation;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,18 +29,14 @@ use Symfony\Component\Mailer\Exception\TransportException;
  */
 final class EmailConfirmationTest extends TestCase
 {
-    // Verifies a transport failure on the admin notifier is logged, swallowed, and doesn't block the welcome notifier or the return value.
+    // Verifies a transport failure on the admin notifier is logged and swallowed, and the return value is unaffected.
     public function testConsumeSwallowsTransportFailureOnAdminNotifier(): void
     {
         $user = $this->makeAwaitingUser();
 
-        $adminNotifier = $this->createMock(AdminRegistrationNotifier::class);
+        $adminNotifier = $this->createStub(AdminRegistrationNotifier::class);
         $adminNotifier->method('notifyOfNewRegistration')
             ->willThrowException(new TransportException('SMTP down'));
-
-        $confirmationNotifier = $this->createMock(RegistrationConfirmationNotifier::class);
-        // Even though admin dispatch failed, the welcome mail must still fire.
-        $confirmationNotifier->expects(self::once())->method('confirmRegistration');
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::once())
@@ -50,11 +45,10 @@ final class EmailConfirmationTest extends TestCase
 
         $service = new EmailConfirmation(
             $this->makeCacheHitting($user),
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $this->makeRepositoryReturning($user),
             $adminNotifier,
-            $this->createMock(DomainRegistrationNotifier::class),
-            $confirmationNotifier,
+            $this->createStub(DomainRegistrationNotifier::class),
             $logger,
         );
 
@@ -63,7 +57,7 @@ final class EmailConfirmationTest extends TestCase
         self::assertSame($user, $result);
     }
 
-    // Verifies a transport failure on the domain notifier is logged and swallowed so the welcome notifier still fires.
+    // Verifies a transport failure on the domain notifier is logged and swallowed after the admin notifier has already fired.
     public function testConsumeSwallowsTransportFailureOnDomainNotifier(): void
     {
         $user = $this->makeAwaitingUser();
@@ -71,13 +65,9 @@ final class EmailConfirmationTest extends TestCase
         $adminNotifier = $this->createMock(AdminRegistrationNotifier::class);
         $adminNotifier->expects(self::once())->method('notifyOfNewRegistration');
 
-        $domainNotifier = $this->createMock(DomainRegistrationNotifier::class);
+        $domainNotifier = $this->createStub(DomainRegistrationNotifier::class);
         $domainNotifier->method('notifyOfNewRegistration')
             ->willThrowException(new TransportException('SMTP down'));
-
-        $confirmationNotifier = $this->createMock(RegistrationConfirmationNotifier::class);
-        // Even though the domain dispatch failed, the welcome mail must still fire.
-        $confirmationNotifier->expects(self::once())->method('confirmRegistration');
 
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects(self::once())
@@ -86,43 +76,10 @@ final class EmailConfirmationTest extends TestCase
 
         $service = new EmailConfirmation(
             $this->makeCacheHitting($user),
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $this->makeRepositoryReturning($user),
             $adminNotifier,
             $domainNotifier,
-            $confirmationNotifier,
-            $logger,
-        );
-
-        $result = $service->consume('any-token');
-
-        self::assertSame($user, $result);
-    }
-
-    // Verifies a transport failure on the welcome notifier is logged and swallowed after the admin notifier has already fired.
-    public function testConsumeSwallowsTransportFailureOnConfirmationNotifier(): void
-    {
-        $user = $this->makeAwaitingUser();
-
-        $adminNotifier = $this->createMock(AdminRegistrationNotifier::class);
-        $adminNotifier->expects(self::once())->method('notifyOfNewRegistration');
-
-        $confirmationNotifier = $this->createMock(RegistrationConfirmationNotifier::class);
-        $confirmationNotifier->method('confirmRegistration')
-            ->willThrowException(new TransportException('SMTP down'));
-
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects(self::once())
-            ->method('warning')
-            ->with(self::stringContains('registration confirmation mail'));
-
-        $service = new EmailConfirmation(
-            $this->makeCacheHitting($user),
-            $this->createMock(EntityManagerInterface::class),
-            $this->makeRepositoryReturning($user),
-            $adminNotifier,
-            $this->createMock(DomainRegistrationNotifier::class),
-            $confirmationNotifier,
             $logger,
         );
 
@@ -152,11 +109,11 @@ final class EmailConfirmationTest extends TestCase
      */
     private function makeCacheHitting(User $user): CacheItemPoolInterface
     {
-        $item = $this->createMock(CacheItemInterface::class);
+        $item = $this->createStub(CacheItemInterface::class);
         $item->method('isHit')->willReturn(true);
         $item->method('get')->willReturn((string) $user->getId());
 
-        $pool = $this->createMock(CacheItemPoolInterface::class);
+        $pool = $this->createStub(CacheItemPoolInterface::class);
         $pool->method('getItem')->willReturn($item);
         $pool->method('deleteItem')->willReturn(true);
 
@@ -169,7 +126,7 @@ final class EmailConfirmationTest extends TestCase
      */
     private function makeRepositoryReturning(User $user): UserRepository
     {
-        $repository = $this->createMock(UserRepository::class);
+        $repository = $this->createStub(UserRepository::class);
         $repository->method('find')->willReturn($user);
 
         return $repository;

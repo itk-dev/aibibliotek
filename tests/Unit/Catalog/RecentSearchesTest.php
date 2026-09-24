@@ -19,8 +19,7 @@ final class RecentSearchesTest extends TestCase
     {
         $request = new Request();
         $request->setSession(new Session(new MockArraySessionStorage()));
-        $stack = new RequestStack();
-        $stack->push($request);
+        $stack = new RequestStack([$request]);
 
         $this->recentSearches = new RecentSearches($stack);
     }
@@ -71,9 +70,8 @@ final class RecentSearchesTest extends TestCase
         $session = new Session(new MockArraySessionStorage());
         $session->set('catalog.recent_searches', 'corrupted');
         $request->setSession($session);
-        $stack = new RequestStack();
-        $stack->push($request);
+        $stack = new RequestStack([$request]);
 
-        self::assertSame([], (new RecentSearches($stack))->all());
+        self::assertSame([], new RecentSearches($stack)->all());
     }
 }

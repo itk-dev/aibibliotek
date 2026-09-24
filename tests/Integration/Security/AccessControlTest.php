@@ -68,7 +68,7 @@ final class AccessControlTest extends WebTestCase
     public function testAuthenticatedUserCanReachGatedRoute(): void
     {
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'alice@example.test']);
-        \assert(null !== $alice);
+        self::assertNotNull($alice);
         $this->client->loginUser($alice);
 
         $this->client->request('GET', '/');

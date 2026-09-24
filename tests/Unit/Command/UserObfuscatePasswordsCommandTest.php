@@ -40,7 +40,7 @@ final class UserObfuscatePasswordsCommandTest extends TestCase
     // Verifies the prod guard is bypassed when --force is passed.
     public function testProdGuardBypassedWithForce(): void
     {
-        $userRepository = $this->createMock(UserRepository::class);
+        $userRepository = $this->createStub(UserRepository::class);
         $userRepository->method('findAll')->willReturn([]);
 
         $tester = $this->tester($userRepository, environment: 'prod');
@@ -54,7 +54,7 @@ final class UserObfuscatePasswordsCommandTest extends TestCase
     // Ensures an empty user list exits cleanly with the "no users" success message.
     public function testEmptyUserListExitsSuccess(): void
     {
-        $userRepository = $this->createMock(UserRepository::class);
+        $userRepository = $this->createStub(UserRepository::class);
         $userRepository->method('findAll')->willReturn([]);
 
         $tester = $this->tester($userRepository);
@@ -76,9 +76,9 @@ final class UserObfuscatePasswordsCommandTest extends TestCase
         string $environment = 'test',
     ): CommandTester {
         $userManager = new UserManager(
-            $this->createMock(EntityManagerInterface::class),
+            $this->createStub(EntityManagerInterface::class),
             $userRepository,
-            $this->createMock(UserPasswordHasherInterface::class),
+            $this->createStub(UserPasswordHasherInterface::class),
         );
         $command = new UserObfuscatePasswordsCommand($userManager, $userRepository, $environment);
 

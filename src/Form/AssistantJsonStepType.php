@@ -26,6 +26,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * `SessionDataStorage`. Validation lives in the `json` group so
  * step 2 (which uses the `metadata` group) doesn't re-check the
  * blob every navigation.
+ *
+ * @extends AbstractType<\App\Assistant\AssistantDraft>
  */
 final class AssistantJsonStepType extends AbstractType
 {

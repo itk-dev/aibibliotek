@@ -21,10 +21,9 @@ final class UserUpdateCommandTest extends KernelTestCase
 
     protected function setUp(): void
     {
-        self::bootKernel();
+        $application = new Application(self::bootKernel());
 
         $container = self::getContainer();
-        $application = new Application(self::$kernel);
         $command = $application->find('app:user:update');
         $this->tester = new CommandTester($command);
         $this->userRepository = $container->get(UserRepository::class);

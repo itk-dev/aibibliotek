@@ -23,7 +23,7 @@ jobs:
             COMPOSE_SERVER_DOMAIN: localhost
         steps:
             - name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
 
             - name: Composer install and asset build
               run: |

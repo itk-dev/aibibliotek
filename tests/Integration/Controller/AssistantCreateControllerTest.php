@@ -10,6 +10,8 @@ use App\Repository\AssistantRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\FormField;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * End-to-end coverage of the three-step assistant-create wizard.
@@ -31,7 +33,7 @@ final class AssistantCreateControllerTest extends WebTestCase
         // logged-in user; no role required), so log in the
         // fixture baseline user before each test.
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixtures::ALICE_EMAIL]);
-        \assert(null !== $alice, 'UserFixtures must seed alice@example.test.');
+        self::assertNotNull($alice, 'UserFixtures must seed alice@example.test.');
         $this->client->loginUser($alice);
     }
 
@@ -149,7 +151,7 @@ final class AssistantCreateControllerTest extends WebTestCase
         // The curator's edited title survives the round-trip — Previous
         // preserved the submitted step-2 data on the way back.
         $stepTwoAgain = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        self::assertSame('Curator edit', $stepTwoAgain[$titleField]->getValue());
+        self::assertSame('Curator edit', $this->fieldValue($stepTwoAgain, '[title]'));
     }
 
     // Verifies going back to step 1 and pasting a different JSON refreshes the metadata fields on step 2 that the curator hadn't manually edited.
@@ -182,10 +184,8 @@ final class AssistantCreateControllerTest extends WebTestCase
         // Step 2 renders with the SECOND JSON's metadata — the curator
         // didn't edit any fields, so the prefiller refreshes them.
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $titleField = $this->findFieldName($stepTwo->all(), '[title]');
-        self::assertSame('Second title', $stepTwo[$titleField]->getValue());
-        $descriptionField = $this->findFieldName($stepTwo->all(), '[description]');
-        self::assertSame('Second description', $stepTwo[$descriptionField]->getValue());
+        self::assertSame('Second title', $this->fieldValue($stepTwo, '[title]'));
+        self::assertSame('Second description', $this->fieldValue($stepTwo, '[description]'));
     }
 
     // Full happy-path: valid JSON on step 1 → auto-extracted metadata on step 2 → persist → step 3 receipt with permalink.
@@ -208,17 +208,10 @@ final class AssistantCreateControllerTest extends WebTestCase
         // Landed on step 2 with metadata pre-filled from the JSON.
         self::assertResponseIsSuccessful();
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $titleField = $this->findFieldName($stepTwo->all(), '[title]');
-        self::assertSame('Demo assistant', $stepTwo[$titleField]->getValue());
-
-        $descriptionField = $this->findFieldName($stepTwo->all(), '[description]');
-        self::assertSame('A demo assistant', $stepTwo[$descriptionField]->getValue());
-
-        $languageModelField = $this->findFieldName($stepTwo->all(), '[languageModel]');
-        self::assertSame('gpt-4o', $stepTwo[$languageModelField]->getValue());
-
-        $tagsField = $this->findFieldName($stepTwo->all(), '[tags]');
-        self::assertSame('alpha, beta', $stepTwo[$tagsField]->getValue());
+        self::assertSame('Demo assistant', $this->fieldValue($stepTwo, '[title]'));
+        self::assertSame('A demo assistant', $this->fieldValue($stepTwo, '[description]'));
+        self::assertSame('gpt-4o', $this->fieldValue($stepTwo, '[languageModel]'));
+        self::assertSame('alpha, beta', $this->fieldValue($stepTwo, '[tags]'));
 
         // `tagline` and `dataSensitivity` are both required —
         // supply a value before advancing.
@@ -240,7 +233,7 @@ final class AssistantCreateControllerTest extends WebTestCase
         self::assertNotNull($created);
         self::assertSame(
             ['alpha', 'beta'],
-            array_map(static fn (Tag $t) => $t->getName(), $created->getTags()->toArray()),
+            array_map(static fn (Tag $t): string => $t->getName(), $created->getTags()->toArray()),
         );
         self::assertSame(
             ['name' => 'Demo assistant', 'base_model_id' => 'gpt-4o', 'meta' => ['description' => 'A demo assistant', 'tags' => ['alpha', 'beta']]],
@@ -248,7 +241,7 @@ final class AssistantCreateControllerTest extends WebTestCase
         );
 
         // The permalink to the created row is on the receipt page.
-        self::assertStringContainsString('/assistant/'.(string) $created->getId(), $body);
+        self::assertStringContainsString('/assistant/'.$created->getId(), $body);
     }
 
     // Verifies importing a non-OpenWebUI (Ollama) config detects the format, normalises the model, and flags step 2 as experimental.
@@ -267,8 +260,7 @@ final class AssistantCreateControllerTest extends WebTestCase
 
         // The detected model is folded onto its canonical id for the selector.
         $stepTwo = $crawler->selectButton('assistant_create_flow[navigator][next]')->form();
-        $languageModelField = $this->findFieldName($stepTwo->all(), '[languageModel]');
-        self::assertSame('llama-3.2', $stepTwo[$languageModelField]->getValue());
+        self::assertSame('llama-3.2', $this->fieldValue($stepTwo, '[languageModel]'));
     }
 
     // Ensures a fresh GET after completing the wizard drops the receipt-state session slot and re-renders step 1.
@@ -379,16 +371,34 @@ final class AssistantCreateControllerTest extends WebTestCase
      * long — this helper avoids hard-coding them and re-computing
      * the block prefix in every test.
      *
-     * @param array<string, \Symfony\Component\DomCrawler\Field\FormField> $fields
+     * @param array<array-key, FormField> $fields
      */
     private function findFieldName(array $fields, string $suffix): string
     {
         foreach (array_keys($fields) as $name) {
-            if (str_ends_with($name, $suffix)) {
-                return $name;
+            $fieldName = (string) $name;
+            if (str_ends_with($fieldName, $suffix)) {
+                return $fieldName;
             }
         }
 
         self::fail(\sprintf('Form field ending with "%s" not found. Available: %s', $suffix, implode(', ', array_keys($fields))));
+    }
+
+    /**
+     * Read the current value of the field whose full name ends with
+     * the supplied suffix. `Form::offsetGet()` widens to
+     * `FormField|FormField[]|FormField[][]` because a form may hold
+     * multi-value controls; every field read here is a single control,
+     * so narrow back to `FormField` before reading the value off it.
+     *
+     * @return string|array<mixed>|null
+     */
+    private function fieldValue(Form $form, string $suffix): string|array|null
+    {
+        $field = $form[$this->findFieldName($form->all(), $suffix)];
+        self::assertInstanceOf(FormField::class, $field);
+
+        return $field->getValue();
     }
 }

@@ -12,9 +12,13 @@ use App\Security\Roles;
 use App\Security\UserApproval;
 use App\Security\UserManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
+use Symfony\Component\Mime\Email;
 
 final class UserApprovalTest extends KernelTestCase
 {
+    use MailerAssertionsTrait;
+
     private UserManager $userManager;
     private UserApproval $userApproval;
     private UserRepository $userRepository;
@@ -47,6 +51,33 @@ final class UserApprovalTest extends KernelTestCase
         $this->userApproval->block($user);
 
         self::assertSame(UserStatus::Blocked, $user->getStatus());
+    }
+
+    // Verifies approve() dispatches the "you're approved" mail to a user transitioning out of Pending.
+    public function testApproveDispatchesConfirmationMail(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => UserFixtures::PENDING_EMAIL]);
+        self::assertNotNull($user);
+
+        $this->userApproval->approve($user);
+
+        self::assertEmailCount(1);
+        $email = self::getMailerMessage();
+        self::assertNotNull($email);
+        self::assertInstanceOf(Email::class, $email);
+        self::assertSame(UserFixtures::PENDING_EMAIL, $email->getTo()[0]->getAddress());
+    }
+
+    // Ensures re-approving a user who is already Approved does not resend the confirmation mail.
+    public function testApproveDoesNotResendMailWhenAlreadyApproved(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => UserFixtures::ALICE_EMAIL]);
+        self::assertNotNull($user);
+        self::assertSame(UserStatus::Approved, $user->getStatus());
+
+        $this->userApproval->approve($user);
+
+        self::assertEmailCount(0);
     }
 
     public function testApprovalIsRoundTrippedThroughTheDatabase(): void

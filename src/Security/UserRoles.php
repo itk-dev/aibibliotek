@@ -24,15 +24,15 @@ use App\Repository\UserRepository;
  * voter (a voter authorises an action, the service refuses to
  * apply one that the data model can't survive).
  */
-final class UserRoles
+final readonly class UserRoles
 {
     /**
      * @param UserManager    $userManager    delegates the actual persistence (validates roles, flushes once)
      * @param UserRepository $userRepository read-side lookup used to count remaining admins for the last-admin guard
      */
     public function __construct(
-        private readonly UserManager $userManager,
-        private readonly UserRepository $userRepository,
+        private UserManager $userManager,
+        private UserRepository $userRepository,
     ) {
     }
 

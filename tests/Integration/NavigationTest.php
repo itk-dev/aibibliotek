@@ -35,7 +35,7 @@ final class NavigationTest extends WebTestCase
     public function testSignedInNavRendersExpectedLinks(): void
     {
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixtures::ALICE_EMAIL]);
-        \assert(null !== $alice, 'UserFixtures must seed alice@example.test.');
+        self::assertNotNull($alice, 'UserFixtures must seed alice@example.test.');
         $this->client->loginUser($alice);
 
         $crawler = $this->client->request('GET', '/search');
@@ -44,7 +44,7 @@ final class NavigationTest extends WebTestCase
         $nav = $crawler->filter('nav[aria-label="Hovedmenu"]');
         self::assertCount(1, $nav);
 
-        $links = $nav->filter('a[href]')->each(static fn ($node) => (string) $node->attr('href'));
+        $links = $nav->filter('a[href]')->each(static fn ($node): string => (string) $node->attr('href'));
         self::assertContains('/search', $links);
         self::assertContains('/assistant/new', $links);
         self::assertContains('/mine/assistenter', $links);
@@ -59,7 +59,7 @@ final class NavigationTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $nav = $crawler->filter('nav[aria-label="Hovedmenu"]');
 
-        $links = $nav->filter('a[href]')->each(static fn ($node) => (string) $node->attr('href'));
+        $links = $nav->filter('a[href]')->each(static fn ($node): string => (string) $node->attr('href'));
         self::assertContains('/search', $links);
         self::assertContains('/assistant/new', $links);
         self::assertNotContains('/mine/assistenter', $links);

@@ -8,7 +8,7 @@ use App\Enum\DataSensitivity;
 use App\Http\QueryStringList;
 use Symfony\Component\HttpFoundation\Request;
 
-final class CatalogCriteria
+final readonly class CatalogCriteria
 {
     /**
      * Read-only snapshot of "what the user asked for" on the catalogue page.
@@ -35,13 +35,13 @@ final class CatalogCriteria
      * @param CatalogSort  $sort              the ordering applied to the result set; defaults to newest-first
      */
     public function __construct(
-        public readonly ?string $q = null,
-        public readonly array $languageModels = [],
-        public readonly array $frameworks = [],
-        public readonly array $tags = [],
-        public readonly array $organizations = [],
-        public readonly array $dataSensitivities = [],
-        public readonly CatalogSort $sort = CatalogSort::Newest,
+        public ?string $q = null,
+        public array $languageModels = [],
+        public array $frameworks = [],
+        public array $tags = [],
+        public array $organizations = [],
+        public array $dataSensitivities = [],
+        public CatalogSort $sort = CatalogSort::Newest,
     ) {
     }
 
@@ -236,8 +236,14 @@ final class CatalogCriteria
             return $query;
         }
 
+        // Every non-`q` key this method is called with is a facet, and
+        // toQueryArray() only emits a facet key when its list is non-empty,
+        // so the entry is always the facet's own list<string>.
+        /** @var list<string> $current */
+        $current = $query[$type];
+
         $remaining = array_values(array_filter(
-            $query[$type],
+            $current,
             static fn (string $v): bool => $v !== $value,
         ));
 

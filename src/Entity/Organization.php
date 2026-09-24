@@ -15,31 +15,26 @@ use ITKDev\EntityBundle\Audit\Attribute\Auditable;
 #[Auditable]
 class Organization extends AbstractEntity
 {
-    #[ORM\Column(length: 255)]
-    private string $name;
-
     /**
      * @var list<string>
      */
     #[ORM\Column(name: 'email_domains', type: Types::JSON)]
     private array $emailDomains;
 
-    #[ORM\Column(length: 255)]
-    #[SupportedFramework]
-    private string $defaultFramework;
-
     /**
-     * @param list<string> $emailDomains
+     * @param array<array-key, string> $emailDomains keys are ignored; the values are
+     *                                               normalised and re-indexed as a list
      */
     public function __construct(
-        string $name,
+        #[ORM\Column(length: 255)]
+        private string $name,
         array $emailDomains,
-        string $defaultFramework,
+        #[ORM\Column(length: 255)]
+        #[SupportedFramework]
+        private string $defaultFramework,
     ) {
         parent::__construct();
-        $this->name = $name;
-        $this->emailDomains = self::normaliseDomains($emailDomains);
-        $this->defaultFramework = $defaultFramework;
+        $this->emailDomains = $this->normaliseDomains($emailDomains);
     }
 
     public function getName(): string
@@ -63,11 +58,12 @@ class Organization extends AbstractEntity
     }
 
     /**
-     * @param list<string> $emailDomains
+     * @param array<array-key, string> $emailDomains keys are ignored; the values are
+     *                                               normalised and re-indexed as a list
      */
     public function setEmailDomains(array $emailDomains): static
     {
-        $this->emailDomains = self::normaliseDomains($emailDomains);
+        $this->emailDomains = $this->normaliseDomains($emailDomains);
 
         return $this;
     }
@@ -91,11 +87,12 @@ class Organization extends AbstractEntity
      * right-hand side of an e-mail address at signup time, and stops admin
      * CRUD from accidentally storing "Aarhus.DK " alongside "aarhus.dk".
      *
-     * @param list<string> $domains
+     * @param array<array-key, string> $domains keys are ignored; callers may pass a
+     *                                          filtered array whose keys have gaps
      *
      * @return list<string>
      */
-    private static function normaliseDomains(array $domains): array
+    private function normaliseDomains(array $domains): array
     {
         return array_values(array_map(
             static fn (string $domain): string => strtolower(trim($domain)),

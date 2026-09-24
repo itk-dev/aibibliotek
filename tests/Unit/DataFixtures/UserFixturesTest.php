@@ -35,8 +35,8 @@ final class UserFixturesTest extends TestCase
     public function testLoadPersistsEveryRoleAndStatusCombination(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $userRepository = $this->createMock(UserRepository::class);
-        $passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $userRepository = $this->createStub(UserRepository::class);
+        $passwordHasher = $this->createStub(UserPasswordHasherInterface::class);
 
         $userRepository->method('findOneBy')->willReturn(null);
         $passwordHasher->method('hashPassword')->willReturn('hashed');
@@ -45,7 +45,7 @@ final class UserFixturesTest extends TestCase
         $entityManager->expects(self::exactly(self::EXPECTED_USER_COUNT))
             ->method('persist')
             ->willReturnCallback(function (object $entity) use (&$persisted): void {
-                \assert($entity instanceof User);
+                self::assertInstanceOf(User::class, $entity);
                 $persisted[] = $entity;
             });
         $entityManager->expects(self::exactly(self::EXPECTED_USER_COUNT))->method('flush');
@@ -53,7 +53,7 @@ final class UserFixturesTest extends TestCase
         $userManager = new UserManager($entityManager, $userRepository, $passwordHasher);
         $fixture = new UserFixtures($userManager);
 
-        $fixture->load($this->createMock(ObjectManager::class));
+        $fixture->load($this->createStub(ObjectManager::class));
 
         $byEmail = [];
         foreach ($persisted as $user) {

@@ -155,6 +155,7 @@ final class OpenAiAssistantAdapterTest extends TestCase
         self::assertSame('Edited', $rebuilt['name']);
         self::assertSame('Edited description', $rebuilt['description']);
         self::assertSame('System prompt', $rebuilt['instructions']);
+        self::assertIsArray($rebuilt['metadata']);
         self::assertSame('alpha, beta', $rebuilt['metadata']['tags']);
         self::assertSame('team', $rebuilt['metadata']['owner']);
         self::assertSame([['type' => 'code_interpreter']], $rebuilt['tools']);
@@ -172,6 +173,7 @@ final class OpenAiAssistantAdapterTest extends TestCase
         self::assertSame('Only columns', $rebuilt['name']);
         self::assertNull($rebuilt['description']);
         self::assertSame('Be brief', $rebuilt['instructions']);
+        self::assertIsArray($rebuilt['metadata']);
         self::assertArrayNotHasKey('tags', $rebuilt['metadata']);
     }
 

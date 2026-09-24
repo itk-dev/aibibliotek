@@ -14,6 +14,7 @@ use App\Repository\UserRepository;
 use App\Settings\SettingsManager;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
+use Symfony\Component\Mime\Email;
 
 /**
  * End-to-end coverage of the two registration notifiers.
@@ -51,9 +52,12 @@ final class NotifierIntegrationTest extends KernelTestCase
         self::assertEmailCount(1);
         $email = self::getMailerMessage();
         self::assertNotNull($email);
+        self::assertInstanceOf(Email::class, $email);
         self::assertSame('Ny bruger: Carol', $email->getSubject());
         self::assertSame('ops@example.test', $email->getTo()[0]->getAddress());
-        self::assertStringContainsString('carol@example.test', $email->getTextBody() ?? '');
+        $text = $email->getTextBody();
+        self::assertIsString($text);
+        self::assertStringContainsString('carol@example.test', $text);
     }
 
     // Ensures the admin notifier skips the send when the recipient is unset (the registration flow stays alive).
@@ -80,9 +84,12 @@ final class NotifierIntegrationTest extends KernelTestCase
         self::assertEmailCount(1);
         $email = self::getMailerMessage();
         self::assertNotNull($email);
+        self::assertInstanceOf(Email::class, $email);
         self::assertSame('Hej Carol', $email->getSubject());
         self::assertSame('carol@example.test', $email->getTo()[0]->getAddress());
-        self::assertStringContainsString('Tak for din oprettelse, Carol.', $email->getTextBody() ?? '');
+        $text = $email->getTextBody();
+        self::assertIsString($text);
+        self::assertStringContainsString('Tak for din oprettelse, Carol.', $text);
     }
 
     // Verifies the email-confirmation notifier sends to the registered user, renders the admin-editable subject + body, and substitutes the %confirmation_url% token with the absolute link.
@@ -98,7 +105,7 @@ final class NotifierIntegrationTest extends KernelTestCase
         // awaiting@aalborg.dk — re-use it here so the notifier has
         // a persisted entity with an id for URL generation.
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixtures::AWAITING_EMAIL]);
-        \assert(null !== $user, 'UserFixtures must seed the AwaitingEmailConfirmation baseline.');
+        self::assertNotNull($user, 'UserFixtures must seed the AwaitingEmailConfirmation baseline.');
         self::assertSame(UserStatus::AwaitingEmailConfirmation, $user->getStatus());
 
         $notifier = self::getContainer()->get(EmailConfirmationNotifier::class);
@@ -107,16 +114,18 @@ final class NotifierIntegrationTest extends KernelTestCase
         self::assertEmailCount(1);
         $email = self::getMailerMessage();
         self::assertNotNull($email);
+        self::assertInstanceOf(Email::class, $email);
         self::assertSame(UserFixtures::AWAITING_EMAIL, $email->getTo()[0]->getAddress());
         self::assertSame('Bekræft Awaiting', $email->getSubject());
-        $text = (string) $email->getTextBody();
+        $text = $email->getTextBody();
+        self::assertIsString($text);
         self::assertStringContainsString('/auth/confirm-email/', $text, 'Plain-text body must include the substituted confirmation URL.');
         self::assertStringContainsString(UserFixtures::AWAITING_EMAIL, $text, '%email% token must be substituted into the body.');
     }
 
     private function makeUser(): User
     {
-        return (new User())
+        return new User()
             ->setEmail('carol@example.test')
             ->setName('Carol')
             ->setStatus(UserStatus::AwaitingEmailConfirmation);

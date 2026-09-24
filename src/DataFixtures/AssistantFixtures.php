@@ -98,7 +98,6 @@ final class AssistantFixtures extends Fixture implements DependentFixtureInterfa
         $organizations = $repository->findAll();
         $byName = [];
         foreach ($organizations as $organization) {
-            \assert($organization instanceof Organization);
             $byName[$organization->getName()] = $organization;
         }
 
@@ -149,7 +148,6 @@ final class AssistantFixtures extends Fixture implements DependentFixtureInterfa
                 languageModel: 'gpt-4o-mini',
                 framework: 'openwebui',
                 tags: $this->tags(['mødeledelse', 'dokumentation', 'produktivitet']),
-                organization: null,
                 tagline: 'Genererer strukturerede mødereferater med handlepunkter.',
                 knowledgeDescription: 'Mødeoptag / transskriptioner. Ingen ekstern videns- eller dataindlæsning ud over selve mødets indhold.',
                 dataSensitivity: DataSensitivity::Confidential,
@@ -171,7 +169,6 @@ final class AssistantFixtures extends Fixture implements DependentFixtureInterfa
                 languageModel: 'llama-3.2',
                 framework: 'openwebui',
                 tags: $this->tags(['skole', 'dagtilbud', 'kommunikation']),
-                organization: null,
                 tagline: 'Drafter svar til forældrehenvendelser med kildehenvisninger.',
                 knowledgeDescription: 'Kommunens vejledningssamling på skole- og dagtilbudsområdet, gældende lovgivning og det enkelte dagtilbuds praksisnotater.',
                 dataSensitivity: DataSensitivity::OrdinaryPersonal,
@@ -192,9 +189,6 @@ final class AssistantFixtures extends Fixture implements DependentFixtureInterfa
                 description: 'Pladsholder uden tags — bruges til at vise hvordan detaljevisningen håndterer en helt umarkeret post.',
                 languageModel: 'gpt-4o',
                 framework: 'openwebui',
-                organization: null,
-                tagline: null,
-                knowledgeDescription: null,
                 dataSensitivity: DataSensitivity::OrdinaryPersonal,
             ),
         ];

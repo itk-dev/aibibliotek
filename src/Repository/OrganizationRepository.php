@@ -67,6 +67,10 @@ class OrganizationRepository extends ServiceEntityRepository
      */
     public function collectAllowedEmailDomains(): array
     {
+        // A partial select over a single json column, so each row is
+        // `['emailDomains' => list<string>]` — Organization stores nothing
+        // else in that column.
+        /** @var list<array{emailDomains: list<string>}> $rows */
         $rows = $this->createQueryBuilder('o')
             ->select('o.emailDomains')
             ->getQuery()
@@ -74,8 +78,8 @@ class OrganizationRepository extends ServiceEntityRepository
 
         $domains = [];
         foreach ($rows as $row) {
-            foreach ((array) ($row['emailDomains'] ?? []) as $domain) {
-                $normalised = strtolower(trim((string) $domain));
+            foreach ($row['emailDomains'] as $domain) {
+                $normalised = strtolower(trim($domain));
                 if ('' === $normalised) {
                     continue;
                 }

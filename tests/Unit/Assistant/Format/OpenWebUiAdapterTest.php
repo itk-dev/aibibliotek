@@ -188,7 +188,24 @@ final class OpenWebUiAdapterTest extends TestCase
         $rebuilt = $this->adapter()->canonicalToSource(new CanonicalModel(name: 'Name'));
 
         self::assertSame('', $rebuilt['base_model_id']);
+        self::assertIsArray($rebuilt['meta']);
         self::assertSame('', $rebuilt['meta']['description']);
         self::assertSame([], $rebuilt['meta']['tags']);
+    }
+
+    /**
+     * `parseToSource()` narrows the normalizer's `?array` with `?? throw`.
+     * That throw is unreachable only while the validator keeps rejecting the
+     * payloads normalise() maps to null, so the invariant is pinned here
+     * rather than left as a comment.
+     */
+    // Ensures the validator rejects the payload shapes that would normalise to null.
+    public function testValidatorRejectsPayloadsThatWouldNormaliseToNull(): void
+    {
+        $adapter = $this->adapter();
+
+        self::assertFalse($adapter->validate('[{"name":"A"},{"name":"B"}]')->isValid(), 'a multi-model list must not validate');
+        self::assertFalse($adapter->validate('[]')->isValid(), 'an empty list must not validate');
+        self::assertTrue($adapter->validate('[{"name":"A"}]')->isValid(), 'a single-element list is the accepted list form');
     }
 }

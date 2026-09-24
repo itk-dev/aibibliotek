@@ -29,7 +29,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
         // before each test so the page-render assertions below see
         // actual content rather than an unauthorised response.
         $alice = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'alice@example.test']);
-        \assert(null !== $alice, 'UserFixtures must seed alice@example.test.');
+        self::assertNotNull($alice, 'UserFixtures must seed alice@example.test.');
         $this->client->loginUser($alice);
     }
 
@@ -105,13 +105,13 @@ final class AssistantCatalogControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static function ($node) {
-            return str_contains((string) $node->attr('aria-label'), 'gpt-4o');
-        });
+        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node): bool => str_contains((string) $node->attr('aria-label'), 'gpt-4o'));
         self::assertCount(1, $chip, 'a removal chip for gpt-4o must be rendered');
 
         $params = [];
-        parse_str(parse_url((string) $chip->attr('href'), \PHP_URL_QUERY) ?? '', $params);
+        $query = parse_url((string) $chip->attr('href'), \PHP_URL_QUERY);
+        self::assertIsString($query, 'the chip href must carry a query string');
+        parse_str($query, $params);
 
         self::assertArrayNotHasKey('language_model', $params, 'chip removes the language_model filter');
         self::assertSame(['openwebui'], $params['framework'] ?? null, 'chip preserves the framework filter');
@@ -167,13 +167,13 @@ final class AssistantCatalogControllerTest extends WebTestCase
 
         self::assertResponseIsSuccessful();
 
-        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static function ($node) {
-            return str_contains((string) $node->attr('aria-label'), 'jura');
-        });
+        $chip = $crawler->filter('[aria-label="Aktive filtre"] a')->reduce(static fn ($node): bool => str_contains((string) $node->attr('aria-label'), 'jura'));
         self::assertCount(1, $chip, 'a removal chip for the jura tag must be rendered');
 
         $params = [];
-        parse_str(parse_url((string) $chip->attr('href'), \PHP_URL_QUERY) ?? '', $params);
+        $query = parse_url((string) $chip->attr('href'), \PHP_URL_QUERY);
+        self::assertIsString($query, 'the chip href must carry a query string');
+        parse_str($query, $params);
 
         self::assertArrayNotHasKey('tag', $params, 'chip removes the tag filter');
         self::assertSame('borgerservice', $params['q'] ?? null, 'chip preserves the search query');
@@ -267,7 +267,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
     // Ensures the "Aktive filtre" sidebar box shows its empty state when no filter is applied.
     public function testActiveFiltersBoxShowsEmptyStateWhenNoFilters(): void
     {
-        $crawler = $this->client->request('GET', '/search');
+        $this->client->request('GET', '/search');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('aside[aria-label="Aktive filtre"]', 'Ingen filtre aktive');
@@ -276,7 +276,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
     // Ensures the "Seneste søgninger" box shows its empty state before any search is run.
     public function testRecentSearchesBoxStartsEmpty(): void
     {
-        $crawler = $this->client->request('GET', '/search');
+        $this->client->request('GET', '/search');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('aside[aria-label="Seneste søgninger"]', 'Ingen søgninger endnu');
@@ -299,7 +299,7 @@ final class AssistantCatalogControllerTest extends WebTestCase
         $total = self::getContainer()->get(AssistantRepository::class)->frameworkFacetCounts()['openwebui'] ?? 0;
         self::assertGreaterThan(0, $total, 'fixture baseline must seed assistants');
 
-        $crawler = $this->client->request('GET', '/search');
+        $this->client->request('GET', '/search');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains(

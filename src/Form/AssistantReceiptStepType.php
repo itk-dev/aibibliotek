@@ -15,6 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * persisted the assistant and stashed its id on the DTO by the
  * time this step is shown, so the template just reads
  * `AssistantDraft::$createdAssistantId` to build a permalink.
+ *
+ * @extends AbstractType<\App\Assistant\AssistantDraft>
  */
 final class AssistantReceiptStepType extends AbstractType
 {

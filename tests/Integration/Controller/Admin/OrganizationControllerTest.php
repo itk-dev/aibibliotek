@@ -10,6 +10,8 @@ use App\Repository\OrganizationRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Field\FormField;
 
 /**
  * Integration coverage of the admin Organization CRUD.
@@ -47,7 +49,7 @@ final class OrganizationControllerTest extends WebTestCase
     // Tests that GET /admin/organization/new renders the create form with every expected field, including the framework `<select>` populated from SUPPORTED_FRAMEWORKS.
     public function testNewFormRenders(): void
     {
-        $crawler = $this->client->request('GET', '/admin/organization/new');
+        $this->client->request('GET', '/admin/organization/new');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('input[name="organization[name]"]');
@@ -129,10 +131,18 @@ final class OrganizationControllerTest extends WebTestCase
         // Setting a value not on the choice list requires disabling the
         // DOM crawler's whitelist enforcement — mimics a hand-crafted
         // POST from outside the browser.
-        $form['organization[name]']->setValue('Vejle Kommune');
-        $form['organization[emailDomains]']->setValue('vejle.dk');
-        $form['organization[defaultFramework]']->disableValidation()->setValue('not-a-real-framework');
-        $crawler = $this->client->submit($form);
+        $name = $form['organization[name]'];
+        self::assertInstanceOf(FormField::class, $name);
+        $name->setValue('Vejle Kommune');
+
+        $emailDomains = $form['organization[emailDomains]'];
+        self::assertInstanceOf(FormField::class, $emailDomains);
+        $emailDomains->setValue('vejle.dk');
+
+        $defaultFramework = $form['organization[defaultFramework]'];
+        self::assertInstanceOf(ChoiceFormField::class, $defaultFramework);
+        $defaultFramework->disableValidation()->setValue('not-a-real-framework');
+        $this->client->submit($form);
 
         self::assertResponseStatusCodeSame(422);
 
@@ -213,7 +223,7 @@ final class OrganizationControllerTest extends WebTestCase
     private function loginAsAdmin(): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => UserFixtures::ADMIN_EMAIL]);
-        \assert(null !== $user);
+        self::assertNotNull($user);
         $this->client->loginUser($user);
     }
 }

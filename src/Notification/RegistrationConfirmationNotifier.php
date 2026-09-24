@@ -13,7 +13,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
 /**
- * Sends a confirmation email to a newly-registered user.
+ * Sends the "you're approved" email to a user a moderator has just approved.
  *
  * Subject + body + sender all resolve through {@see SettingsManager}
  * at send time, so admin edits at `/admin/settings/email` take
@@ -25,7 +25,7 @@ use Symfony\Component\Mime\Address;
  * - `%brand_name%`  — current brand identity
  *
  * When the sender is unset, logs a warning and returns without
- * sending so the registration flow itself stays alive.
+ * sending so the approval action itself stays alive.
  */
 class RegistrationConfirmationNotifier
 {
@@ -44,14 +44,14 @@ class RegistrationConfirmationNotifier
     }
 
     /**
-     * Dispatch the "thanks, awaiting approval" message to a registered user.
+     * Dispatch the "you're approved" message to a newly-approved user.
      *
      * Looks up the sender via {@see SettingsManager::getSenderAddress()};
      * if unset, the send is skipped with a warning so the
-     * registration succeeds even when the mailer surface is
+     * approval action succeeds even when the mailer surface is
      * incompletely configured.
      *
-     * @param User $user the user the registration was created for
+     * @param User $user the user who was just approved
      */
     public function confirmRegistration(User $user): void
     {
@@ -74,7 +74,7 @@ class RegistrationConfirmationNotifier
             ],
         );
 
-        $email = (new TemplatedEmail())
+        $email = new TemplatedEmail()
             ->from(Address::create($sender))
             ->to(Address::create((string) $user->getEmail()))
             ->subject($rendered->subject)

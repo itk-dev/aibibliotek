@@ -20,7 +20,7 @@ final class AssistantFixturesTest extends TestCase
     {
         self::assertSame(
             [UserFixtures::class, OrganizationFixtures::class],
-            (new AssistantFixtures())->getDependencies(),
+            new AssistantFixtures()->getDependencies(),
         );
     }
 
@@ -38,7 +38,7 @@ final class AssistantFixturesTest extends TestCase
         self::assertCount(21, $persisted);
 
         $detailedTitles = array_map(
-            static fn (Assistant $a) => $a->getTitle(),
+            static fn (Assistant $a): string => $a->getTitle(),
             \array_slice($persisted, 0, 6),
         );
         self::assertSame(
@@ -62,13 +62,13 @@ final class AssistantFixturesTest extends TestCase
         }
 
         $signatures = array_map(
-            static fn (Assistant $a) => $a->getTitle().'|'.$a->getDescription(),
+            static fn (Assistant $a): string => $a->getTitle().'|'.$a->getDescription(),
             $generated,
         );
         self::assertSame($signatures, array_unique($signatures), 'every generated entry must be unique');
 
         $models = array_unique(array_map(
-            static fn (Assistant $a) => $a->getLanguageModel(),
+            static fn (Assistant $a): string => $a->getLanguageModel(),
             $generated,
         ));
         sort($models);
@@ -82,11 +82,11 @@ final class AssistantFixturesTest extends TestCase
     public function testLoadIsDeterministic(): void
     {
         $first = array_map(
-            static fn (Assistant $a) => $a->getTitle(),
+            static fn (Assistant $a): string => $a->getTitle(),
             $this->captureLoad(),
         );
         $second = array_map(
-            static fn (Assistant $a) => $a->getTitle(),
+            static fn (Assistant $a): string => $a->getTitle(),
             $this->captureLoad(),
         );
 
@@ -103,7 +103,7 @@ final class AssistantFixturesTest extends TestCase
         $captured = [];
         $manager = $this->createMock(ObjectManager::class);
         $manager->method('persist')->willReturnCallback(function (object $entity) use (&$captured): void {
-            \assert($entity instanceof Assistant);
+            self::assertInstanceOf(Assistant::class, $entity);
             $captured[] = $entity;
         });
         $manager->expects(self::once())->method('flush');
@@ -112,7 +112,7 @@ final class AssistantFixturesTest extends TestCase
         $repository->method('findAll')->willReturn($organizations);
         $manager->method('getRepository')->willReturn($repository);
 
-        (new AssistantFixtures())->load($manager);
+        new AssistantFixtures()->load($manager);
 
         return $captured;
     }

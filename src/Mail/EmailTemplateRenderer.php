@@ -22,9 +22,9 @@ use League\CommonMark\CommonMarkConverter;
  * surface tokens with user-controlled content, escape at the
  * call site.
  */
-final class EmailTemplateRenderer
+final readonly class EmailTemplateRenderer
 {
-    public function __construct(private readonly CommonMarkConverter $converter)
+    public function __construct(private CommonMarkConverter $converter)
     {
     }
 

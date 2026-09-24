@@ -9,6 +9,7 @@ use App\Entity\Assistant;
 use App\Entity\User;
 use App\Repository\AssistantRepository;
 use App\Repository\UserRepository;
+use App\Security\CurrentUser;
 use App\Security\Roles;
 use App\Security\Voter\OrganizationAssistantVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +27,7 @@ final class AssistantOwnershipController extends AbstractController
         private readonly AssistantOwnership $ownership,
         private readonly AssistantRepository $assistants,
         private readonly UserRepository $users,
+        private readonly CurrentUser $currentUser,
     ) {
     }
 
@@ -38,13 +40,13 @@ final class AssistantOwnershipController extends AbstractController
         return $this->render('admin/assistant/list.html.twig', [
             'organizations' => $this->ownership->manageableOrganizations($actor),
             'organization' => $organization,
-            'assistants' => null === $organization ? [] : $this->ownership->assistantsFor($organization),
-            'candidate_owners' => null === $organization ? [] : $this->ownership->candidateOwners($organization),
+            'assistants' => $organization instanceof \App\Entity\Organization ? $this->ownership->assistantsFor($organization) : [],
+            'candidate_owners' => $organization instanceof \App\Entity\Organization ? $this->ownership->candidateOwners($organization) : [],
         ]);
     }
 
     #[Route(path: '/reassign', name: '_reassign', methods: ['POST'])]
-    public function reassign(Request $request): Response
+    public function reassign(Request $request): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if (!$this->isCsrfTokenValid('admin-assistant-reassign', (string) $request->request->get('_token'))) {
             throw $this->createAccessDeniedException();
@@ -52,7 +54,7 @@ final class AssistantOwnershipController extends AbstractController
 
         $actor = $this->currentUser();
         $organization = $this->ownership->resolveOrganization($actor, $request->request->getString('organization'));
-        if (null === $organization) {
+        if (!$organization instanceof \App\Entity\Organization) {
             throw $this->createNotFoundException();
         }
 
@@ -93,7 +95,7 @@ final class AssistantOwnershipController extends AbstractController
     {
         $selected = [];
         foreach ($request->request->all('assistants') as $id) {
-            if (!\is_string($id) || !Ulid::isValid($id)) {
+            if (!\is_string($id) || !Ulid::isValid($id, Ulid::FORMAT_BASE_32)) {
                 continue;
             }
 
@@ -120,13 +122,12 @@ final class AssistantOwnershipController extends AbstractController
      */
     private function findUser(string $id): ?User
     {
-        return Ulid::isValid($id) ? $this->users->find($id) : null;
+        return Ulid::isValid($id, Ulid::FORMAT_BASE_32) ? $this->users->find($id) : null;
     }
 
     private function currentUser(): User
     {
-        $user = $this->getUser();
-        \assert($user instanceof User);
+        $user = $this->currentUser->get();
 
         return $user;
     }

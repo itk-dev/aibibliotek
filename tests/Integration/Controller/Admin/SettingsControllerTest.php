@@ -378,17 +378,18 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'Velkommen %name%',
                 'body' => "Hej **%name%**!\n\nDin e-mail: %email%",
                 '_token' => $token,
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseIsSuccessful();
         $payload = $this->decodeJsonResponse();
         self::assertSame('Velkommen Admin', $payload['subject']);
+        self::assertIsString($payload['html']);
         self::assertStringContainsString('<strong>Admin</strong>', $payload['html']);
         self::assertStringContainsString(UserFixtures::ADMIN_EMAIL, $payload['html']);
     }
@@ -402,16 +403,17 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'ignored',
                 'body' => 'Approve: %approval_url%',
                 '_token' => $token,
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseIsSuccessful();
         $payload = $this->decodeJsonResponse();
+        self::assertIsString($payload['html']);
         self::assertStringContainsString('/admin/users', $payload['html']);
     }
 
@@ -423,12 +425,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'x',
                 'body' => 'y',
                 '_token' => 'not-a-real-token',
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(403);
@@ -442,12 +444,12 @@ final class SettingsControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/admin/settings/email/preview',
+            server: ['CONTENT_TYPE' => 'application/json'],
             content: json_encode([
                 'subject' => 'x',
                 'body' => 'y',
                 '_token' => 'irrelevant',
             ], JSON_THROW_ON_ERROR),
-            server: ['CONTENT_TYPE' => 'application/json'],
         );
 
         self::assertResponseStatusCodeSame(403);
@@ -470,13 +472,13 @@ final class SettingsControllerTest extends WebTestCase
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed, mixed>
      */
     private function decodeJsonResponse(): array
     {
         $content = (string) $this->client->getResponse()->getContent();
         $decoded = json_decode($content, true);
-        \assert(\is_array($decoded));
+        self::assertIsArray($decoded);
 
         return $decoded;
     }
@@ -489,7 +491,7 @@ final class SettingsControllerTest extends WebTestCase
     private function loginAsApproved(string $email): void
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneBy(['email' => $email]);
-        \assert(null !== $user, 'Test user must be created before login.');
+        self::assertNotNull($user, 'Test user must be created before login.');
         $this->client->loginUser($user);
     }
 }

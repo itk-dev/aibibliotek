@@ -1,0 +1,39 @@
+# This file is not mirrored from
+# https://github.com/itk-dev/devops_itkdev-docker, so it is safe to edit here.
+# It deliberately follows the structure of the mirrored workflows (php.yaml,
+# tests.yaml) so the two read the same way.
+
+name: Static analysis
+
+env:
+    COMPOSE_USER: runner
+
+on:
+    pull_request:
+        paths: &paths
+            - "**/*.php"
+            - "composer.json"
+            - "composer.lock"
+            - "phpstan.dist.neon"
+            - "docker-compose.yml"
+            - ".github/workflows/static-analysis.yaml"
+    push:
+        branches:
+            - main
+            - develop
+        paths: *paths
+
+jobs:
+    static-analysis:
+        name: PHP - Static Analysis
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+
+            - name: Create docker network
+              run: |
+                  docker network create frontend
+
+            - run: |
+                  docker compose run --rm phpfpm composer install
+                  docker compose run --rm phpfpm vendor/bin/phpstan analyse --no-progress
