@@ -27,12 +27,12 @@ final class UserMenuRouteMissingTest extends TestCase
     // Verifies that when every routed item raises RouteNotFoundException, no sections render.
     public function testRouteNotFoundDropsItemsFromMenu(): void
     {
-        $security = $this->createMock(Security::class);
+        $security = $this->createStub(Security::class);
         // Grant every role check so the only thing that can suppress an
         // item is the route-existence guard we're trying to exercise.
         $security->method('isGranted')->willReturn(true);
 
-        $router = $this->createMock(RouterInterface::class);
+        $router = $this->createStub(RouterInterface::class);
         $router->method('generate')->willThrowException(new RouteNotFoundException('test: route not registered'));
 
         $menu = new UserMenu($security, $router, new CurrentUser($security));

@@ -135,7 +135,7 @@ final class EditAssistantVoterTest extends TestCase
      */
     private function voterWithRoles(array $tokenRoles): EditAssistantVoter
     {
-        $adm = $this->createMock(AccessDecisionManagerInterface::class);
+        $adm = $this->createStub(AccessDecisionManagerInterface::class);
         $adm->method('decide')->willReturnCallback(
             static fn (TokenInterface $token, array $attributes): bool => \in_array($attributes[0] ?? null, $tokenRoles, true),
         );
@@ -145,7 +145,7 @@ final class EditAssistantVoterTest extends TestCase
 
     private function tokenFor(?User $user): TokenInterface
     {
-        $token = $this->createMock(TokenInterface::class);
+        $token = $this->createStub(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
 
         return $token;

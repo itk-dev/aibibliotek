@@ -86,7 +86,7 @@ final class RegistrationTest extends TestCase
     public function testDuplicateEmailReturnsNullWithoutPersisting(): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
-        $repo = $this->createMock(UserRepository::class);
+        $repo = $this->createStub(UserRepository::class);
         $hasher = $this->createStub(UserPasswordHasherInterface::class);
 
         // UserManager's duplicate-email path returns the existing user
@@ -115,8 +115,8 @@ final class RegistrationTest extends TestCase
     public function testPersistsAwaitingEmailConfirmationUserOnHappyPath(): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
-        $repo = $this->createMock(UserRepository::class);
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $repo = $this->createStub(UserRepository::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
 
         $repo->method('findOneBy')->willReturn(null);
         $hasher->method('hashPassword')->willReturn('hashed-secret');
@@ -160,12 +160,12 @@ final class RegistrationTest extends TestCase
     public function testNotifierTransportFailureIsSwallowed(): void
     {
         $em = $this->createStub(EntityManagerInterface::class);
-        $repo = $this->createMock(UserRepository::class);
-        $hasher = $this->createMock(UserPasswordHasherInterface::class);
+        $repo = $this->createStub(UserRepository::class);
+        $hasher = $this->createStub(UserPasswordHasherInterface::class);
         $repo->method('findOneBy')->willReturn(null);
         $hasher->method('hashPassword')->willReturn('hashed-secret');
 
-        $emailLinkNotifier = $this->createMock(EmailConfirmationNotifier::class);
+        $emailLinkNotifier = $this->createStub(EmailConfirmationNotifier::class);
         $emailLinkNotifier->method('sendConfirmationLink')
             ->willThrowException(new TransportException('SMTP down'));
 
@@ -247,7 +247,7 @@ final class RegistrationTest extends TestCase
      */
     private function allowedDomains(array $domains): AllowedEmailDomains
     {
-        $repository = $this->createMock(OrganizationRepository::class);
+        $repository = $this->createStub(OrganizationRepository::class);
         $repository->method('collectAllowedEmailDomains')->willReturn($domains);
 
         return new AllowedEmailDomains($repository);
@@ -272,7 +272,7 @@ final class RegistrationTest extends TestCase
      */
     private function openLimiter(): RateLimiterFactoryInterface
     {
-        $factory = $this->createMock(RateLimiterFactoryInterface::class);
+        $factory = $this->createStub(RateLimiterFactoryInterface::class);
         $factory->method('create')->willReturn(new NoLimiter());
 
         return $factory;
@@ -285,10 +285,10 @@ final class RegistrationTest extends TestCase
     private function closedLimiter(): RateLimiterFactoryInterface
     {
         $rejected = new RateLimit(0, new \DateTimeImmutable('+1 hour'), false, 1);
-        $limiter = $this->createMock(\Symfony\Component\RateLimiter\LimiterInterface::class);
+        $limiter = $this->createStub(\Symfony\Component\RateLimiter\LimiterInterface::class);
         $limiter->method('consume')->willReturn($rejected);
 
-        $factory = $this->createMock(RateLimiterFactoryInterface::class);
+        $factory = $this->createStub(RateLimiterFactoryInterface::class);
         $factory->method('create')->willReturn($limiter);
 
         return $factory;

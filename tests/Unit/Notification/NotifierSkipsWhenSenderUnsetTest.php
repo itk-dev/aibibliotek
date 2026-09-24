@@ -34,7 +34,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getAdminRecipient')->willReturn('ops@example.test');
         $settings->method('getSenderAddress')->willReturn(null);
 
@@ -55,7 +55,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn(null);
 
         // The repository is never queried when the sender check
@@ -81,7 +81,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn(null);
 
         $notifier = new RegistrationConfirmationNotifier(
@@ -100,7 +100,7 @@ final class NotifierSkipsWhenSenderUnsetTest extends TestCase
         $mailer = $this->createMock(MailerInterface::class);
         $mailer->expects(self::never())->method('send');
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn(null);
 
         // EmailConfirmation is final, so we wire a real one with mock
