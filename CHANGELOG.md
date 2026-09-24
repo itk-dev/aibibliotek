@@ -25,9 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ([#236](https://github.com/itk-dev/ai-reolen/issues/236)).
 - README documents that self-signup stays closed until an organisation exists
   ([#235](https://github.com/itk-dev/ai-reolen/issues/235)).
-- Applied the configured Rector sets across `src/` and `tests/` — 104 files,
-  a net deletion of 78 lines
-  ([#247](https://github.com/itk-dev/ai-reolen/issues/247)).
+  - Applied the configured Rector sets across `src/` and `tests/` — 104 files,
+    a net deletion of 78 lines
+    ([#247](https://github.com/itk-dev/ai-reolen/issues/247)).
 - `App\Twig\TextExtension` and `App\Twig\FrameworkExtension` declare their
   filters with `#[AsTwigFilter]` instead of extending `AbstractExtension`
   ([#247](https://github.com/itk-dev/ai-reolen/issues/247)).
