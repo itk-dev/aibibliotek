@@ -33,7 +33,7 @@ final class UserApprovalTest extends TestCase
         $user->setName('Carol');
         $user->setStatus(UserStatus::Pending);
 
-        $confirmationNotifier = $this->createMock(RegistrationConfirmationNotifier::class);
+        $confirmationNotifier = $this->createStub(RegistrationConfirmationNotifier::class);
         $confirmationNotifier->method('confirmRegistration')
             ->willThrowException(new TransportException('SMTP down'));
 
