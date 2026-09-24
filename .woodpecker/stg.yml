@@ -29,5 +29,9 @@ steps:
               - git pull
               - itkdev-docker-compose-server up -d --force-recreate
               - itkdev-docker-compose-server exec phpfpm composer install -o --no-dev --classmap-authoritative
+              # https://symfony.com/bundles/TailwindBundle/current/index.html
+              - itkdev-docker-compose-server exec phpfpm bin/console tailwind:build --minify
+              # https://symfony.com/doc/current/frontend/asset_mapper.html#serving-assets-in-dev-vs-prod
+              - itkdev-docker-compose-server exec phpfpm bin/console asset-map:compile
               - itkdev-docker-compose-server exec phpfpm bin/console doctrine:migrations:migrate --no-interaction
               - itkdev-docker-compose-server exec phpfpm bin/console cache:clear --no-debug
