@@ -56,7 +56,8 @@ final class DomainRegistrationNotifierTest extends TestCase
         $healthy = $this->makeApprover('healthy@aarhus.dk', 'Healthy', Roles::ADMIN);
 
         $userRepository = $this->createMock(UserRepository::class);
-        $userRepository->method('findApproversForDomain')
+        $userRepository->expects(self::once())
+            ->method('findApproversForDomain')
             ->with('aarhus.dk')
             ->willReturn([$flaky, $healthy]);
 
