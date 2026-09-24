@@ -23,7 +23,7 @@ final class CurrentUserTest extends TestCase
     {
         $user = (new User())->setEmail('alice@example.test')->setName('Alice');
 
-        $security = $this->createMock(Security::class);
+        $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn($user);
 
         self::assertSame($user, (new CurrentUser($security))->get());
@@ -32,7 +32,7 @@ final class CurrentUserTest extends TestCase
     // Ensures an unauthenticated request raises rather than returning null to the caller.
     public function testThrowsWhenNobodyIsAuthenticated(): void
     {
-        $security = $this->createMock(Security::class);
+        $security = $this->createStub(Security::class);
         $security->method('getUser')->willReturn(null);
 
         $this->expectException(\LogicException::class);
@@ -44,8 +44,8 @@ final class CurrentUserTest extends TestCase
     // Ensures a token holding some other UserInterface is rejected, not silently accepted.
     public function testThrowsWhenTheTokenHoldsAnotherUserType(): void
     {
-        $security = $this->createMock(Security::class);
-        $security->method('getUser')->willReturn($this->createMock(UserInterface::class));
+        $security = $this->createStub(Security::class);
+        $security->method('getUser')->willReturn($this->createStub(UserInterface::class));
 
         $this->expectException(\LogicException::class);
 

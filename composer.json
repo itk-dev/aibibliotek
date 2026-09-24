@@ -42,14 +42,14 @@
         "friendsofphp/php-cs-fixer": "^3.95.25",
         "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-symfony": "^2.0",
-        "phpunit/phpunit": "^11.5.56",
+        "phpunit/phpunit": "^13.3.4",
         "rector/rector": "^2.6",
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "symfony/browser-kit": "~8.1.5",
         "symfony/css-selector": "~8.1.6",
         "symfony/maker-bundle": "^1.68",
         "symfony/phpunit-bridge": "~8.1.6",
-        "vincentlanglet/twig-cs-fixer": "^3.14"
+        "vincentlanglet/twig-cs-fixer": "^4.1.1"
     },
     "replace": {
         "symfony/polyfill-ctype": "*",

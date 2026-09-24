@@ -50,7 +50,7 @@ final class AllowedEmailDomainsTest extends TestCase
      */
     private function allowedDomains(array $domains): AllowedEmailDomains
     {
-        $repository = $this->createMock(OrganizationRepository::class);
+        $repository = $this->createStub(OrganizationRepository::class);
         $repository->method('collectAllowedEmailDomains')->willReturn($domains);
 
         return new AllowedEmailDomains($repository);
