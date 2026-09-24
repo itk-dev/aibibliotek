@@ -73,7 +73,7 @@ final class FixtureCreatorsTest extends TestCase
      */
     private function managerReturning(?User $alice, ?User $bob): ObjectManager
     {
-        $repository = $this->createMock(ObjectRepository::class);
+        $repository = $this->createStub(ObjectRepository::class);
         $repository->method('findOneBy')->willReturnCallback(
             static fn (array $criteria): ?User => match ($criteria['email'] ?? null) {
                 UserFixtures::ALICE_EMAIL => $alice,
@@ -83,7 +83,10 @@ final class FixtureCreatorsTest extends TestCase
         );
 
         $manager = $this->createMock(ObjectManager::class);
-        $manager->method('getRepository')->with(User::class)->willReturn($repository);
+        $manager->expects(self::once())
+            ->method('getRepository')
+            ->with(User::class)
+            ->willReturn($repository);
 
         return $manager;
     }

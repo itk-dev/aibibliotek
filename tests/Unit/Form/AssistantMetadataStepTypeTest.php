@@ -31,7 +31,7 @@ final class AssistantMetadataStepTypeTest extends TestCase
      */
     private function type(array $persistedModels = []): AssistantMetadataStepType
     {
-        $repository = $this->createMock(AssistantRepository::class);
+        $repository = $this->createStub(AssistantRepository::class);
         $repository->method('persistedLanguageModels')->willReturn($persistedModels);
         $organizations = $this->createStub(OrganizationRepository::class);
         $organizations->method('findAll')->willReturn([]);

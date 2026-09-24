@@ -46,7 +46,7 @@ final class DomainRegistrationNotifierTest extends TestCase
                 }
             });
 
-        $settings = $this->createMock(SettingsManager::class);
+        $settings = $this->createStub(SettingsManager::class);
         $settings->method('getSenderAddress')->willReturn('sender@example.test');
         $settings->method('getAdminNotificationSubject')->willReturn('Ny bruger: %name%');
         $settings->method('getAdminNotificationBody')->willReturn('E-mail: %email%');
@@ -56,7 +56,8 @@ final class DomainRegistrationNotifierTest extends TestCase
         $healthy = $this->makeApprover('healthy@aarhus.dk', 'Healthy', Roles::ADMIN);
 
         $userRepository = $this->createMock(UserRepository::class);
-        $userRepository->method('findApproversForDomain')
+        $userRepository->expects(self::once())
+            ->method('findApproversForDomain')
             ->with('aarhus.dk')
             ->willReturn([$flaky, $healthy]);
 
@@ -65,7 +66,7 @@ final class DomainRegistrationNotifierTest extends TestCase
             ->method('warning')
             ->with(self::stringContains('domain registration notification'));
 
-        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
         $urlGenerator->method('generate')->willReturn('https://example.test/admin/users?status=pending');
 
         $notifier = new DomainRegistrationNotifier(
