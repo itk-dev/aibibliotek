@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Tidy-feedback collector widget 
+  ([#269](https://github.com/itk-dev/ai-reolen/pull/269)).
+
 ## [1.0.3] - 2026-10-12
 
 ### Changed
