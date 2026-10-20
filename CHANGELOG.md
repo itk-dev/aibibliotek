@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- TidyFeedback widget loaded on every page, with the API key configurable via
+  `FEEDBACK_WIDGET_API_KEY` in `.env.local`.
+
 ## [1.0.3] - 2026-10-12
 
 ### Changed
