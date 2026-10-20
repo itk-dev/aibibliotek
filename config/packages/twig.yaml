@@ -3,6 +3,11 @@ twig:
     # `brand_name`, `brand_tagline`, and `brand_initials` are exposed
     # by `App\Twig\BrandExtension` so admin overrides stored on the
     # `Setting` entity win over the `BRAND_*` env-var defaults.
+    globals:
+        # Deploy-time only (no admin override), unlike the `BrandExtension`
+        # globals above — the API key is set once per environment and
+        # read directly from the env var.
+        feedback_widget_api_key: '%env(FEEDBACK_WIDGET_API_KEY)%'
 
 when@test:
     twig:
