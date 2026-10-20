@@ -61,7 +61,7 @@
         {# Feedback widget API key is deploy-time config (FEEDBACK_WIDGET_API_KEY #}
         {# in .env.local); the tag is omitted entirely when it's unset. #}
         {% if feedback_widget_api_key %}
-            <script src="http://stgtidyfeedback.srvitkstgweb02.itkdev.dk/build/widget/widget.js"
+            <script src="https://stgtidyfeedback.srvitkstgweb02.itkdev.dk/build/widget/widget.js"
                     data-api-key="{{ feedback_widget_api_key }}"></script>
         {% endif %}
     </body>
