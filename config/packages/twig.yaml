@@ -3,6 +3,9 @@ twig:
     # `brand_name`, `brand_tagline`, and `brand_initials` are exposed
     # by `App\Twig\BrandExtension` so admin overrides stored on the
     # `Setting` entity win over the `BRAND_*` env-var defaults.
+    globals:
+        tidy_feedback_widget_url: '%env(string:TIDY_FEEDBACK_WIDGET_URL)%'
+        tidy_feedback_api_key: '%env(string:TIDY_FEEDBACK_API_KEY)%'
 
 when@test:
     twig:
