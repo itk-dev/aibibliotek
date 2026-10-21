@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-21
+
 ### Added
 
 - Tidy-feedback collector widget
@@ -373,3 +375,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub issue and pull-request templates, each pairing a human-facing resume
   with an "AI specificities" detail block
   ([#69](https://github.com/itk-dev/ai-reolen/issues/69)).
+
+[Unreleased]: https://github.com/itk-dev/aibibliotek/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/itk-dev/aibibliotek/compare/1.0.3...1.2.0
+[1.0.3]: https://github.com/itk-dev/aibibliotek/compare/1.0.2...1.0.3
+[1.0.2]: https://github.com/itk-dev/aibibliotek/compare/1.0.1...1.0.2
+[1.0.1]: https://github.com/itk-dev/aibibliotek/compare/1.0.0...1.0.1
+[1.0.0]: https://github.com/itk-dev/aibibliotek/tree/1.0.0
