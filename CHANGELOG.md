@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-10-26
+
+### Changed
+
+- Docker compose setup uses the maintained `nginx/nginx-unprivileged` image
+  instead of the archived `nginxinc/nginx-unprivileged`
+  ([#272](https://github.com/itk-dev/ai-reolen/pull/272)).
+
 ## [1.2.0] - 2026-10-21
 
 ### Added
@@ -376,7 +384,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   with an "AI specificities" detail block
   ([#69](https://github.com/itk-dev/ai-reolen/issues/69)).
 
-[Unreleased]: https://github.com/itk-dev/aibibliotek/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/itk-dev/aibibliotek/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/itk-dev/aibibliotek/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/itk-dev/aibibliotek/compare/1.0.3...1.2.0
 [1.0.3]: https://github.com/itk-dev/aibibliotek/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/itk-dev/aibibliotek/compare/1.0.1...1.0.2
